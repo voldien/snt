@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Versions
-MAJOR := 9
-MINOR := 0
+MAJOR := 0
+MINOR := 9
 PATCH := 0
 VERSION := $(MAJOR).$(MINOR).$(PATCH)
 # Utilitys
