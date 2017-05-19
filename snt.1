@@ -1,0 +1,155 @@
+'\" snt command manual.
+.\" Copyright (c) 2017, valdemar lindberg
+.\"
+.\" %%%LICENSE_START(GPLv3+_DOC_FULL)
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 3 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, see
+.\" <http://www.gnu.org/licenses/>.
+.\" %%%LICENSE_END
+
+.pc
+.TH SNT 1 "10 May 2017" "1.0" "User Commands"
+.SH NAME
+snt - simple-network-tool
+
+.SH SYNOPSIS
+.B snt [ -VDq46UTSsC ]
+.TP
+.B snt [ -v ]
+
+.SH DESCRIPTION
+snt is a program for network connection performance for various benchmark modes. It supports performance, integrity and file mode.
+Where each of the benchmark modes can be executed with either the TCP or UDP transport protocol. Where the connection can be
+be setup in order enable compression and encryption between each time. This is in order to see the performance differences when using a compressed data in respect to non compressed data.
+
+The server and client functionality is intregreted into a single executable binary.
+
+.SH OPTIONS
+.TP
+.BR \-v ", " \-\-version
+Print the version of the program and exit.
+.TP
+.BR \-V ", " \-\-verbose
+Enable verbose printing.
+.TP
+.BR \-D ", " \-\-debug
+Enable mode. This will printout information about the execution of the program more often than verbose will. This will also reduce the performance since it will print information about each recved and sent packet.
+.TP
+.BR \-q ", " \-\-quite
+Quite mode will oppresses all kind of verbose and debugging logging. This will not opresses the stderr. 
+.TP
+.BR \-6 ", " \-\-ipv6
+The connection will use IPv6 as the network layer protocol.
+.TP
+.BR \-4 ", " \-\-ipv4 
+The connection will use IPv4 as the network layer protocol.
+.TP
+.BR \-T ", " \-\-TCP
+Use the TCP protocol for the benchmarking. 
+.TP
+.BR \-U ", " \-\-UDP
+Use the UDP protocol for the benchmarking.
+.TP
+.BR \-H ", " \-\-hash
+Sets the hashing algorithm used for the digital signature.
+.TP
+.BR \-C ", " \-\-compression
+Use compression on the connection. Default compression is gzip.
+.TP
+.BR \-d ", " \-\-delta
+Set delta mode that is used for the integrity benchmark mode.
+.TP
+.BR \-S ", " \-\-secure
+Use secure connection.
+.TP
+.BR \-s ", " \-\-server
+Run the program as the server.
+.TP
+.BR \-h ", " \-\-host
+Set hostname or IP address for the client to connect to.
+.TP 
+.BR \-p ", " \-\-port 
+Override the default port used the connection.
+.TP
+.BR \-t ", " \-\-transport 
+Specifiy what transport layer protocol to used for the benchmarking.
+.TP
+.BR \-l ", " \-\-listen
+Specifiy number of listing on the TCP socket. Server only.
+.TP
+.BR \-n ", " \-\-parallel =\fINUMCONNECTIONS\fR
+Number of parallel ports. Client only.
+.TP
+.BR \-b ", " \-\-benchmarkmode
+Sets the benchmark to perform.
+.TP
+.BR \-c ", " \-\-cipher
+Set the symmetric cipher used for the secure connection. Default is AES128.
+.TP
+.BR \-P ", " \-\-public-key 
+Set the asymmetric cipher used for performing key exchange. Default is RSA.
+.TP
+.BR \-B ", " \-\-public-nbits =\fIBITS\fR
+Sets the size of asymmetric cipher key. Default is 1024.
+.TP
+.BR \-f ", " \-\-file =\fIPATH\fR
+Set file used for the file transfer performance benchmark mode.
+.TP
+.BR \-A ", " \-\-affinity
+Set the affinity of the process. This will limit what CPU and cores that can be used for the process.
+.TP
+.BR \-X ", " \-\-certificate	 
+Specifiy cerficate file used during the key exchange phase.
+
+
+.SH EXIT STATUS
+If exist status is equal 0 than the program was exited successfully.
+
+'\" .SH EXAMPLES
+'\" The follwing are examples of how the program can be used and what parameter is nedded and etc.
+'\" 
+'\" The program can be run as a server, see following.
+'\" .TP
+'\" .B snt --sever
+'\" .TP
+'\" This will bind the process to default port. Where the settings of the operation of the server will set to the default value. The program '\" can  be run as in client as followed
+'\" .TP
+'\" .B snt hostname
+'\" .TP
+'\" Where the hostname is the IP address or the hostname. That is minimum count of paramater in order use it as client. The client will run '\" the  default configuration if no options are overriden.
+
+.SH NOTES
+The program has so far not being exetably tested in order determine how 
+accured the mesauremend value presented are. So take the result with a grain of salt. Also the program is not in a stable release. 
+
+.SH "SEE ALSO"
+\&\fIopenssl\fR\|(1), \&\fIssl\fR\|(3), \fIsocket\fR\|(2)\&, \fIcrypto\fR\|(2)\&, \fIpthreads\fR\|(7)\&
+.TP
+Visit
+\&\fIhttps://github.com/voldien/snt\fR\|\&
+for accessing the source code for the
+.B snt
+program.
+
+.SH BUGS
+See 
+\&\fIhttps://github.com/voldien/snt/issues\fR\|\&
+for any known bugs.
+
+.SH AUTHOR
+	Valdemar Lindberg (voldiekami@gmail.com)
