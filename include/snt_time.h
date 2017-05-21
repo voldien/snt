@@ -34,4 +34,10 @@ extern long int sntGetUnixTime(void);
  */
 extern long int sntGetTimeResolution(void);
 
+/**
+ *	Sleep current thread in n number of
+ *	nano seconds.
+ */
+extern void sntNanoSleep(long int nanosec);
+
 #endif

@@ -18,3 +18,10 @@ long int sntGetTimeResolution(void){
 	clock_getres(CLOCK_MONOTONIC, &spec);
 	return (1E9 / spec.tv_nsec);
 }
+
+void sntNanoSleep(long int nanosec){
+	struct timespec spec;
+	spec.tv_nsec = nanosec;
+	spec.tv_sec = 0;
+	nanosleep(&spec, NULL);	/*	TODO relocate to time.c	*/
+}
