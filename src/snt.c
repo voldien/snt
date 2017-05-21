@@ -143,19 +143,26 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			break;
 		case 'b':	/*	benchmark mode.	*/
 			if(optarg){
-				if(strcmp(optarg, "integrity") == 0){
-					option->bm_protocol_mode = SNT_PROTOCOL_BM_MODE_INTEGRITY;
+				i = 0;
+				if(strcmp(optarg, "all") == 0){
+					option->symmetric = SNT_PROTOCOL_BM_MODE_ALL;
+					break;
 				}
-				else if(strcmp(optarg, "performance") == 0){
-					option->bm_protocol_mode = SNT_PROTOCOL_BM_MODE_PERFORMANCE;
-				}
-				else if(strcmp(optarg, "file") == 0){
-					option->bm_protocol_mode = SNT_PROTOCOL_BM_MODE_FILE;
-				}
-				else{
-					fprintf(stderr,"Invalid benchmark mode option, %s.\n", optarg);
-					exit(EXIT_FAILURE);
-				}
+
+				do{
+					if(strcmp(gc_bench_symbol[i], optarg) == 0){
+						break;
+					}
+					i++;
+					if(gc_bench_symbol[i] == NULL){
+						fprintf(stderr, "Invalid benchmark mode option, %s.\n", optarg);
+						exit(EXIT_FAILURE);
+					}
+				}while(gc_bench_symbol[i]);
+
+				option->bm_protocol_mode = (1 << (i - 1));
+				sntVerbosePrintf("Using %s for benchmark mode .\n", gc_bench_symbol[i]);
+				break;
 			}
 			break;
 		case 'C':	/*	Use compression.	*/
