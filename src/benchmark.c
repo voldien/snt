@@ -12,7 +12,7 @@ const char* gc_bench_symbol[] = {
 		"",
 		"performance",
 		"integrity",
-		"file-transfer",
+		"file",
 		NULL
 };
 
@@ -113,17 +113,15 @@ int sntWaitBenchmark(SNTConnection* connection){
 	return 1;
 }
 
-void sntWaitFrequency(SNTConnection* connection){
-	struct timespec spec;
-	spec.tv_nsec = connection->option->invfrequency;
-	spec.tv_sec = 0;
-	nanosleep(&spec, NULL);	/*	TODO relocate to time.c	*/
+void sntWaitFrequency(const SNTConnectionOption* conopt){
+	sntNanoSleep(conopt->invfrequency);
 }
 
 void* sntClientIntegrityBenchmark(void* patt){
 
 	/*	*/
 	SNTConnection* con = patt;
+	SNTClientOption* conopt = con->option;
 	SNTUniformPacket* pack;
 	size_t clne;
 	int len = 0;
@@ -164,7 +162,7 @@ void* sntClientIntegrityBenchmark(void* patt){
 		total += len;
 
 		/*	*/
-		sntWaitFrequency(con);
+		sntWaitFrequency(conopt);
 	}
 
 	printf("number of packet failure : %d.\n", g_nfailure);
@@ -179,6 +177,7 @@ void* sntClientIntegrityBenchmark(void* patt){
 void* sntClientPerformanceBenchmark(void* patt){
 
 	SNTConnection* con = patt;
+	SNTClientOption* conopt = con->option;
 	SNTUniformPacket* pack;
 	float duration;
 	size_t clne;
@@ -211,7 +210,7 @@ void* sntClientPerformanceBenchmark(void* patt){
 		total += len;
 
 		/*	*/
-		sntWaitFrequency(con);
+		sntWaitFrequency(conopt);
 	}
 
 	/*	*/
@@ -228,6 +227,7 @@ void* sntClientPerformanceBenchmark(void* patt){
 void* sntClientFileBenchmark(void* patt){
 
 	SNTConnection* con = (SNTConnection*)patt;
+	SNTClientOption* conopt = con->option;
 	SNTUniformPacket* pack;
 	float duration;
 	int len;
@@ -276,7 +276,7 @@ void* sntClientFileBenchmark(void* patt){
 		total += len;
 
 		/*	*/
-		sntWaitFrequency(con);
+		sntWaitFrequency(conopt);
 	}
 
 	/*	End connection.	*/

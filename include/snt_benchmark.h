@@ -51,8 +51,10 @@ extern pthread_t sntCreateBenchmarkThread(unsigned int mode,
  */
 extern int sntWaitBenchmark(SNTConnection* connection);
 
-/**/
-extern void sntWaitFrequency(SNTConnection* connection);
+/**
+ *	Sleep thread.
+ */
+extern void sntWaitFrequency(const SNTConnectionOption* connection);
 
 /**
  *	Send packet diagram with ID string.
