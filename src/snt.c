@@ -295,37 +295,26 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			break;
 		case 'c':
 			if(optarg){
-				if(strcmp(optarg, "aes128") == 0){
-					option->symmetric = SNT_ENCRYPTION_AES128;
-				}
-				else if(strcmp(optarg, "aes192") == 0){
-					option->symmetric = SNT_ENCRYPTION_AES192;
-				}
-				else if(strcmp(optarg, "aes256") == 0){
-					option->symmetric = SNT_ENCRYPTION_AES256;
-				}
-				else if(strcmp(optarg, "blowfish") == 0){
-					option->symmetric = SNT_ENCRYPTION_BLOWFISH;
-				}
-				else if(strcmp(optarg, "des") == 0){
-					option->symmetric = SNT_ENCRYPTION_DES;
-				}
-				else if(strcmp(optarg, "3des") == 0){
-					option->symmetric = SNT_ENCRYPTION_3DES;
-				}
-				else if(strcmp(optarg, "aescbc128") == 0){
-					option->symmetric = SNT_ENCRYPTION_AES_CBC128;
-				}
-				else if(strcmp(optarg, "aesecb128") == 0){
-					option->symmetric = SNT_ENCRYPTION_AES_ECB128;
-				}
-				else if(strcmp(optarg, "all") == 0){
+				i = 0;
+				if(strcmp(optarg, "all") == 0){
 					option->symmetric = SNT_ENCRYPTION_SYM_ALL;
+					break;
 				}
-				else{
-					fprintf(stderr, "Invalid symmetric cipher option, %s.\n", optarg);
-					exit(EXIT_FAILURE);
-				}
+
+				do{
+					if(strcmp(gc_symchi_symbol[i], optarg) == 0){
+						break;
+					}
+					i++;
+					if(gc_symchi_symbol[i] == NULL){
+						fprintf(stderr, "Invalid symmetric cipher option, %s.\n", optarg);
+						exit(EXIT_FAILURE);
+					}
+				}while(gc_symchi_symbol[i]);
+
+				option->symmetric = (1 << (i - 1));
+				sntVerbosePrintf("Using %s for symmetric cipher .\n", gc_symchi_symbol[i]);
+				break;
 			}
 			break;
 		case 'P':	/*	Asymmetric cipher.	*/
@@ -358,12 +347,10 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			if(optarg){
 				sntVerbosePrintf("Opening %s.\n", optarg);
 				g_filepath = optarg;
-				/*
-				if(!g_filepath){
-					fprintf(stderr, "Failed to open file %s, %s.\n", optarg, strerror(errno));
+				if(access(g_filepath, F_OK) != 0){
+					fprintf(stderr, "File %s is not accessible, %s.\n", optarg, strerror(errno));
 					exit(EXIT_FAILURE);
 				}
-				*/
 			}
 			break;
 		case 'A':
@@ -375,6 +362,10 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			if(optarg){
 				/*	Use certificate file.	*/
 				cerficatefilepath = optarg;
+				if(access(cerficatefilepath, F_OK) != 0){
+					fprintf(stderr, "File %s is not accessible, %s.\n", optarg, strerror(errno));
+					exit(EXIT_FAILURE);
+				}
 			}
 			break;
 		default:
