@@ -21,46 +21,46 @@ int sntHash(unsigned int hashtype, const void* block, unsigned int len,
 		SHA_CTX* sha;
 		SHA256_CTX* sha256;
 		SHA512_CTX* sha512;
-	}hash;
+	}ctx;
 
 	switch(hashtype){
 	case SNT_HASH_MD5:
-		hash.md5 = (MD5_CTX*)malloc(sizeof(MD5_CTX));
-		MD5_Init(hash.md5);
-		MD5_Update(hash.md5, block, len);
-		if(!MD5_Final(res, hash.md5)){
+		ctx.md5 = (MD5_CTX*)malloc(sizeof(MD5_CTX));
+		MD5_Init(ctx.md5);
+		MD5_Update(ctx.md5, block, len);
+		if(!MD5_Final(res, ctx.md5)){
 			return 0;
 		}
 		break;
 	case SNT_HASH_SHA:
-		hash.sha = malloc(sizeof(SHA_CTX));
-		SHA1_Init(hash.sha);
-		SHA1_Update(hash.sha, block, len);
-		if(!SHA1_Final(res, hash.sha)){
+		ctx.sha = malloc(sizeof(SHA_CTX));
+		SHA1_Init(ctx.sha);
+		SHA1_Update(ctx.sha, block, len);
+		if(!SHA1_Final(res, ctx.sha)){
 			return 0;
 		}
 		break;
 	case SNT_HASH_SHA256:
-		hash.sha256 = malloc(sizeof(SHA256_CTX));
-		SHA256_Init(hash.sha256);
-		SHA256_Update(hash.sha256, block, len);
-		if(!SHA256_Final(res, hash.sha256)){
+		ctx.sha256 = malloc(sizeof(SHA256_CTX));
+		SHA256_Init(ctx.sha256);
+		SHA256_Update(ctx.sha256, block, len);
+		if(!SHA256_Final(res, ctx.sha256)){
 			return 0;
 		}
 		break;
 	case SNT_HASH_SHA384:
-		hash.sha512 = malloc(sizeof(SHA512_CTX));
-		SHA384_Init(hash.sha512);
-		SHA384_Update(hash.sha512, block, len);
-		if(!SHA384_Final(res, hash.sha512)){
+		ctx.sha512 = malloc(sizeof(SHA512_CTX));
+		SHA384_Init(ctx.sha512);
+		SHA384_Update(ctx.sha512, block, len);
+		if(!SHA384_Final(res, ctx.sha512)){
 			return 0;
 		}
 		break;
 	case SNT_HASH_SHA512:
-		hash.sha512 = malloc(sizeof(SHA512_CTX));
-		SHA512_Init(hash.sha512);
-		SHA512_Update(hash.sha512, block, len);
-		if(!SHA512_Final(res, hash.sha512)){
+		ctx.sha512 = malloc(sizeof(SHA512_CTX));
+		SHA512_Init(ctx.sha512);
+		SHA512_Update(ctx.sha512, block, len);
+		if(!SHA512_Final(res, ctx.sha512)){
 			return 0;
 		}
 		break;
@@ -68,7 +68,7 @@ int sntHash(unsigned int hashtype, const void* block, unsigned int len,
 		return 0;
 	}
 
-	free(hash.md5);
+	free(ctx.md5);
 	return sntGetHashTypeSize(hashtype);
 }
 
