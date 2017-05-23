@@ -24,7 +24,7 @@ typedef struct snt_connection_t SNTConnection;
 
 /**
  *	Symmetric cipher.
- *	mutually exclusive.
+ *	mutually exclusive enumerates.
  */
 #define SNT_ENCRYPTION_NONE				0x0		/*	No symmetric encryption cipher.	*/
 #define SNT_ENCRYPTION_AES128			0x1		/*	AES 128 bit key.	*/
@@ -157,6 +157,8 @@ extern int sntSymCreateFromKey(SNTConnection* __restrict__ connection,
 
 /**
  *	Copy symmetric cipher.
+ *
+ *	Remark:
  */
 extern void sntSymCopyKey(SNTConnection* connection, void** key);
 

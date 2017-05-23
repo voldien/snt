@@ -26,7 +26,11 @@ const char* gc_symchi_symbol[] = {
 		"des",
 		"3des",
 		"aesecb128",
+		"aesecb192",
+		"aesecb256",
 		"aescbc128",
+		"aescbc192",
+		"aescbc256",
 		NULL,
 };
 
@@ -344,7 +348,7 @@ int sntASymSignDigSign(const SNTConnection* connection, unsigned int hashtype,
 
 	int res;
 
-	/**/
+	/*	Sign.	*/
 	res = RSA_sign(sntGetSignHashEnum(hashtype), hash, len, output, diglen, connection->RSAkey);
 	if(res != 1){
 		sntSSLPrintError();
@@ -357,6 +361,7 @@ int sntASymVerifyDigSign(const SNTConnection* connection, unsigned int hashtype,
 
 	int res;
 
+	/*	Verify.	*/
 	res = RSA_verify(sntGetSignHashEnum(hashtype), hash, len, digital, diglen, connection->RSAkey);
 	if(res != 1){
 		sntSSLPrintError();
@@ -376,7 +381,7 @@ int sntSymGenerateKey(SNTConnection* connection, unsigned int cipher){
 	RAND_poll();
 
 	/*	Generate random string.	*/
-	rand = malloc(sntSymKeyByteSize(cipher));
+	rand = (unsigned char*)malloc(sntSymKeyByteSize(cipher));
 	status = RAND_bytes(rand, sntSymKeyByteSize(cipher));
 	if(status != 1){
 		printf("error : %d\n", RAND_status());
@@ -402,7 +407,11 @@ int sntSymCreateFromKey(SNTConnection* connection, unsigned int cipher, const vo
 	case SNT_ENCRYPTION_AES256:
 	case SNT_ENCRYPTION_AES192:
 	case SNT_ENCRYPTION_AES_CBC128:
+	case SNT_ENCRYPTION_AES_CBC192:
+	case SNT_ENCRYPTION_AES_CBC256:
 	case SNT_ENCRYPTION_AES_ECB128:
+	case SNT_ENCRYPTION_AES_ECB192:
+	case SNT_ENCRYPTION_AES_ECB256:
 		connection->aes = malloc(sizeof(AES_KEY));
 		connection->deaes = malloc(sizeof(AES_KEY));
 		AES_set_encrypt_key(pkey, sntSymKeyBitSize(cipher), connection->aes);
@@ -448,7 +457,11 @@ void sntSymCopyKey(SNTConnection* connection, void** key){
 	case SNT_ENCRYPTION_AES192:
 	case SNT_ENCRYPTION_AES256:
 	case SNT_ENCRYPTION_AES_ECB128:
+	case SNT_ENCRYPTION_AES_ECB192:
+	case SNT_ENCRYPTION_AES_ECB256:
 	case SNT_ENCRYPTION_AES_CBC128:
+	case SNT_ENCRYPTION_AES_CBC192:
+	case SNT_ENCRYPTION_AES_CBC256:
 		memcpy(*key, ((AES_KEY*)connection->aes)->rd_key, sntSymKeyByteSize(connection->symchiper));
 		break;
 	case SNT_ENCRYPTION_BLOWFISH:
@@ -471,8 +484,12 @@ int sntSymKeyBitSize(unsigned int cipher){
 	case SNT_ENCRYPTION_AES_CBC128:
 		return 128;
 	case SNT_ENCRYPTION_AES192:
+	case SNT_ENCRYPTION_AES_ECB192:
+	case SNT_ENCRYPTION_AES_CBC192:
 		return 192;
 	case SNT_ENCRYPTION_AES256:
+	case SNT_ENCRYPTION_AES_ECB256:
+	case SNT_ENCRYPTION_AES_CBC256:
 		return 256;
 	case SNT_ENCRYPTION_BLOWFISH:
 		return 192;
@@ -493,7 +510,11 @@ int sntSymBlockSize(unsigned int cipher){
 	case SNT_ENCRYPTION_AES192:
 	case SNT_ENCRYPTION_AES256:
 	case SNT_ENCRYPTION_AES_CBC128:
+	case SNT_ENCRYPTION_AES_CBC192:
+	case SNT_ENCRYPTION_AES_CBC256:
 	case SNT_ENCRYPTION_AES_ECB128:
+	case SNT_ENCRYPTION_AES_ECB192:
+	case SNT_ENCRYPTION_AES_ECB256:
 		return AES_BLOCK_SIZE;
 	case SNT_ENCRYPTION_BLOWFISH:
 		return BF_BLOCK;
@@ -511,7 +532,11 @@ void sntSymFree(SNTConnection* connection){
 	case SNT_ENCRYPTION_AES192:
 	case SNT_ENCRYPTION_AES256:
 	case SNT_ENCRYPTION_AES_CBC128:
+	case SNT_ENCRYPTION_AES_CBC192:
+	case SNT_ENCRYPTION_AES_CBC256:
 	case SNT_ENCRYPTION_AES_ECB128:
+	case SNT_ENCRYPTION_AES_ECB192:
+	case SNT_ENCRYPTION_AES_ECB256:
 		free(connection->aes);
 		free(connection->deaes);
 		break;
@@ -558,13 +583,17 @@ int sntSymEncrypt(const SNTConnection* connection, const void* source,
 		}
 		break;
 	case SNT_ENCRYPTION_AES_ECB128:
+	case SNT_ENCRYPTION_AES_ECB192:
+	case SNT_ENCRYPTION_AES_ECB256:
 		for(i = 0; i < delen; i += connection->blocksize){
 			AES_ecb_encrypt(in + i, dest + i, connection->aes, AES_ENCRYPT);
 		}
 		break;
 	case SNT_ENCRYPTION_AES_CBC128:
+	case SNT_ENCRYPTION_AES_CBC192:
+	case SNT_ENCRYPTION_AES_CBC256:
 		for(i = 0; i < delen; i += connection->blocksize){
-			/*AES_cbc_encrypt(in + i, dest + i, connection->aes, AES_ENCRYPT);*/
+			/*AES_cbc_encrypt(source + i, dest + i,connection->blocksize, connection->aes, NULL, AES_ENCRYPT);*/
 		}
 		break;
 	case SNT_ENCRYPTION_DES:
@@ -607,13 +636,17 @@ int sntSymDecrypt(const SNTConnection* connection, const void* source,
 		}
 		break;
 	case SNT_ENCRYPTION_AES_ECB128:
+	case SNT_ENCRYPTION_AES_ECB192:
+	case SNT_ENCRYPTION_AES_ECB256:
 		for(i = 0; i < deslen; i += connection->blocksize){
 			AES_ecb_encrypt(source + i, dest + i, connection->deaes, DES_DECRYPT);
 		}
 		break;
 	case SNT_ENCRYPTION_AES_CBC128:
+	case SNT_ENCRYPTION_AES_CBC192:
+	case SNT_ENCRYPTION_AES_CBC256:
 		for(i = 0; i < deslen; i += connection->blocksize){
-			/*AES_cbc_encrypt(source + i, dest + i, connection->aes, AES_DECRYPT);*/
+			/*AES_cbc_encrypt(source + i, dest + i,connection->blocksize, connection->aes, NULL, AES_DECRYPT);*/
 		}
 		break;
 	case SNT_ENCRYPTION_DES:
@@ -640,7 +673,6 @@ int sntSymDecrypt(const SNTConnection* connection, const void* source,
 }
 
 int sntSymTotalBlockSize(unsigned int len, unsigned int blocksize){
-	/*	TODO fix!	Cause accumulative size problem.	*/
 	if(len % blocksize == 0)
 		return len;
 	else
