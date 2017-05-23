@@ -131,6 +131,8 @@ int sntProtFuncCertificate(SNTConnection* connection, SNTUniformPacket* packet) 
 		fprintf(stderr, "sntAsymPubEncrypt failed.\n");
 		return 0;
 	}
+	/*	*/
+	memset(key, 0, sntSymKeyByteSize(connection->symchiper));
 	free(key);
 
 	/*	Send packet.	*/
