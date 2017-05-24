@@ -205,7 +205,11 @@ int sntProtFuncError(SNTConnection* __restrict__ connection,
 		SNTUniformPacket* __restrict__ packet){
 	SNTErrorPacket* error = (SNTErrorPacket*)packet;
 
-	fprintf(stderr, "Error code %d, %s.\n", error->errorcode, error->message);
+	if(error->meslen > 0){
+		fprintf(stderr, "Error code %d, %s.\n", error->errorcode, error->message);
+	}else{
+		fprintf(stderr, "Error code %d.\n", error->errorcode);
+	}
 	return 0;
 }
 
