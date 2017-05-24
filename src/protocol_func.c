@@ -285,6 +285,7 @@ int sntSendCertificate(const SNTConnection* bind, SNTConnection* client){
 	memset(cert.cert, 0, sizeof(cert.cert));
 	cert.certlen = sntASymCopyPublicKey(bind, &cert.cert[0]);
 	if(cert.certlen <= 0){
+		sntSendError(client, SNT_ERROR_SERVER, "");
 		fprintf(stderr, "sntAsymmetricCopyPublicKey failed.\n");
 		return 0;
 	}
@@ -295,7 +296,11 @@ int sntSendCertificate(const SNTConnection* bind, SNTConnection* client){
 	/*	Hash the certificate and meta data.	*/
 	cert.hashtype = bind->option->hash;
 	cert.localhashedsize = sizeof(cert.cert);
-	sntHash(cert.hashtype, cert.cert, cert.localhashedsize, cert.hash);
+	if(!sntHash(cert.hashtype, cert.cert, cert.localhashedsize, cert.hash)){
+		sntSendError(client, SNT_ERROR_SERVER, "");
+		fprintf(stderr, "sntHash failed.\n");
+		return 0;
+	}
 
 	/*	Encrypt the hash in order to prevent integrity compromising.	*/
 	tmphash = malloc(sntGetHashTypeSize(cert.hashtype));
