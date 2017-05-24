@@ -28,6 +28,6 @@
  */
 #define SNT_VERSION ((SNT_MAJOR << 10) | (SNT_MINOR & 0x3FF))		/*	SNT version.	*/
 #define SNT_GET_MAJ_VERSION(ver) ((ver & ~0x3FF) >> 10)				/*	Extract major version.	*/
-#define SNT_GET_MIN_VERSION(ver) (SNT_MINOR & 0x3FF)				/*	Extract minor version.	*/
+#define SNT_GET_MIN_VERSION(ver) (ver & 0x3FF)						/*	Extract minor version.	*/
 
 #endif
