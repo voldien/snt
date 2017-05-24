@@ -114,14 +114,15 @@ extern const char* gs_symprotocol[];
 /**
  *	Error codes.
  */
-#define SNT_ERROR_NONE						0x0	/*	*/
+#define SNT_ERROR_NONE						0x0	/*	No error.	*/
 #define SNT_ERROR_INVALID_ARGUMENT			0x1	/*	Invalid argument.	*/
 #define SNT_ERROR_SIGNATURE_FAILED			0x2	/*	Signature failed.	*/
 #define SNT_ERROR_SERVER					0x3	/*	Error on the server side.	*/
-#define SNT_ERROR_INCOMPATIBLE_VERSION		0x4	/*	*/
-#define SNT_ERROR_SSL_NOT_SUPPORTED			0x5	/*	*/
-#define SNT_ERROR_COMPRESSION_NOT_SUPPORTED	0x6	/*	*/
-
+#define SNT_ERROR_INCOMPATIBLE_VERSION		0x4	/*	Version not compatible.	*/
+#define SNT_ERROR_SSL_NOT_SUPPORTED			0x5	/*	Secure connection is not supported.	*/
+#define SNT_ERROR_COMPRESSION_NOT_SUPPORTED	0x6	/*	Specified compression algorithm not supported.	*/
+#define SNT_ERROR_BAD_REQUEST				0x7	/*	*/
+#define SNT_ERROR_SERVICE_UNAVAILABLE		0x8	/*	*/
 
 /**
  *	Packet flag option.
@@ -147,7 +148,7 @@ typedef struct snt_packet_header_t{
  *	Used for encryption.
  */
 typedef struct snt_presentation_package_t{
-	uint8_t noffset;	/*	*/
+	uint8_t noffset;	/*	Negative offset.	*/
 } __attribute__ ((__packed__)) SNTPresentationPacket;
 
 /**
