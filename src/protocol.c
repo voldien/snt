@@ -238,7 +238,11 @@ SNTConnection* sntAcceptSocket(SNTConnection* bindcon){
 	/*	Set timeout for client.	*/
 	tv.tv_sec = 10;
 	tv.tv_usec = 0;
-	setsockopt(connection->tcpsock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
+	if(setsockopt(connection->tcpsock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) != 0){
+		fprintf(stderr, "setsockopt failed, %s.\n", strerror(errno));
+		sntDisconnectSocket(connection);
+		return NULL;
+	}
 
 	/*	Get attribute about connection interface.	*/
 	sntGetInterfaceAttr(connection);
