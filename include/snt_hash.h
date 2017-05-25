@@ -26,9 +26,10 @@
 #define SNT_HASH_None		0x0		/*	No hash.	*/
 #define SNT_HASH_MD5		0x1		/*	MD5 hash.	*/
 #define SNT_HASH_SHA		0x2		/*	Secure hashing algorithm.	*/
-#define SNT_HASH_SHA256		0x3		/*	Secure hashing algorithm 256 bits.	*/
-#define SNT_HASH_SHA384 	0x4		/*	Secure hashing algorithm 384 bits.	*/
-#define SNT_HASH_SHA512 	0x5		/*	Secure hashing algorithm 512 bits.*/
+#define SNT_HASH_SHA224		0x3		/*	Secure hashing algorithm 224 bits.	*/
+#define SNT_HASH_SHA256		0x4		/*	Secure hashing algorithm 256 bits.	*/
+#define SNT_HASH_SHA384 	0x5		/*	Secure hashing algorithm 384 bits.	*/
+#define SNT_HASH_SHA512 	0x6		/*	Secure hashing algorithm 512 bits.*/
 
 /**
  *	Hash symbol table.
@@ -42,7 +43,7 @@ extern const char* gc_hash_symbol[];
  *	@Return hash size
  */
 extern int sntHash(unsigned int hashtype, const void* __restrict__ block,
-		unsigned int len, void* __restrict__ res);
+		unsigned int len, void* __restrict__ result);
 
 /**
  *	Get fixed hashed size of given hash type.
