@@ -42,7 +42,7 @@ extern const char* gc_hash_symbol[];
  *
  *	@Return hash size
  */
-extern int sntHash(unsigned int hashtype, const void* __restrict__ block,
+extern unsigned int sntHash(unsigned int hashtype, const void* __restrict__ block,
 		unsigned int len, void* __restrict__ result);
 
 /**

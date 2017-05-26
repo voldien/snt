@@ -14,7 +14,7 @@ const char* gc_hash_symbol[] = {
 };
 
 
-int sntHash(unsigned int hashtype, const void* block, unsigned int len,
+unsigned int sntHash(unsigned int hashtype, const void* block, unsigned int len,
 		void* result) {
 
 	union{
