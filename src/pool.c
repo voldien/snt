@@ -92,11 +92,28 @@ unsigned int sntPoolNumNodes(const SNTPool* pool){
 	return pool->num;
 }
 
+unsigned int sntPoolItemSize(const SNTPool* pool){
+	return pool->itemsize;
+}
+
 int sntPoolGetIndex(const SNTPool* pool, const void* data){
 	return ((const char*)data - (const char*)pool->pool) / pool->itemsize;
+}
+
+static void* sntPoolItemByIndex(SNTPool* pool, unsigned int index){
+	return ((char*)pool->pool) + ( (pool->itemsize + sizeof(void*)) * index + sizeof(void*));
 }
 
 void sntPoolFree(SNTPool* allactor){
 	free(allactor->pool);
 	free(allactor);
+}
+
+void sntMemsetPoolFrame(SNTPool* pool){
+	unsigned int i;
+
+	for(i = 0; i < sntPoolNumNodes(pool); i++){
+		memset(sntPoolItemByIndex(pool, i), 0, sntPoolItemSize(pool));
+	}
+	/*memset(pool->pool, 0, sntPoolNumNodes(pool) * sntPoolItemSize(pool));	*/
 }

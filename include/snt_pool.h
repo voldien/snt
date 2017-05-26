@@ -92,6 +92,11 @@ extern void* sntPoolResize(SNTPool* allocator, unsigned int num, unsigned int it
 extern unsigned int sntPoolNumNodes(const SNTPool* pool);
 
 /**
+ *	@Return item size in bytes.
+ */
+extern unsigned int sntPoolItemSize(const SNTPool* pool);
+
+/**
  *	Get the node index of a valid node.
  */
 extern int sntPoolGetIndex(const SNTPool* pool, const void* data);
@@ -105,6 +110,11 @@ extern int sntPoolGetIndex(const SNTPool* pool, const void* data);
  *	and pool frame pointer. The allocator pointer will be
  *	invalid afterward.
  */
-extern void sntPoolFree(SNTPool* allocator);
+extern void sntPoolFree(SNTPool* pool);
+
+/**
+ *	Set the whole pool frame to zero.
+ */
+extern void sntMemsetPoolFrame(SNTPool* pool);
 
 #endif
