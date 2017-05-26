@@ -143,7 +143,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			break;
 		case 'b':	/*	benchmark mode.	*/
 			if(optarg){
-				i = 0;
+				i = 1;
 				if(strcmp(optarg, "all") == 0){
 					option->symmetric = SNT_PROTOCOL_BM_MODE_ALL;
 					break;
@@ -160,7 +160,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 					}
 				}while(gc_bench_symbol[i]);
 
-				option->bm_protocol_mode = (1 << (i - 1));
+				option->bm_protocol_mode = (1 << (uint32_t)(i - 1));
 				sntVerbosePrintf("Using %s for benchmark mode .\n", gc_bench_symbol[i]);
 				break;
 			}
