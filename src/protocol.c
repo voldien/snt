@@ -37,6 +37,17 @@ const char* gs_symprotocol[] = {
 		NULL
 };
 
+const char* gs_error_sym[] = {
+		"No error",
+		"Invalid argument",
+		"Signature failed",
+		"Server unkown error",
+		"Incompatiable version",
+		"SSL not supported",
+		"Bad request",
+		"Service unavailable",
+};
+
 void sntGetInterfaceAttr(SNTConnection* connection){
 
 	struct ifreq ifr;				/*	*/

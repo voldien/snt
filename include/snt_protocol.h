@@ -121,8 +121,13 @@ extern const char* gs_symprotocol[];
 #define SNT_ERROR_INCOMPATIBLE_VERSION		0x4	/*	Version not compatible.	*/
 #define SNT_ERROR_SSL_NOT_SUPPORTED			0x5	/*	Secure connection is not supported.	*/
 #define SNT_ERROR_COMPRESSION_NOT_SUPPORTED	0x6	/*	Specified compression algorithm not supported.	*/
-#define SNT_ERROR_BAD_REQUEST				0x7	/*	*/
-#define SNT_ERROR_SERVICE_UNAVAILABLE		0x8	/*	*/
+#define SNT_ERROR_BAD_REQUEST				0x7	/*	Invalid application protocol command.	*/
+#define SNT_ERROR_SERVICE_UNAVAILABLE		0x8	/*	Server can't provide the service.	*/
+
+/**
+ *	Error code symbols.
+ */
+extern const char* gs_error_sym[];
 
 /**
  *	Packet flag option.
