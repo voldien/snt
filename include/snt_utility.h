@@ -46,6 +46,6 @@ extern int sntMin(int a, int b);
 /**
  *	@Return size in number of elements in pointer array.
  */
-extern unsigned int sntSymbolArraySize(void** array);
+extern unsigned int sntSymbolArraySize(const void** array);
 
 #endif

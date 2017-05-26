@@ -31,7 +31,7 @@ int sntMin(int a, int b){
 	return ( ( (a) < (b) ) ? (a) : (b) );
 }
 
-unsigned int sntSymbolArraySize(void** array){
+unsigned int sntSymbolArraySize(const void** array){
 
 	unsigned int i = 0;
 
