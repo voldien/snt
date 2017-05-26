@@ -52,7 +52,7 @@ extern SNTPool* sntPoolCreate(unsigned int num,
  *	Lock pool frame from being swapped to
  *	swap storage.
  */
-extern void sntPoolLockMem(SNTPool* poolallocator);
+extern int sntPoolLockMem(SNTPool* poolallocator);
 
 /**
  *	Obtain the next element from pool frame.
@@ -91,7 +91,9 @@ extern void* sntPoolResize(SNTPool* allocator, unsigned int num, unsigned int it
  */
 extern unsigned int sntPoolNumNodes(const SNTPool* pool);
 
-
+/**
+ *	Get the node index of a valid node.
+ */
 extern int sntPoolGetIndex(const SNTPool* pool, const void* data);
 
 /**
@@ -100,7 +102,8 @@ extern int sntPoolGetIndex(const SNTPool* pool, const void* data);
  *	\allocator
  *
  *	Remark: this function will call 'free' on allocator
- *	and pool frame pointer.
+ *	and pool frame pointer. The allocator pointer will be
+ *	invalid afterward.
  */
 extern void sntPoolFree(SNTPool* allocator);
 

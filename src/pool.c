@@ -35,14 +35,17 @@ SNTPool* sntPoolCreate(unsigned int num, unsigned int itemsize) {
 	return alloc;
 }
 
-void sntPoolLockMem(SNTPool* poolallocator){
+int sntPoolLockMem(SNTPool* poolallocator){
 	int e;
 
 	e = mlock(poolallocator->pool,
 			poolallocator->itemsize * poolallocator->num);
 	if( e != 0){
 		fprintf(stderr, "mlock failed, %s.\n", strerror(errno));
+		return 0;
 	}
+
+	return 1;
 }
 
 void* sntPoolObtain(SNTPool* allactor) {
