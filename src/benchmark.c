@@ -121,7 +121,7 @@ void* sntClientIntegrityBenchmark(void* patt){
 
 	/*	*/
 	SNTConnection* con = patt;
-	SNTClientOption* conopt = con->option;
+	SNTConnectionOption* conopt = con->option;
 	SNTUniformPacket* pack;
 	size_t clne;
 	int len = 0;
@@ -177,7 +177,7 @@ void* sntClientIntegrityBenchmark(void* patt){
 void* sntClientPerformanceBenchmark(void* patt){
 
 	SNTConnection* con = patt;
-	SNTClientOption* conopt = con->option;
+	SNTConnectionOption* conopt = con->option;
 	SNTUniformPacket* pack;
 	float duration;
 	size_t clne;
@@ -227,7 +227,7 @@ void* sntClientPerformanceBenchmark(void* patt){
 void* sntClientFileBenchmark(void* patt){
 
 	SNTConnection* con = (SNTConnection*)patt;
-	SNTClientOption* conopt = con->option;
+	SNTConnectionOption* conopt = con->option;
 	SNTUniformPacket* pack;
 	float duration;
 	int len;
