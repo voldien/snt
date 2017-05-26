@@ -30,3 +30,13 @@ int sntMax(int a, int b){
 int sntMin(int a, int b){
 	return ( ( (a) < (b) ) ? (a) : (b) );
 }
+
+unsigned int sntSymbolArraySize(void** array){
+
+	unsigned int i = 0;
+
+	while(array[i]){
+		i++;
+	}
+	return i;
+}

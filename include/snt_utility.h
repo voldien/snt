@@ -24,7 +24,7 @@
 /**
  *	Swap pointer value
  */
-extern void sntSwapPointer(void** a, void** b);
+extern void sntSwapPointer(void** __restrict__ a, void** __restrict__ b);
 
 /**
  *	log2 with mutuality exclusive bit flag.
@@ -34,12 +34,18 @@ extern void sntSwapPointer(void** a, void** b);
 extern int sntLog2MutExlusive32(unsigned int a);
 
 /**
- *
+ *	Return max value of a and b.
  */
 extern int sntMax(int a, int b);
+
 /**
- *
+ *	Return min value of a and b.
  */
 extern int sntMin(int a, int b);
+
+/**
+ *	@Return size in number of elements in pointer array.
+ */
+extern unsigned int sntSymbolArraySize(void** array);
 
 #endif
