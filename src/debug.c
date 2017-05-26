@@ -2,10 +2,20 @@
 
 void sntPrintPacketInfo(const SNTUniformPacket* packet){
 
-	/*	*/
+	union{
+		const SNTUniformPacket* uni;
+		const SNTInitPackage* init;
+		const SNTClientOption* cli;
+		const SNTCertificate* cer;
+		const SNTSecureEstablismentPacket* sec;
+		const SNTResultPacket* res;
+	}pack;
+
+	/*	Check the verbosity.	*/
 	if(g_verbosity < SNT_LOG_DEBUG)
 		return;
 
+	/*	Application protocol header.	*/
 	fprintf(stdout, "--- header ---\n"
 					"version : %u.%u.\n"
 					"stype : %u : %s.\n"
@@ -28,10 +38,8 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 						packet->totalbuf[sizeof(SNTPacketHeader)]);
 	}
 
-	const SNTInitPackage* init = (SNTInitPackage*)packet;
-	const SNTClientOption* cli = (SNTClientOption*)packet;
-	const SNTCertificate* cer = (SNTCertificate*)packet;
-	const SNTSecureEstablismentPacket* sec = (SNTSecureEstablismentPacket*)packet;
+	/*	*/
+	pack.uni = packet;
 
 	/*	*/
 	switch(packet->header.stype){
@@ -46,15 +54,15 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 				"transmode : %u.\n"
 				"extension : %u.\n"
 				"deltaTypes : %u : .\n",
-				init->ssl,
-				init->asymchiper,
-				init->symchiper,
-				init->compression,
-				init->mode,
-				init->inetbuffer,
-				init->transmode,
-				init->extension,
-				init->deltaTypes);
+				pack.init->ssl,
+				pack.init->asymchiper,
+				pack.init->symchiper,
+				pack.init->compression,
+				pack.init->mode,
+				pack.init->inetbuffer,
+				pack.init->transmode,
+				pack.init->extension,
+				pack.init->deltaTypes);
 		break;
 	case SNT_PROTOCOL_STYPE_CLIENTOPT:
 		fprintf(stdout,
@@ -69,17 +77,17 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 				"frequency : %lu.\n"
 				"playload : %hu.\n"
 				"extension : %u.\n",
-				cli->ssl,
-				cli->symchiper,
-				cli->compression,
-				cli->benchmode,
-				cli->transprotocol,
-				cli->deltaTypes,
-				cli->incdelta.i,
-				cli->duplex,
-				cli->invfrequency,
-				cli->playload,
-				cli->extension);
+				pack.cli->ssl,
+				pack.cli->symchiper,
+				pack.cli->compression,
+				pack.cli->benchmode,
+				pack.cli->transprotocol,
+				pack.cli->deltaTypes,
+				pack.cli->incdelta.i,
+				pack.cli->duplex,
+				pack.cli->invfrequency,
+				pack.cli->playload,
+				pack.cli->extension);
 		break;
 	case SNT_PROTOCOL_STYPE_CERTIFICATE:
 		fprintf(stdout,
@@ -90,22 +98,22 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 				"offset : %u\n"
 				"asymchiper : %u\n"
 				"certlen : %u\n",
-				cer->certype,
-				cer->hashtype,
-				cer->localhashedsize,
-				cer->encryedhashsize,
-				cer->offset,
-				cer->asymchiper,
-				cer->certlen);
+				pack.cer->certype,
+				pack.cer->hashtype,
+				pack.cer->localhashedsize,
+				pack.cer->encryedhashsize,
+				pack.cer->offset,
+				pack.cer->asymchiper,
+				pack.cer->certlen);
 		break;
 	case SNT_PROTOCOL_STYPE_SECURE:
 		fprintf(stdout,
 				"symchiper : %u\n"
 				"keylen : %u\n"
 				"encrypsize : %u\n",
-				sec->symchiper,
-				sec->keybitlen,
-				sec->encrykeyblock);
+				pack.sec->symchiper,
+				pack.sec->keybitlen,
+				pack.sec->encrykeyblock);
 		break;
 	case SNT_PROTOCOL_STYPE_READY:
 	case SNT_PROTOCOL_STYPE_STARTTEST:
@@ -118,4 +126,3 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 	fprintf(stdout, ".\n");
 }
 
-/*extern void sntPrintConnection(const SNTConnection* connection);	*/

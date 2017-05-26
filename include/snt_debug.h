@@ -27,9 +27,4 @@
  */
 extern void sntPrintPacketInfo(const SNTUniformPacket* packet);
 
-/**
- *	Print information about the connection.
- */
-/*extern void sntPrintConnection(const SNTConnection* connection);	*/
-
 #endif
