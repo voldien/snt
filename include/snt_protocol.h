@@ -75,7 +75,7 @@
 #define SNT_PROTOCOL_STYPE_STARTTEST	0x6		/*	Start testing. Sent to client by the server.*/
 #define SNT_PROTOCOL_STYPE_ERROR		0x7		/*	Error packet. Informing about the error.	*/
 #define SNT_PROTOCOL_STYPE_BENCHMARK	0x8		/*	Benchmark specific packet.	*/
-#define SNT_RPTPOCOL_STYPE_RESULT		0x9		/*	*/
+#define SNT_PROTOCOL_STYPE_RESULT		0x9		/*	*/
 
 /**
  *	protocol symbol table used
@@ -257,7 +257,12 @@ typedef struct snt_error_packet_t{
  *	benchmark.
  */
 typedef struct snt_result_packet_t{
-	unsigned int type;
+	SNTPacketHeader header;			/*	Protocol header.	*/
+	uint32_t type;					/*	Type of result.	*/
+	uint64_t npackets;				/*	Number of packets.	*/
+	uint64_t nbytes;				/*	Number of bytes.	*/
+	uint64_t elapse;				/*	Elapse time.	*/
+
 }__attribute__ ((__packed__))SNTResultPacket;
 
 /**
