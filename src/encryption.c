@@ -17,6 +17,7 @@
 #include <openssl/x509.h>
 #include <openssl/evp.h>
 
+
 const char* gc_symchi_symbol[] = {
 		"",
 		"aes128",
@@ -332,8 +333,10 @@ static int sntGetSignHashEnum(unsigned int hash){
 		return NID_md5;
 	case SNT_HASH_SHA:
 		return NID_sha1;
-	case SNT_HASH_SHA256:
+	case SNT_HASH_SHA224:
 		return NID_sha224;
+	case SNT_HASH_SHA256:
+		return NID_sha256;
 	case SNT_HASH_SHA384:
 		return NID_sha384;
 	case SNT_HASH_SHA512:
@@ -449,7 +452,7 @@ int sntSymCreateFromKey(SNTConnection* connection, unsigned int cipher, const vo
 
 void sntSymCopyKey(SNTConnection* connection, void** key){
 
-	*key = calloc(sntSymKeyByteSize(connection->symchiper), 1);
+	*key = calloc(1, sntSymKeyByteSize(connection->symchiper));
 	assert(*key);
 
 	switch(connection->symchiper){
