@@ -3,7 +3,7 @@
 #include<assert.h>
 #include<sys/socket.h>
 
-int sntProtFuncInit(SNTConnection* connection, SNTUniformPacket* packet) {
+int sntProtFuncInit(SNTConnection* connection, const SNTUniformPacket* packet) {
 
 	int len;
 	SNTInitPackage* initpack = (SNTInitPackage*)packet->totalbuf;
@@ -33,7 +33,7 @@ int sntProtFuncInit(SNTConnection* connection, SNTUniformPacket* packet) {
 	return len;
 }
 
-int sntProtFuncCliOpt(SNTConnection* connection, SNTUniformPacket* packet) {
+int sntProtFuncCliOpt(SNTConnection* connection, const SNTUniformPacket* packet) {
 
 	int len;
 	int error;
@@ -80,7 +80,7 @@ int sntProtFuncCliOpt(SNTConnection* connection, SNTUniformPacket* packet) {
 	return len;
 }
 
-int sntProtFuncCertificate(SNTConnection* connection, SNTUniformPacket* packet) {
+int sntProtFuncCertificate(SNTConnection* connection, const SNTUniformPacket* packet) {
 
 	int len;
 	SNTCertificate* cer = (SNTCertificate*)packet->totalbuf;
@@ -147,7 +147,7 @@ int sntProtFuncCertificate(SNTConnection* connection, SNTUniformPacket* packet) 
 	return len;
 }
 
-int sntProtFuncSecure(SNTConnection* connection, SNTUniformPacket* packet) {
+int sntProtFuncSecure(SNTConnection* connection, const SNTUniformPacket* packet) {
 
 	/*	*/
 	int len;
@@ -180,7 +180,7 @@ int sntProtFuncSecure(SNTConnection* connection, SNTUniformPacket* packet) {
 	return len;
 }
 
-int sntProtFuncReady(SNTConnection* connection, SNTUniformPacket* packet) {
+int sntProtFuncReady(SNTConnection* connection, const SNTUniformPacket* packet) {
 
 	int len;
 	SNTstartPacket start;
@@ -196,12 +196,12 @@ int sntProtFuncReady(SNTConnection* connection, SNTUniformPacket* packet) {
 	return len;
 }
 
-int sntProtFuncStart(SNTConnection* connection, SNTUniformPacket* packet){
+int sntProtFuncStart(SNTConnection* connection, const SNTUniformPacket* packet){
 
 	return 1;
 }
 
-int sntProtFuncError(SNTConnection* connection, SNTUniformPacket* packet) {
+int sntProtFuncError(SNTConnection* connection, const SNTUniformPacket* packet) {
 
 	const char* codemesg = "";
 	SNTErrorPacket* error = (SNTErrorPacket*)packet;
@@ -219,7 +219,12 @@ int sntProtFuncError(SNTConnection* connection, SNTUniformPacket* packet) {
 	return 0;
 }
 
-int sntProtFuncBenchmark(SNTConnection* connection, SNTUniformPacket* packet) {
+int sntProtFuncResult(SNTConnection* connection, const SNTUniformPacket* packet) {
+
+	return 1;
+}
+
+int sntProtFuncBenchmark(SNTConnection* connection, const SNTUniformPacket* packet) {
 
 	switch(connection->option->bm_protocol_mode){
 	case SNT_PROTOCOL_BM_MODE_PERFORMANCE:

@@ -24,23 +24,23 @@
  *	Protocol command functions.
  */
 extern int sntProtFuncInit(SNTConnection* __restrict__ connection,
-		SNTUniformPacket* __restrict__ packet);
+		const SNTUniformPacket* __restrict__ packet);
 extern int sntProtFuncCliOpt(SNTConnection* __restrict__ connection,
-		SNTUniformPacket* __restrict__ packet);
+		const SNTUniformPacket* __restrict__ packet);
 extern int sntProtFuncCertificate(SNTConnection* __restrict__ connection,
-		SNTUniformPacket* __restrict__ packet);
+		const SNTUniformPacket* __restrict__ packet);
 extern int sntProtFuncSecure(SNTConnection* __restrict__ connection,
-		SNTUniformPacket* __restrict__ packet);
+		const SNTUniformPacket* __restrict__ packet);
 extern int sntProtFuncReady(SNTConnection* __restrict__ connection,
-		SNTUniformPacket* __restrict__ packet);
+		const SNTUniformPacket* __restrict__ packet);
 extern int sntProtFuncStart(SNTConnection* __restrict__ connection,
-		SNTUniformPacket* __restrict__ packet);
+		const SNTUniformPacket* __restrict__ packet);
 extern int sntProtFuncError(SNTConnection* __restrict__ connection,
-		SNTUniformPacket* __restrict__ packet);
+		const SNTUniformPacket* __restrict__ packet);
 extern int sntProtFuncResult(SNTConnection* __restrict__ connection,
-		SNTUniformPacket* __restrict__ packet);
+		const SNTUniformPacket* __restrict__ packet);
 extern int sntProtFuncBenchmark(SNTConnection* __restrict__ connection,
-		SNTUniformPacket* __restrict__ packet);
+		const SNTUniformPacket* __restrict__ packet);
 
 /**
  *	Validate capability of system.
