@@ -57,7 +57,7 @@ static void snt_default_con_option(SNTConnectionOption* option, unsigned int isS
 void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 		SNTConnectionOption* option) {
 
-	unsigned int compretype;										/*	*/
+	//unsigned int compretype;											/*	*/
 	unsigned int i;
 	int c;															/*	*/
 	const char* shortopt = "vVD46ySCUTh:b:p:s:c:P:n:B:f:H:F:m:d:";	/*	*/
@@ -167,31 +167,29 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			break;
 		case 'C':	/*	Use compression.	*/
 			if(optarg){
-				if(strcmp(optarg, "lz4") == 0){
-					sntVerbosePrintf("LZ4 compression set.\n");
-					compretype = SNT_COMPRESSION_LZ4;
+				i = 0;
+				if(strcmp(optarg, "all") == 0){
+					option->compression = SNT_COMPRESSION_ALL;
+					sntInitCompression(option->compression);
+					break;
 				}
-				else if(strcmp(optarg, "gzip") == 0){
-					sntVerbosePrintf("GZIP compression set.\n");
-					compretype = SNT_COMPRESSION_GZIP;
-				}
-				else if(strcmp(optarg, "all") == 0){
-					compretype = SNT_COMPRESSION_ALL;
-				}
-				else if(strcmp(optarg, "none") == 0){
-					sntVerbosePrintf("No compression set.\n");
-					compretype = SNT_COMPRESSION_NONE;
-				}
-				else{
-					fprintf(stderr,"Invalid compression option, %s.\n", optarg);
-					exit(EXIT_FAILURE);
-				}
-			}else{
-				sntVerbosePrintf("Default compression set to LZ4.\n");
-				compretype = SNT_COMPRESSION_LZ4;
+
+				do{
+					if(strcmp(gs_symcompression[i], optarg) == 0){
+						break;
+					}
+					i++;
+					if(gs_symcompression[i] == NULL){
+						fprintf(stderr, "Invalid compression option, %s.\n", optarg);
+						exit(EXIT_FAILURE);
+					}
+				}while(gs_symcompression[i]);
+
+				sntVerbosePrintf("Using %s for compression.\n", gs_symcompression[i]);
+				option->compression = (1 << (i - 1));
+				sntInitCompression(option->compression);
+				break;
 			}
-			sntInitCompression(compretype);
-			option->compression = compretype;
 			break;
 		case 'p':	/*	Port.	*/
 			if(optarg && port){
