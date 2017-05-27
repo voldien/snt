@@ -295,9 +295,11 @@ SNTConnection* sntConnectSocket(const char* host, uint16_t port,
 	/*	Get IP from hostname.	*/
 	hoste = gethostbyname(host);
 	if(hoste == NULL){
+		/*
 		sntDisconnectSocket(connection);
 		fprintf(stderr, "Failed to get host.\n");
 		return NULL;
+		*/
 	}
 
 	/*	*/
@@ -318,7 +320,14 @@ SNTConnection* sntConnectSocket(const char* host, uint16_t port,
 		bzero(&addr4, sizeof(addr4));
 		addr4.sin_family = domain;
 		addr4.sin_port = htons(port);
-		memcpy(&addr4.sin_addr, *hoste->h_addr_list, hoste->h_length);
+		if(hoste){
+			memcpy(&addr4.sin_addr, *hoste->h_addr_list, hoste->h_length);
+		}else{
+			if( inet_pton(domain, host, &addr4.sin_addr) < 0){
+				sntDisconnectSocket(connection);
+				return NULL;
+			}
+		}
 		addrlen = sizeof(addr4);
 		addr = (const struct sockaddr*)&addr4;
 	}
