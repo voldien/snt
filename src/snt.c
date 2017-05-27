@@ -354,7 +354,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			if(optarg){
 				sntVerbosePrintf("Opening %s.\n", optarg);
 				g_filepath = optarg;
-				if(access(g_filepath, F_OK) != 0){
+				if(access(g_filepath, F_OK | R_OK) != 0){
 					fprintf(stderr, "File %s is not accessible, %s.\n", optarg, strerror(errno));
 					exit(EXIT_FAILURE);
 				}
@@ -369,7 +369,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			if(optarg){
 				/*	Use certificate file.	*/
 				cerficatefilepath = optarg;
-				if(access(cerficatefilepath, F_OK) != 0){
+				if(access(cerficatefilepath, F_OK | R_OK) != 0){
 					fprintf(stderr, "File %s is not accessible, %s.\n", optarg, strerror(errno));
 					exit(EXIT_FAILURE);
 				}
