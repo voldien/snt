@@ -3,7 +3,7 @@
 #include<openssl/md5.h>
 
 const char* gc_hash_symbol[] = {
-		"None",
+		"none",
 		"md5",
 		"sha",
 		"sha224",
