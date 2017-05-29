@@ -662,6 +662,9 @@ int sntPacketInterpreter(SNTConnection* connection){
 	case SNT_PROTOCOL_STYPE_BENCHMARK:
 		sntProtFuncBenchmark(connection, &unipackbuf);
 		break;
+	case SNT_PROTOCOL_STYPE_RESULT:
+		return sntProtFuncResult(connection, &unipackbuf);
+		break;
 	case SNT_PROTOCOL_STYPE_STARTTEST:
 		break;
 	default:
