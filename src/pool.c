@@ -9,9 +9,9 @@ SNTPool* sntPoolCreate(unsigned int num, unsigned int itemsize) {
 	SNTPool* alloc;
 	unsigned char* tmp;
 	unsigned int i;
-	const int size = (itemsize + sizeof(SNTPool));
+	const int size = (itemsize + sizeof(SNTPool));	/*	Total size of each node.	*/
 
-	/*	*/
+	/*	Allocate pool descriptor.	*/
 	alloc = malloc(sizeof(SNTPool));
 	assert(alloc);
 
@@ -39,7 +39,7 @@ int sntPoolLockMem(SNTPool* poolallocator){
 	int e;
 
 	e = mlock(poolallocator->pool,
-			poolallocator->itemsize * poolallocator->num);
+			sntPoolNumNodes(poolallocator) * sntPoolItemSize(poolallocator));
 	if( e != 0){
 		fprintf(stderr, "mlock failed, %s.\n", strerror(errno));
 		return 0;
