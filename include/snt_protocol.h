@@ -59,9 +59,9 @@
  */
 
 /**
- *
+ *	Constants.
  */
-#define SNT_DEFAULT_PORT 54321										/*	Default port.	*/
+#define SNT_DEFAULT_PORT 54321					/*	Default port.	*/
 
 /**
  *	SNT application protocol.
@@ -75,7 +75,7 @@
 #define SNT_PROTOCOL_STYPE_STARTTEST	0x6		/*	Start testing. Sent to client by the server.*/
 #define SNT_PROTOCOL_STYPE_ERROR		0x7		/*	Error packet. Informing about the error.	*/
 #define SNT_PROTOCOL_STYPE_BENCHMARK	0x8		/*	Benchmark specific packet.	*/
-#define SNT_PROTOCOL_STYPE_RESULT		0x9		/*	*/
+#define SNT_PROTOCOL_STYPE_RESULT		0x9		/*	Result from server.	*/
 
 /**
  *	protocol symbol table used
@@ -153,7 +153,7 @@ typedef struct snt_packet_header_t{
  *	Used for encryption.
  */
 typedef struct snt_presentation_package_t{
-	uint8_t noffset;	/*	Negative offset.	*/
+	uint8_t noffset;			/*	Negative offset.	*/
 } __attribute__ ((__packed__)) SNTPresentationPacket;
 
 /**
@@ -164,7 +164,7 @@ typedef struct snt_presentation_package_t{
  *	capability in order for the client.
  */
 typedef struct snt_init_package_t{
-	SNTPacketHeader header;		/*	protocol header.	*/
+	SNTPacketHeader header;		/*	Protocol header.	*/
 	uint32_t ssl;				/*	Using secure connection.	*/
 	uint32_t asymchiper;		/*	What asymmetric cipher is supported.	*/
 	uint32_t symchiper;			/*	What asymmetric cipher is supported.	*/
@@ -181,7 +181,7 @@ typedef struct snt_init_package_t{
  *	Send to server by the client.
  */
 typedef struct snt_client_option_packet_t{
-	SNTPacketHeader header;			/*	*/
+	SNTPacketHeader header;			/*	Protocol header.	*/
 	uint32_t ssl;					/*	If to use a secure connection. */
 	uint32_t symchiper;				/*	Symmetric cipher use.	*/
 	uint32_t compression;			/*	Compression use.	*/
@@ -231,7 +231,7 @@ typedef struct snt_secure_establishment_packet_t{
  *	thread and and is ready to start the benchmark.
  */
 typedef struct snt_ready_packet_t{
-	SNTPacketHeader header;			/*	Header.	*/
+	SNTPacketHeader header;			/*	Protocol header.	*/
 }__attribute__ ((__packed__))SNTReadyPacket;
 
 /**
@@ -240,14 +240,14 @@ typedef struct snt_ready_packet_t{
  *	thread and and is ready to start the benchmark.
  */
 typedef struct snt_start_packet_t{
-	SNTPacketHeader header;			/*	Header.	*/
+	SNTPacketHeader header;			/*	Protocol header.	*/
 }__attribute__ ((__packed__))SNTstartPacket;
 
 /**
  *	Error message.
  */
 typedef struct snt_error_packet_t{
-	SNTPacketHeader header;			/*	Header.	*/
+	SNTPacketHeader header;			/*	Protocol header.	*/
 	int32_t errorcode;				/*	Error code.	*/
 	uint32_t meslen;				/*	Length of message.	*/
 	int8_t message[512];			/*	Message.	*/
@@ -296,8 +296,8 @@ typedef union snt_unionform_packet_t{
 typedef struct snt_connection_t{
 	int tcpsock;					/*	socket file descriptor, TCP.	*/
 	int udpsock;					/*	socket file descriptor, UDP.	*/
-	struct sockaddr* intaddr;		/*	*/
-	struct sockaddr* extaddr;		/*	*/
+	struct sockaddr* intaddr;		/*	Internal socket address.	*/
+	struct sockaddr* extaddr;		/*	External socket address.	*/
 	socklen_t sclen;				/*	Socket address length in bytes.	*/
 	int externalport;				/*	External port.	*/
 	int port;						/*	Source port.	*/
@@ -471,21 +471,36 @@ extern void sntCopyPacket(SNTUniformPacket* __restrict__ dest,
 /**
  *	Initialize default header values.
  *
+ *	\command Application protocol command.
+ *
+ *	\len Total size of the packet. Includes packet header
+ *	and the size the data block.
  *
  */
 extern void sntInitDefaultHeader(SNTPacketHeader* header, unsigned int command,
 		unsigned int len);
 
 /**
- *
+ *	Initialize header. This will set the size based on the data buffer size.
  */
 extern void sntInitHeader(SNTPacketHeader* header, unsigned int command,
 		unsigned int buffer);
 
 extern void sntSetDatagramSize(SNTPacketHeader* header, unsigned int buffer);
 
+/**
+ *	@Return Total size of packet.
+ */
 /*	TODO improve name.	*/
 extern unsigned int sntDatagramSize(const SNTPacketHeader* header);
+
+/**
+ *	Get the size of data inside the packet. This excluses the size
+ *	of the packet header and presentation header if exists.
+ *	This is done by computing packet.length - packet.offset.
+ *
+ *	@Return number of bytes in the data block.
+ */
 extern unsigned int sntDatagramCommandSize(const SNTPacketHeader* header);
 
 
