@@ -32,8 +32,8 @@ const char* gs_symprotocol[] = {
 		"Ready",
 		"Start",
 		"Error",
-		"benchmark",
-		"result",
+		"Benchmark",
+		"Result",
 		NULL
 };
 
@@ -41,11 +41,12 @@ const char* gs_error_sym[] = {
 		"No error",
 		"Invalid argument",
 		"Signature failed",
-		"Server unkown error",
+		"Server error",
 		"Incompatiable version",
 		"SSL not supported",
 		"Bad request",
 		"Service unavailable",
+		NULL
 };
 
 void sntGetInterfaceAttr(SNTConnection* connection){
