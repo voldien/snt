@@ -24,7 +24,7 @@
 #include<string.h>
 
 /**
- *
+ *	Version marcros.
  */
 #define SNT_VERSION ((SNT_MAJOR << 10) | (SNT_MINOR & 0x3FF))		/*	SNT version.	*/
 #define SNT_GET_MAJ_VERSION(ver) ((ver & ~0x3FF) >> 10)				/*	Extract major version.	*/

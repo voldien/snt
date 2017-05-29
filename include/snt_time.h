@@ -18,6 +18,7 @@
 */
 #ifndef _SNT_TIME_H_
 #define _SNT_TIME_H_ 1
+#include"snt_def.h"
 
 /**
  *	Get time in nano seconds.
