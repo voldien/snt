@@ -113,7 +113,7 @@ extern int sntPoolGetIndex(const SNTPool* pool, const void* data);
 extern void sntPoolFree(SNTPool* pool);
 
 /**
- *	Set the whole pool frame to zero.
+ *	Memset each pool node.
  */
 extern void sntMemsetPoolFrame(SNTPool* pool);
 
