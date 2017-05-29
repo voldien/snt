@@ -55,17 +55,19 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 	struct ifreq* ifcr;				/*	*/
 	socklen_t aclen;				/*	*/
 	char sockbuf[128];				/*	*/
+	union{
+		struct sockaddr_in addr4;		/*	*/
+		struct sockaddr_in6 addr6;		/*	*/
+	}addrU;
 	struct sockaddr_in* sockaddr;	/*	*/
 	struct sockaddr* addr;			/*	*/
-	struct sockaddr_in addr4;		/*	*/
-	struct sockaddr_in6 addr6;		/*	*/
 
 	assert(connection->tcpsock > 0);
 
 	/*	*/
 	bzero(&ifr, sizeof(ifr));
 	bzero(&ifcon, sizeof(ifcon));
-	sockaddr = (struct sockaddr*)sockbuf;
+	sockaddr = (struct sockaddr_in*)sockbuf;
 	aclen = sizeof(sockbuf);
 
 	/*	*/
@@ -105,46 +107,65 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 	memcpy(connection->extipv, inet_ntoa(sockaddr->sin_addr), strlen(inet_ntoa(sockaddr->sin_addr)) + 1);
 	connection->externalport = ntohs(sockaddr->sin_port);
 
-	/*	*/
-	switch(connection->option->affamily){
-	case AF_INET:
-		bzero(&addr4, sizeof(addr4));
-		addr4.sin_port = htons(connection->externalport);
-		addr4.sin_family = connection->option->affamily;
-		addr4.sin_addr.s_addr = inet_addr(connection->extipv);
-		connection->sclen = sizeof(addr4);
-		addr = (struct sockaddr*)&addr4;
-		break;
-	case AF_INET6:
-		bzero(&addr6, sizeof(addr6));
-		addr6.sin6_port = htons(connection->externalport);
-		addr6.sin6_family = connection->option->affamily;
-		//addr4.sin_addr.s_addr = inet_netof(connection->extipv);
-		/*addr6.sin6_addr.__in6_u = IN6ADDR_ANY_INIT;*/
-		connection->sclen = sizeof(addr6);
-		addr = (struct sockaddr*)&addr6;
-		break;
-	default:
-		break;
-	}
 
-	/*	socket address for UDP.	*/
+	/*	Socket address for UDP.	*/
 	connection->extaddr = (struct sockaddr*)malloc(connection->sclen);
 	connection->intaddr = (struct sockaddr*)malloc(connection->sclen);
 	assert(connection->extaddr);
 	assert(connection->intaddr);
 
-	/*	Copy.	*/
-	bzero(connection->extaddr, connection->sclen);
-	bzero(connection->intaddr, connection->sclen);
-	memcpy(connection->extaddr, addr, connection->sclen);
-	memcpy(connection->intaddr, addr, connection->sclen);
+	/*	zero out.	*/
+	memset(connection->extaddr, 0, connection->sclen);
+	memset(connection->intaddr, 0, connection->sclen);
+
+	/*	Create socket address.	*/
+	switch(connection->option->affamily){
+	case AF_INET:
+
+		bzero(&addrU.addr4, sizeof(addrU.addr4));
+		addrU.addr4.sin_port = htons((uint16_t)connection->externalport);
+		addrU.addr4.sin_family = connection->option->affamily;
+		addrU.addr4.sin_addr.s_addr = inet_addr(connection->extipv);
+		connection->sclen = sizeof(addrU.addr4);
+		addr = (struct sockaddr*)&addrU.addr4;
+
+		addrU.addr4.sin_port = htons((uint16_t)connection->externalport);
+		memcpy(connection->extaddr, addr, connection->sclen);
+		addrU.addr4.sin_port = htons((uint16_t)connection->port);
+		memcpy(connection->intaddr, addr, connection->sclen);
+
+		break;
+	case AF_INET6:
+		bzero(&addrU.addr6, sizeof(addrU.addr6));
+		addrU.addr6.sin6_port = htons((uint16_t)connection->externalport);
+		addrU.addr6.sin6_family = connection->option->affamily;
+		//addr4.sin_addr.s_addr = inet_netof(connection->extipv);
+		/*addr6.sin6_addr.__in6_u = IN6ADDR_ANY_INIT;*/
+		connection->sclen = sizeof(addrU.addr6);
+		addr = (struct sockaddr*)&addrU.addr6;
+
+		addrU.addr6.sin6_port = htons((uint16_t)connection->externalport);
+		memcpy(connection->extaddr, addr, connection->sclen);
+		addrU.addr6.sin6_port = htons((uint16_t)connection->port);
+		memcpy(connection->intaddr, addr, connection->sclen);
+
+		break;
+	default:
+		break;
+	}
+
 
 	/*	Allocate transmission and receive buffer.	*/
 	connection->tranbuf = malloc(1 << 16);
 	assert(connection->tranbuf);
 	connection->recvbuf = malloc(1 << 16);
 	assert(connection->recvbuf);
+
+	/*	Allocate payload.	*/
+	connection->mtubuf = malloc(connection->option->payload);
+	assert(connection->mtubuf);
+
+
 }
 
 SNTConnection* sntBindSocket(uint16_t port,
@@ -355,24 +376,18 @@ SNTConnection* sntConnectSocket(const char* host, uint16_t port,
 		return NULL;
 	}
 
+	/*	Get attribute about connection interface.	*/
+	sntGetInterfaceAttr(connection);
+
+
 	/*	Create UDP if UDP is used, optional.	*/
-	/*
 	if(connection->udpsock > 0){
-		if( connect(connection->udpsock, addr, addrlen) < 0){
+		if( bind(connection->udpsock, connection->intaddr, addrlen) < 0){
 			fprintf(stderr, "Failed to connect UDP, %s.\n", strerror(errno));
 			sntDisconnectSocket(connection);
 			return NULL;
 		}
 	}
-	*/
-
-	/*	Allocate payload.	*/
-	connection->mtubuf = malloc(connection->option->payload);
-	assert(connection->mtubuf);
-
-	/*	Get attribute about connection interface.	*/
-	sntGetInterfaceAttr(connection);
-
 	return connection;
 }
 
@@ -415,10 +430,11 @@ void sntConnectionCopyOption(SNTConnection* connection, const SNTConnectionOptio
 int sntInitSocket(SNTConnection* connection, int affamily,
 		unsigned int protocol){
 
-	assert(protocol > 0);
+	assert(protocol > 0 && affamily > 0);
 
 	/*	Create socket if not already created.	*/
 	if( (protocol & SNT_TRANSPORT_TCP) && connection->tcpsock == 0){
+		sntDebugPrintf("Create stream socket.\n");
 		connection->tcpsock = socket(affamily, SOCK_STREAM, 0);
 		if(connection->tcpsock < 0){
 			fprintf(stderr, "Failed to create socket, %s.\n", strerror(errno));
@@ -426,7 +442,8 @@ int sntInitSocket(SNTConnection* connection, int affamily,
 		}
 	}
 	if( (protocol & SNT_TRANSPORT_UDP ) && connection->udpsock == 0){
-		connection->udpsock = socket(affamily, SOCK_DGRAM, 0);
+		sntDebugPrintf("Create datagram socket.\n");
+		connection->udpsock = socket(affamily, SOCK_DGRAM, IPPROTO_UDP);
 		if(connection->udpsock < 0){
 			fprintf(stderr, "Failed to create socket, %s.\n", strerror(errno));
 			return 0;
