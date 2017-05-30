@@ -48,6 +48,6 @@ extern unsigned int sntHash(unsigned int hashtype, const void* __restrict__ bloc
 /**
  *	Get fixed hashed size of given hash type.
  */
-extern unsigned int sntGetHashTypeSize(unsigned int hashtype);
+extern unsigned int sntHashGetTypeSize(unsigned int hashtype);
 
 #endif

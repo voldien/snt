@@ -82,7 +82,7 @@ unsigned int sntHash(unsigned int hashtype, const void* block, unsigned int len,
 }
 
 
-unsigned int sntGetHashTypeSize(unsigned int hashtype){
+unsigned int sntHashGetTypeSize(unsigned int hashtype){
 	switch(hashtype){
 	case SNT_HASH_MD5:
 		return MD5_DIGEST_LENGTH;
