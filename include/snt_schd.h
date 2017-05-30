@@ -23,7 +23,19 @@
 /**
  *	Set process affinity mapping.
  */
-extern void sntSchdSetAffinity(unsigned int cpu, unsigned int cores, unsigned int size);
+extern void sntSchdSetAffinity(unsigned int cpu, unsigned int cores,
+		unsigned int size);
 
+/**
+ *
+ */
+extern void sntSchdGetAffinity(unsigned int* cpu, unsigned int* cores,
+		unsigned int* size);
+
+/**
+ *
+ */
+extern void sntSchdSetThreadAttrAffinity(void* att, unsigned int cpu,
+		unsigned int cores, unsigned int size);
 
 #endif
