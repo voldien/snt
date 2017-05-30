@@ -2,7 +2,8 @@
 #include"snt_protocol.h"
 #include<assert.h>
 
-int sntGenerateDeltaTypeInc(unsigned int type, char* text, SNTDelta* delta, const SNTDelta* incr){
+int sntGenerateDeltaTypeInc(unsigned int type, char* text, SNTDelta* delta,
+		const SNTDelta* incr) {
 
 	int len = 0;
 
