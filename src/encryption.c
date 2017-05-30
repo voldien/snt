@@ -32,6 +32,9 @@ const char* gc_symchi_symbol[] = {
 		"aescbc128",
 		"aescbc192",
 		"aescbc256",
+		"aesfbc128",
+		"aesfbc192",
+		"aesfbc256",
 		NULL,
 };
 
