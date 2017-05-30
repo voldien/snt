@@ -105,6 +105,8 @@ int sntProtFuncCertificate(SNTConnection* connection, const SNTUniformPacket* pa
 		fprintf(stderr, "sntHash failed.\n");
 		return 0;
 	}
+
+	/*	Attempt to verify signature.	*/
 	if (!sntASymVerifyDigSign(connection, cer->hashtype, localhash,
 			sntHashGetTypeSize(cer->hashtype), cer->hash,
 			cer->encryedhashsize)) {
@@ -162,7 +164,7 @@ int sntProtFuncSecure(SNTConnection* connection, const SNTUniformPacket* packet)
 		return 0;
 	}
 	if(!sntSymCreateFromKey(connection, sec->symchiper, symkey)){
-		sntSendError(connection, 0, "");
+		sntSendError(connection, SNT_ERROR_SERVER, "Couldn't extract symmetric key");
 		return 0;
 	}
 	connection->symchiper = sec->symchiper;
@@ -237,6 +239,8 @@ int sntProtFuncBenchmark(SNTConnection* connection, const SNTUniformPacket* pack
 		break;
 	case SNT_PROTOCOL_BM_MODE_INTEGRITY:
 		printf("%s\n", packet->buf);
+
+		/*	Compare sequence.	*/
 		switch(connection->option->deltatype){
 		case SNT_DELTA_TYPE_FLOAT:
 			break;
@@ -249,7 +253,7 @@ int sntProtFuncBenchmark(SNTConnection* connection, const SNTUniformPacket* pack
 		default:
 			break;
 		}
-		/*	Compare sequence.	*/
+
 		break;
 	default:
 		break;
@@ -270,7 +274,7 @@ int sntValidateCapability(const SNTClientOption* option){
 		return SNT_ERROR_SSL_NOT_SUPPORTED;
 	}
 
-	if(option->benchmode & (~SNT_PROTOCOL_BM_MODE_ALL)){
+	if(!(option->benchmode & SNT_PROTOCOL_BM_MODE_ALL)){
 		fprintf(stderr, "%d: Invalid benchmark mode.\n", option->benchmode);
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
@@ -289,6 +293,8 @@ int sntSendCertificate(const SNTConnection* bind, SNTConnection* client){
 	int len;
 	SNTCertificate cert;
 	void* tmphash;
+
+	/*	*/
 	assert(bind->asymchiper != SNT_ENCRYPTION_ASYM_NONE);
 
 	/*	Copy public key to init packet.	*/
@@ -301,7 +307,7 @@ int sntSendCertificate(const SNTConnection* bind, SNTConnection* client){
 		return 0;
 	}
 	sntDebugPrintf("%s.\n", cert.cert);
-	cert.certype = SNT_CERTIFICATE_RSA;
+	cert.certype = SNT_CERTIFICATE_RSA;	/*	TODO change to a variable.	*/
 	cert.asymchiper = bind->asymchiper;
 
 	/*	Hash the certificate and meta data.	*/
@@ -323,7 +329,8 @@ int sntSendCertificate(const SNTConnection* bind, SNTConnection* client){
 	if (!sntASymSignDigSign(bind, cert.hashtype, tmphash,
 			sntHashGetTypeSize(cert.hashtype), cert.hash,
 			(unsigned int*)&cert.encryedhashsize)) {
-		sntSendError(client, SNT_ERROR_SERVER, "Couldn't create digital signature");
+		sntSendError(client, SNT_ERROR_SERVER, "Couldn't create a digital signature");
+		free(tmphash);
 		return 0;
 	}
 	free(tmphash);
@@ -341,11 +348,15 @@ int sntSendCertificate(const SNTConnection* bind, SNTConnection* client){
 int sntSendError(const SNTConnection* connection, int code,
 		const char* message) {
 	SNTErrorPacket error;
+
 	sntInitDefaultHeader(&error.header, SNT_PROTOCOL_STYPE_ERROR, sizeof(error));
+
+	/*	*/
 	error.errorcode = code;
 	error.meslen = (unsigned int)strlen(message);
 	memcpy(error.message, message, error.meslen);
 	error.message[error.meslen] = '\0';
+
 	return sntWriteSocketPacket(connection, (SNTUniformPacket*)&error);
 }
 
