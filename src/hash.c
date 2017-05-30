@@ -1,9 +1,11 @@
 #include"snt_hash.h"
 #include<openssl/sha.h>
 #include<openssl/md5.h>
+#include<openssl/md4.h>
 
 const char* gc_hash_symbol[] = {
 		"none",
+		"md4",
 		"md5",
 		"sha",
 		"sha224",
@@ -18,6 +20,7 @@ unsigned int sntHash(unsigned int hashtype, const void* block, unsigned int len,
 		void* result) {
 
 	union{
+		MD4_CTX* md4;
 		MD5_CTX* md5;
 		SHA_CTX* sha;
 		SHA256_CTX* sha256;
@@ -25,6 +28,14 @@ unsigned int sntHash(unsigned int hashtype, const void* block, unsigned int len,
 	}ctx;
 
 	switch(hashtype){
+	case SNT_HASH_MD4:
+		ctx.md4 = (MD4_CTX*)malloc(sizeof(MD4_CTX));
+		MD4_Init(ctx.md4);
+		MD4_Update(ctx.md4, block, len);
+		if(!MD4_Final(result, ctx.md4)){
+			return 0;
+		}
+		break;
 	case SNT_HASH_MD5:
 		ctx.md5 = (MD5_CTX*)malloc(sizeof(MD5_CTX));
 		MD5_Init(ctx.md5);
@@ -78,12 +89,14 @@ unsigned int sntHash(unsigned int hashtype, const void* block, unsigned int len,
 	}
 
 	free(ctx.md5);
-	return sntGetHashTypeSize(hashtype);
+	return sntHashGetTypeSize(hashtype);
 }
 
 
 unsigned int sntHashGetTypeSize(unsigned int hashtype){
 	switch(hashtype){
+	case SNT_HASH_MD4:
+		return MD4_DIGEST_LENGTH;
 	case SNT_HASH_MD5:
 		return MD5_DIGEST_LENGTH;
 	case SNT_HASH_SHA:
