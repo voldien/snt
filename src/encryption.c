@@ -298,7 +298,7 @@ int sntASymPriDecrypt(unsigned int cipher, const void* source, unsigned int len,
 	return reslen;
 }
 
-int sntASymGetBlockSize(unsigned int cipher, const void* key){
+unsigned int sntASymGetBlockSize(unsigned int cipher, const void* key){
 	switch(cipher){
 	case SNT_ENCRYPTION_ASYM_RSA:
 		return RSA_size((RSA*)key);

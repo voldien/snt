@@ -119,7 +119,7 @@ extern int sntASymPriDecrypt(unsigned int type, const void* __restrict__ input,
  *
  *	@Return size in bytes.
  */
-extern int sntASymGetBlockSize(unsigned int cipher, const void* key);
+extern unsigned int sntASymGetBlockSize(unsigned int cipher, const void* key);
 
 /**
  *	Free all asymmetric encryption data
