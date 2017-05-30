@@ -48,7 +48,7 @@ extern char* cerficatefilepath;			/*	Certificate file pathS.	*/
  *	Connection option.
  */
 typedef struct snt_connection_option_t{
-	uint32_t affamily;			/*	Address family.	*/
+	int32_t affamily;			/*	Address family.	*/
 	uint32_t ssl;				/*	Use secure connection via SSL.	*/
 	uint32_t compression;		/*	Compression.	*/
 	uint32_t bm_protocol_mode;	/*	Benchmark mode.	*/
@@ -59,8 +59,10 @@ typedef struct snt_connection_option_t{
 	uint32_t hash;				/*	Hash algorithm.	*/
 	uint32_t deltatype;			/*	Delta type.	*/
 	uint32_t invfrequency;		/*	Frequency of number of packet sent per sec.	*/
+	uint32_t freqsec;			/*	TODO resolve to have higher sleep than one second.*/
 	uint16_t payload;			/*	Size of payload.	*/
-	uint32_t listen;			/*	Number of listen. (Server only).	*/
+	int32_t listen;				/*	Number of listen. (Server only).	*/
+	uint64_t duration;			/*	Duration.	*/
 	uint32_t port;				/*	Port.	*/
 }SNTConnectionOption;
 
