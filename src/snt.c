@@ -2,6 +2,7 @@
 #include "snt_utility.h"
 #include "snt_debug.h"
 #include "snt_protocol.h"
+#include "snt_schd.h"
 #include <assert.h>
 #include <unistd.h>
 #include <getopt.h>
@@ -59,8 +60,8 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 
 	//unsigned int compretype;											/*	*/
 	unsigned int i;
-	int c;															/*	*/
-	const char* shortopt = "vVD46ySCUTh:b:p:s:c:P:n:B:f:H:F:m:d:";	/*	*/
+	int c;																/*	*/
+	const char* shortopt = "vVD46ySCUTh:b:p:s:c:P:n:B:f:H:F:m:d:A:";	/*	*/
 
 	static struct option longoption[] = {
 		{"version", 		no_argument, 		NULL, 'v'},	/*	Print out version.	*/
@@ -360,7 +361,11 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			break;
 		case 'A':
 			if(optarg){
+				int cpu,core,size;
 				/*	parse input.	*/
+				sscanf(optarg, "%d,%d,%d", &cpu, &core, &size);
+				sntVerbosePrintf("Affinity.\n");
+				sntSchdSetAffinity(cpu, core, size);
 			}
 			break;
 		case 'X':
