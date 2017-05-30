@@ -296,10 +296,10 @@ typedef union snt_unionform_packet_t{
 typedef struct snt_connection_t{
 	int tcpsock;					/*	socket file descriptor, TCP.	*/
 	int udpsock;					/*	socket file descriptor, UDP.	*/
-	struct sockaddr* intaddr;		/*	Internal socket address.	*/
-	struct sockaddr* extaddr;		/*	External socket address.	*/
+	struct sockaddr* intaddr;		/*	Internal socket address. aka* source address.	*/
+	struct sockaddr* extaddr;		/*	External socket address. aka* destination address.	*/
 	socklen_t sclen;				/*	Socket address length in bytes.	*/
-	int externalport;				/*	External port.	*/
+	int externalport;				/*	External port. aka* destination port.	*/
 	int port;						/*	Source port.	*/
 	char ip[16];					/*	Source IP address.	*/
 	char extipv[16];				/*	External/Destination IP address.	*/
