@@ -23,29 +23,29 @@
 /**
  *	verbosity levels.
  */
-#define SNT_LOG_QUITE	0x0
-#define SNT_LOG_VERBOSE	0x1
-#define SNT_LOG_DEBUG	0x3
+#define SNT_LOG_QUITE		0x0		/*	Will oppress all print out on the sntLogPrintfInternal function.	*/
+#define SNT_LOG_VERBOSE		0x1		/*	Print only verbose print outs.	*/
+#define SNT_LOG_DEBUG		0x3		/*	Prints all everything.	*/
 
 /**
- *
+ *	Set verbosity level.
  */
 extern void sntVerbosityLevelSet(unsigned int verbosity);
 
 /**
- *
+ *	Log.
  */
 extern int sntLogPrintfInternal(unsigned int verbosity, const char* fmt,...);
 
 
 /**
- *
+ *	Print.
  */
-#define sntDebugPrintf(fmt,...)		\
-	sntLogPrintfInternal(SNT_LOG_DEBUG, fmt, ## __VA_ARGS__)
-#define sntVerbosePrintf(fmt,...)	\
-	sntLogPrintfInternal(SNT_LOG_VERBOSE, fmt, ## __VA_ARGS__)
-#define sntLogPrintf(verbosity, fmt, args...) sntLogPrintfInternal(verbosity, fmt, args);		\
+#define sntDebugPrintf(fmt, args...)					\
+		sntLogPrintfInternal(SNT_LOG_DEBUG, fmt, ##args)
+#define sntVerbosePrintf(fmt, args...)					\
+		sntLogPrintfInternal(SNT_LOG_VERBOSE, fmt, ##args)
+#define sntLogPrintf(verbosity, fmt, args...) sntLogPrintfInternal(verbosity, fmt, args)		\
 
 
 #endif
