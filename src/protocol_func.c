@@ -96,17 +96,17 @@ int sntProtFuncCertificate(SNTConnection* connection, const SNTUniformPacket* pa
 	}
 
 	/*	Check if certificate has not been compromised.	*/
-	localhash = malloc(sntGetHashTypeSize(cer->hashtype) + 1);
+	localhash = malloc(sntHashGetTypeSize(cer->hashtype) + 1);
 	assert(localhash);
 
 	/*	Generate hash and compare to remote and local hash.	*/
 	if(sntHash(cer->hashtype, cer->cert, cer->localhashedsize, localhash) !=
-			sntGetHashTypeSize(cer->hashtype)){
+			sntHashGetTypeSize(cer->hashtype)){
 		fprintf(stderr, "sntHash failed.\n");
 		return 0;
 	}
 	if (!sntASymVerifyDigSign(connection, cer->hashtype, localhash,
-			sntGetHashTypeSize(cer->hashtype), cer->hash,
+			sntHashGetTypeSize(cer->hashtype), cer->hash,
 			cer->encryedhashsize)) {
 		fprintf(stderr, "None matching hashes.\n");
 		return 0;
@@ -314,14 +314,14 @@ int sntSendCertificate(const SNTConnection* bind, SNTConnection* client){
 	}
 
 	/*	Encrypt the hash in order to prevent integrity compromising.	*/
-	tmphash = malloc(sntGetHashTypeSize(cert.hashtype));
+	tmphash = malloc(sntHashGetTypeSize(cert.hashtype));
 	assert(tmphash);
-	memset(tmphash, 0, sntGetHashTypeSize(cert.hashtype));
-	memcpy(tmphash, cert.hash, sntGetHashTypeSize(cert.hashtype));
+	memset(tmphash, 0, sntHashGetTypeSize(cert.hashtype));
+	memcpy(tmphash, cert.hash, sntHashGetTypeSize(cert.hashtype));
 
 	/*	*/
 	if (!sntASymSignDigSign(bind, cert.hashtype, tmphash,
-			sntGetHashTypeSize(cert.hashtype), cert.hash,
+			sntHashGetTypeSize(cert.hashtype), cert.hash,
 			(unsigned int*)&cert.encryedhashsize)) {
 		sntSendError(client, SNT_ERROR_SERVER, "Couldn't create digital signature");
 		return 0;
