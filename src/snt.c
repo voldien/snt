@@ -325,19 +325,26 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			break;
 		case 'P':	/*	Asymmetric cipher.	*/
 			if(optarg){
-				if(strcmp(optarg, "rsa") == 0){
-					option->asymmetric = SNT_ENCRYPTION_ASYM_RSA;
-				}
-				else if(strcmp(optarg, "ec") == 0){
-
-				}
-				else if(strcmp(optarg, "all") == 0){
+				i = 0;
+				if(strcmp(optarg, "all") == 0){
 					option->asymmetric = SNT_ENCRYPTION_ASYM_ALL;
+					break;
 				}
-				else{
-					fprintf(stderr, "Invalid asymmetric cipher option, %s.\n", optarg);
-					exit(EXIT_FAILURE);
-				}
+
+				do{
+					if(strcmp(gc_asymchi_symbol[i], optarg) == 0){
+						break;
+					}
+					i++;
+					if(gc_asymchi_symbol[i] == NULL){
+						fprintf(stderr, "Invalid asymmetric cipher option, %s.\n", optarg);
+						exit(EXIT_FAILURE);
+					}
+				}while(gc_asymchi_symbol[i]);
+
+				option->asymmetric = (1 << (i - 1));
+				sntVerbosePrintf("Using %s for asymmetric cipher .\n", gc_asymchi_symbol[i]);
+				break;
 			}
 			break;
 		case 'B':	/*	Number of bits.	*/
