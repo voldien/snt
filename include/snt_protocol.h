@@ -421,7 +421,7 @@ extern int sntSetTransportProcotcol(SNTConnection* connection,
  *	@#eturn number of bytes of the packet body.
  */
 extern unsigned int sntCreateSendPacket(const SNTConnection* __restrict__ connection,
-		void* __restrict__ buffer, unsigned int buflen, unsigned int* noffset);
+		void* __restrict__ buffer, unsigned int buflen, unsigned int* __restrict__ noffset);
 /**
  *	Create packet ready to be received.
  *
