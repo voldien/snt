@@ -360,5 +360,7 @@ int sntSendError(const SNTConnection* connection, int code,
 	return sntWriteSocketPacket(connection, (SNTUniformPacket*)&error);
 }
 
-
+int sntSendBenchMarkResult(const SNTConnection* connection, const SNTResultPacket* result){
+	return sntWriteSocketPacket(connection, result);
+}
 
