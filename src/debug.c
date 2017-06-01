@@ -25,7 +25,7 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 					"--------------\n",
 					SNT_GET_MAJ_VERSION(packet->header.version),
 					SNT_GET_MIN_VERSION(packet->header.version),
-					packet->header.stype, sntSymbolArraySize(gs_symprotocol) <= packet->header.stype ?
+					packet->header.stype, packet->header.stype <= sntSymbolArraySize(gs_symprotocol) ?
 							gs_symprotocol[packet->header.stype] : "",
 					packet->header.offset,
 					sntDatagramSize(&packet->header),
