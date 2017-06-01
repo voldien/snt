@@ -59,7 +59,6 @@ static void snt_default_con_option(SNTConnectionOption* option, unsigned int isS
 void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 		SNTConnectionOption* option) {
 
-	//unsigned int compretype;											/*	*/
 	unsigned int i;
 	int c;																/*	*/
 	const char* shortopt = "vVD46ySCUTh:b:p:s:c:P:n:B:f:H:F:m:d:r:A:";	/*	*/
@@ -501,7 +500,7 @@ void sntServerMain(void){
 								sntUnMapSocket(g_contable, &fd_active, con->tcpsock);
 							}
 							g_threadtable[sntPoolGetIndex(g_connectionpool, con)] =
-									sntCreateBenchmarkThread(con->option->bm_protocol_mode,
+									sntBenchmarkCreateThread(con->option->bm_protocol_mode,
 											con);
 						}
 
