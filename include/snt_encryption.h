@@ -123,12 +123,15 @@ extern unsigned int sntASymGetBlockSize(unsigned int cipher, const void* key);
 
 /**
  *	Free all asymmetric encryption data
- *	associated with the connection.
+ *	associated with the connection. All associated asymmetric
+ *	variable in the connection will be memset to zero.
  */
 extern void sntASymFree(SNTConnection* connection);
 
 /**
  *	Create signed digital signature.
+ *
+ *	@Return if successfully size of the signature in bytes. zero if failed.
  */
 extern int sntASymSignDigSign(const SNTConnection* __restrict__ connection,
 		unsigned int hashtype, const void* __restrict__ hash, unsigned int len,
@@ -136,6 +139,8 @@ extern int sntASymSignDigSign(const SNTConnection* __restrict__ connection,
 
 /**
  *	Verify signed digital signature.
+ *
+ *	@Return if successfully size of the verified in bytes. zero if failed.
  */
 extern int sntASymVerifyDigSign(const SNTConnection* __restrict__ connection,
 		unsigned int hashtype, const void* __restrict__ hash, unsigned int len,
