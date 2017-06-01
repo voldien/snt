@@ -42,7 +42,7 @@ const char* gs_error_sym[] = {
 		"Invalid argument",
 		"Signature failed",
 		"Server error",
-		"Incompatiable version",
+		"incompatible version",
 		"SSL not supported",
 		"Bad request",
 		"Service unavailable",
