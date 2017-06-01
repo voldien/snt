@@ -342,10 +342,16 @@ typedef struct snt_connection_t{
 }SNTConnection;
 
 /**
- *	Connection flag.
+ *	Connection flag.	TODO Add some kind of encpsulation.
  */
 #define SNT_CONNECTION_TRANS	0x1	/*	Transport mode enabled.	*/
 #define SNT_CONNECTION_BENCH	0x2	/*	Benchmark mode.	*/
+
+/**
+ *
+ */
+#define sntIsTransportEnable(con) (con->flag & SNT_CONNECTION_TRANS)
+#define sntIsBenchEnable(con) (con->flag & SNT_CONNECTION_BENCH)
 
 /**
  *	Get attribute about the current socket
