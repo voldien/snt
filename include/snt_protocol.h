@@ -263,6 +263,7 @@ typedef struct snt_result_packet_t{
 	uint64_t npackets;				/*	Number of packets.	*/
 	uint64_t nbytes;				/*	Number of bytes.	*/
 	uint64_t elapse;				/*	Elapse time.	*/
+	uint64_t timeres;				/*	Time resolution.	*/
 
 }__attribute__ ((__packed__))SNTResultPacket;
 

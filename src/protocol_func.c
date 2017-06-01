@@ -21,6 +21,7 @@ int sntProtFuncInit(SNTConnection* connection, const SNTUniformPacket* packet) {
 	cliopt.invfrequency = connection->option->invfrequency;
 	cliopt.playload = connection->option->payload;
 	cliopt.extension = 0;
+	cliopt.duration = connection->option->duration;
 
 	/*	Send option.	*/
 	sntInitDefaultHeader(&cliopt.header, SNT_PROTOCOL_STYPE_CLIENTOPT, sizeof(cliopt));
@@ -54,6 +55,7 @@ int sntProtFuncCliOpt(SNTConnection* connection, const SNTUniformPacket* packet)
 	connection->option->deltatype = cliopt->deltaTypes;
 	connection->option->invfrequency = cliopt->invfrequency;
 	connection->option->transport_mode = cliopt->transprotocol;
+	connection->option->duration = cliopt->duration;
 
 	connection->option->payload = cliopt->playload;
 	connection->mtubuf = malloc(connection->option->payload);
