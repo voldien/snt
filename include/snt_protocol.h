@@ -112,6 +112,11 @@ extern const char* gs_symprotocol[];
 	| SNT_DELTA_TYPE_TIMESTAMP)					\
 
 /**
+ *	Delta type symbols.
+ */
+extern const char* gs_delta_sym[];
+
+/**
  *	Error codes.
  */
 #define SNT_ERROR_NONE						0x0	/*	No error.	*/
