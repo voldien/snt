@@ -63,10 +63,11 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 	struct ifconf ifcon;			/*	*/
 	struct ifreq* ifcr;				/*	*/
 	socklen_t aclen;				/*	*/
+
 	char sockbuf[128];				/*	*/
 	union{
-		struct sockaddr_in addr4;		/*	*/
-		struct sockaddr_in6 addr6;		/*	*/
+		struct sockaddr_in addr4;	/*	*/
+		struct sockaddr_in6 addr6;	/*	*/
 	}addrU;
 	struct sockaddr_in* sockaddr;	/*	*/
 	struct sockaddr* addr;			/*	*/
@@ -74,12 +75,12 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 	assert(connection->tcpsock > 0);
 
 	/*	*/
-	bzero(&ifr, sizeof(ifr));
-	bzero(&ifcon, sizeof(ifcon));
+	memset(&ifr, 0, sizeof(ifr));
+	memset(&ifcon, 0, sizeof(ifcon));
 	sockaddr = (struct sockaddr_in*)sockbuf;
 	aclen = sizeof(sockbuf);
 
-	/*	*/
+	/*	Get interface list associated with the socket.	*/
 	if(ioctl(connection->tcpsock, SIOCGIFCONF, &ifcon) < 0){
 		fprintf(stderr, "ioctl %s.\n", strerror(errno));
 	}
@@ -133,7 +134,7 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 
 		bzero(&addrU.addr4, sizeof(addrU.addr4));
 		addrU.addr4.sin_port = htons((uint16_t)connection->externalport);
-		addrU.addr4.sin_family = connection->option->affamily;
+		addrU.addr4.sin_family = (sa_family_t)connection->option->affamily;
 		addrU.addr4.sin_addr.s_addr = inet_addr(connection->extipv);
 		connection->sclen = sizeof(addrU.addr4);
 		addr = (struct sockaddr*)&addrU.addr4;
@@ -147,7 +148,7 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 	case AF_INET6:
 		bzero(&addrU.addr6, sizeof(addrU.addr6));
 		addrU.addr6.sin6_port = htons((uint16_t)connection->externalport);
-		addrU.addr6.sin6_family = connection->option->affamily;
+		addrU.addr6.sin6_family = (sa_family_t)connection->option->affamily;
 		//addr4.sin_addr.s_addr = inet_netof(connection->extipv);
 		/*addr6.sin6_addr.__in6_u = IN6ADDR_ANY_INIT;*/
 		connection->sclen = sizeof(addrU.addr6);
@@ -183,9 +184,10 @@ SNTConnection* sntBindSocket(uint16_t port,
 	SNTConnection* connection = NULL;	/*	*/
 	socklen_t addrlen;					/*	*/
 	struct sockaddr* addr;				/*	*/
-	struct sockaddr_in addr4;			/*	*/
-	struct sockaddr_in6 addr6;			/*	*/
-
+	union{
+		struct sockaddr_in addr4;		/*	*/
+		struct sockaddr_in6 addr6;		/*	*/
+	}addrU;
 	int domain = option->affamily;
 
 	/*	Create connection.	*/
@@ -200,20 +202,20 @@ SNTConnection* sntBindSocket(uint16_t port,
 
 	/*	*/
 	if(domain == AF_INET){
-		bzero(&addr4, sizeof(addr4));
-		addr4.sin_port = htons(port);
-		addr4.sin_family = domain;
-		addr4.sin_addr.s_addr = INADDR_ANY;
-		addrlen = sizeof(addr4);
-		addr = (struct sockaddr*)&addr4;
+		bzero(&addrU.addr4, sizeof(addrU.addr4));
+		addrU.addr4.sin_port = htons(port);
+		addrU.addr4.sin_family = (sa_family_t)domain;
+		addrU.addr4.sin_addr.s_addr = INADDR_ANY;
+		addrlen = sizeof(addrU.addr4);
+		addr = (struct sockaddr*)&addrU.addr4;
 	}
 	else if(domain == AF_INET6){
-		bzero(&addr6, sizeof(addr6));
-		addr6.sin6_port = htons(port);
-		addr6.sin6_family = domain;
+		bzero(&addrU.addr6, sizeof(addrU.addr6));
+		addrU.addr6.sin6_port = htons(port);
+		addrU.addr6.sin6_family = (sa_family_t)domain;
 		/*addr6.sin6_addr.__in6_u = IN6ADDR_ANY_INIT;*/
-		addrlen = sizeof(addr6);
-		addr = (struct sockaddr*)&addr6;
+		addrlen = sizeof(addrU.addr6);
+		addr = (struct sockaddr*)&addrU.addr6;
 	}else{
 		fprintf(stderr, "Invalid address family.\n");
 		sntDisconnectSocket(connection);
@@ -222,7 +224,7 @@ SNTConnection* sntBindSocket(uint16_t port,
 
 	/*	Bind process to socket.	*/
 	if( bind(connection->tcpsock, (struct sockaddr *)addr, addrlen) < 0){
-		fprintf(stderr, "Failed to bindsocket, %s.\n", strerror(errno));
+		fprintf(stderr, "Failed to bind TCP socket, %s.\n", strerror(errno));
 		sntDisconnectSocket(connection);
 		return NULL;
 	}
@@ -230,7 +232,7 @@ SNTConnection* sntBindSocket(uint16_t port,
 	/*	Bind UDP socket to process. Optional.	*/
 	if(connection->udpsock > 0){
 		if( bind(connection->udpsock, (struct sockaddr *)addr, addrlen) < 0){
-			fprintf(stderr, "Failed to bindsocket, %s.\n", strerror(errno));
+			fprintf(stderr, "Failed to bind UDP socket, %s.\n", strerror(errno));
 			sntDisconnectSocket(connection);
 			return NULL;
 		}
@@ -238,7 +240,7 @@ SNTConnection* sntBindSocket(uint16_t port,
 
 	/*	Listen.	*/
 	if( listen(connection->tcpsock, option->listen) < 0){
-		fprintf(stderr, "%s.\n", strerror(errno));
+		fprintf(stderr, "listen failed, %s.\n", strerror(errno));
 		sntDisconnectSocket(connection);
 		return NULL;
 	}
@@ -258,7 +260,6 @@ SNTConnection* sntAcceptSocket(SNTConnection* bindcon){
 	SNTInitPackage init;				/*	*/
 	struct timeval tv;					/*	*/
 
-
 	/*	Allocate connection.	*/
 	connection = (SNTConnection*)sntPoolObtain(g_connectionpool);
 	if(connection == NULL){
@@ -274,7 +275,6 @@ SNTConnection* sntAcceptSocket(SNTConnection* bindcon){
 		sntDisconnectSocket(connection);
 		return NULL;
 	}
-
 
 	/*	Set timeout for client.	*/
 	tv.tv_sec = 10;
@@ -299,7 +299,11 @@ SNTConnection* sntAcceptSocket(SNTConnection* bindcon){
 	init.transmode = SNT_TRANSPORT_ALL;
 	init.extension = 0;
 	init.deltaTypes = SNT_DELTA_TYPE_ALL;
-	sntWriteSocketPacket(connection, (SNTUniformPacket*)&init);
+	if(sntWriteSocketPacket(connection, (SNTUniformPacket*)&init) <= 0){
+		fprintf(stderr, "Failed to write to client, %s.\n", strerror(errno));
+		sntDisconnectSocket(connection);
+		return NULL;
+	}
 
 	return connection;
 }
@@ -310,67 +314,61 @@ SNTConnection* sntConnectSocket(const char* host, uint16_t port,
 	SNTConnection* connection = NULL;	/*	*/
 	socklen_t addrlen;					/*	*/
 	const struct sockaddr* addr;		/*	*/
-	struct sockaddr_in addr4;			/*	*/
-	struct sockaddr_in6 addr6;			/*	*/
-	struct hostent* hoste = NULL;		/*	*/
+	union{
+		struct sockaddr_in addr4;		/*	*/
+		struct sockaddr_in6 addr6;		/*	*/
+	}addrU;
+	struct hostent* hosten = NULL;		/*	*/
 	int domain;
-	int style = 0;
-	int protocol = 0;
 
 	/*	*/
 	connection = sntPoolObtain(g_connectionpool);
 	assert(connection);
+
 	sntConnectionCopyOption(connection, option);
+	domain = option->affamily;
 
 	/*	Get IP from hostname.	*/
-	hoste = gethostbyname(host);
-	if(hoste == NULL){
-		/*
-		sntDisconnectSocket(connection);
-		fprintf(stderr, "Failed to get host.\n");
-		return NULL;
-		*/
+	hosten = gethostbyname(host);
+	if(hosten == NULL){
+		sntDebugPrintf("Couldn't find IP address for host %s.\n", host);
+	}else{
+		domain = hosten->h_addrtype;
 	}
 
-	/*	*/
-	domain = hoste->h_addrtype;
-	style = SOCK_STREAM;
-
 	/*	Create socket.	*/
-	sntInitSocket(connection, domain, option->transport_mode | SNT_TRANSPORT_TCP);
-	connection->tcpsock  = socket(domain, style, protocol);
-	if(connection->tcpsock < 0 ){
+	if(sntInitSocket(connection, domain, option->transport_mode | SNT_TRANSPORT_TCP) == 0){
 		sntDisconnectSocket(connection);
 		fprintf(stderr, "Failed to create socket, %s.\n", strerror(errno));
 		return NULL;
 	}
 
-	/*	Assign addr struct.	*/
+	/*	Assign address struct.	*/
 	if(domain == AF_INET){
-		bzero(&addr4, sizeof(addr4));
-		addr4.sin_family = domain;
-		addr4.sin_port = htons(port);
-		if(hoste){
-			memcpy(&addr4.sin_addr, *hoste->h_addr_list, hoste->h_length);
+		bzero(&addrU.addr4, sizeof(addrU.addr4));
+		addrU.addr4.sin_family = (sa_family_t)domain;
+		addrU.addr4.sin_port = htons(port);
+		if(hosten){
+			memcpy(&addrU.addr4.sin_addr, *hosten->h_addr_list, hosten->h_length);
 		}else{
-			if( inet_pton(domain, host, &addr4.sin_addr) < 0){
+			if( inet_pton(domain, host, &addrU.addr4.sin_addr) < 0){
 				sntDisconnectSocket(connection);
 				return NULL;
 			}
 		}
-		addrlen = sizeof(addr4);
-		addr = (const struct sockaddr*)&addr4;
+		addrlen = sizeof(addrU.addr4);
+		addr = (const struct sockaddr*)&addrU.addr4;
 	}
 	else if(domain == AF_INET6){
-		bzero(&addr6, sizeof(addr6));
-		addr6.sin6_port = htons(port);
-		addr6.sin6_family = domain;
-		if( inet_pton(domain, host, &addr6.sin6_addr) < 0){
+		bzero(&addrU.addr6, sizeof(addrU.addr6));
+		addrU.addr6.sin6_port = htons(port);
+		addrU.addr6.sin6_family = (sa_family_t)domain;
+		if( inet_pton(domain, host, &addrU.addr6.sin6_addr) < 0){
 			sntDisconnectSocket(connection);
 			return NULL;
 		}
-		addrlen = sizeof(addr6);
-		addr = (const struct sockaddr*)&addr6;
+		addrlen = sizeof(addrU.addr6);
+		addr = (const struct sockaddr*)&addrU.addr6;
 	}else{
 		fprintf(stderr, "Invalid address family.\n");
 		sntDisconnectSocket(connection);
@@ -402,7 +400,7 @@ SNTConnection* sntConnectSocket(const char* host, uint16_t port,
 
 void sntDisconnectSocket(SNTConnection* connection){
 
-	/*	Verbose.	TODO move perhaps to a different function to be invoked in the benchmark functions.	*/
+	/*	Print disconnected.	*/
 	sntVerbosePrintf("Disconnecting %s:%d from %s:%d.\n", connection->ip,
 			connection->port, connection->extipv, connection->externalport);
 
@@ -418,6 +416,7 @@ void sntDisconnectSocket(SNTConnection* connection){
 	sntASymFree(connection);
 	sntSymFree(connection);
 
+	/*	Release */
 	free(connection->option);
 	free(connection->extaddr);
 	free(connection->mtubuf);
@@ -463,7 +462,7 @@ int sntInitSocket(SNTConnection* connection, int affamily,
 
 int sntSetTransportProcotcol(SNTConnection* connection, unsigned int protocol){
 
-	assert(protocol > 0);
+	assert(protocol > 0 && connection->option->affamily > 0);
 
 	/*	Create socket if not already created.	*/
 	if( (protocol & SNT_TRANSPORT_TCP)){
@@ -593,7 +592,7 @@ int sntReadSocket(const SNTConnection* connection, void* buffer,
 			case SNT_TRANSPORT_UDP:
 				assert(connection->udpsock > 0);
 				len = connection->sclen;
-				return recvfrom(connection->udpsock, buffer, recvlen, flag, connection->intaddr, &len);
+				return recvfrom(connection->udpsock, buffer, (size_t)recvlen, flag, connection->intaddr, &len);
 			default:
 				break;
 			}
@@ -615,7 +614,7 @@ int sntWriteSocket(const SNTConnection* connection, const void* buffer,
 			return send(connection->tcpsock, buffer, (size_t)senlen, flag);
 		case SNT_TRANSPORT_UDP:
 			assert(connection->udpsock > 0);
-			return sendto(connection->udpsock, buffer, senlen, flag,
+			return sendto(connection->udpsock, buffer, (size_t)senlen, flag,
 					connection->extaddr, connection->sclen);
 		default:
 			break;
