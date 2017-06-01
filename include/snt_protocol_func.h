@@ -62,6 +62,6 @@ extern int sntSendError(const SNTConnection* __restrict__ connection,
 /**
  *
  */
-extern int sntSendBenchMarkResult(const SNTConnection* connection, SNTResultPacket* result);
+extern int sntSendBenchMarkResult(const SNTConnection* connection, const SNTResultPacket* result);
 
 #endif

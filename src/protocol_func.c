@@ -220,13 +220,15 @@ int sntProtFuncError(SNTConnection* connection, const SNTUniformPacket* packet) 
 		fprintf(stderr, "Error code %d : %s | '%s'.\n", error->errorcode,
 				codedesc, error->message);
 	}else{
-		fprintf(stderr, "Error code %d  : %s .\n", error->errorcode, codedesc);
+		fprintf(stderr, "Error code %d : %s .\n", error->errorcode, codedesc);
 	}
 	return 0;
 }
 
 int sntProtFuncResult(SNTConnection* connection, const SNTUniformPacket* packet) {
 
+	const SNTResultPacket* result = (SNTResultPacket*)packet;
+	sntBenchmarkPrintResult(result);
 	return 1;
 }
 
