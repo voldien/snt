@@ -35,8 +35,9 @@ unsigned int sntSymbolArraySize(const void** array){
 
 	unsigned int i = 0;
 
-	while(array[i]){
+	while(array[i] != NULL){
 		i++;
 	}
+
 	return i;
 }
