@@ -20,6 +20,7 @@
 #define _SNT_H_ 1
 #include "snt_def.h"
 #include "snt_pool.h"
+#include "snt_delta.h"
 #include <pthread.h>	/*	TODO resolve.	*/
 
 /**
@@ -39,7 +40,7 @@ extern pthread_t* g_threadtable;		/*	Thread table for each connection.	(Server o
 extern SNTConnection** g_contable;		/*	Maps file descriptor to connection.	*/
 extern int g_nfailure;					/*	Number of sequence failure. TODO relocate to benchmark integrity.	*/
 extern int g_numcliconne;				/*	Number of client connection. (Client only).	*/
-extern char* g_filepath;					/*	File for file benchmark mode.	*/
+extern char* g_filepath;				/*	File for file benchmark mode.	*/
 extern char* cerficatefilepath;			/*	Certificate file pathS.	*/
 /*extern SNTPool* g_symkeys;*/			/*	TODO add data pool for symmetric key data block for server.	*/
 
@@ -58,6 +59,7 @@ typedef struct snt_connection_option_t{
 	uint32_t asymmetric_bits;	/*	Asymmetric cipher key bitsize.	*/
 	uint32_t hash;				/*	Hash algorithm.	*/
 	uint32_t deltatype;			/*	Delta type.	*/
+	SNTDelta delta;
 	uint32_t invfrequency;		/*	Frequency of number of packet sent per sec.	*/
 	uint32_t freqsec;			/*	TODO resolve to have higher sleep than one second.*/
 	uint16_t payload;			/*	Size of payload.	*/
