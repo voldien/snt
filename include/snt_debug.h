@@ -21,7 +21,6 @@
 #include"snt_protocol.h"
 #include"snt_log.h"
 
-
 /**
  *	Print information about packet.
  */
