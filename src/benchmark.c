@@ -18,7 +18,7 @@ const char* gc_bench_symbol[] = {
 
 typedef void* (*snt_client_thread)(void* patt);
 
-pthread_t sntCreateBenchmarkThread(unsigned int mode, SNTConnection* patt){
+pthread_t sntBenchmarkCreateThread(unsigned int mode, SNTConnection* patt){
 
 	pthread_t thread;					/*	*/
 	pthread_attr_t attr;				/*	*/
@@ -26,35 +26,38 @@ pthread_t sntCreateBenchmarkThread(unsigned int mode, SNTConnection* patt){
 	size_t  guardsize;					/*	*/
 	struct sched_param schparam;		/*	*/
 	int err;							/*	*/
+	int cpu,cores,size;
 
 	switch(mode){
 	case SNT_PROTOCOL_BM_MODE_PERFORMANCE:
-		sntVerbosePrintf("Creating Performance benchmark thread.\n");
 		func = sntClientPerformanceBenchmark;
 		break;
 	case SNT_PROTOCOL_BM_MODE_INTEGRITY:
-		sntVerbosePrintf("Creating Integrity benchmark thread.\n");
 		func = sntClientIntegrityBenchmark;
 		break;
 	case SNT_PROTOCOL_BM_MODE_FILE:
-		sntVerbosePrintf("Creating file benchmark thread.\n");
 		func = sntClientFileBenchmark;
 		break;
 	case SNT_PROTOCOL_BM_MODE_UNKNOWN:
 	default:
 		fprintf(stderr, "Invalid benchmark mode, %x.\n", mode);
-		return NULL;
+		return 0;
 	}
+
+	/*	Verbose benchmark mode.	*/
+	sntVerbosePrintf("Creating %s benchmark thread.\n", gc_bench_symbol[sntLog2MutExlusive32(mode)]);
 
 	/*	Thread attributes.	*/
 	if(pthread_attr_init(&attr) != 0){
 		fprintf(stderr, "pthread_attr_init failed, %s.\n", strerror(errno));
+		return 0;
 	}
 
-	/*	Set guardsize.	*/
+	/*	Set guardsize. 	*/
 	guardsize = (1 << 14);
 	if(pthread_attr_setguardsize(&attr, guardsize) != 0){
 		fprintf(stderr, "pthread_attr_getguardsize failed, %s.\n", strerror(errno));
+		return 0;
 	}
 
 	/*	Thread schedule priority.	*/
@@ -62,6 +65,7 @@ pthread_t sntCreateBenchmarkThread(unsigned int mode, SNTConnection* patt){
 	err = pthread_attr_setschedparam(&attr, &schparam);
 	if(err != 0){
 		fprintf(stderr, "pthread_attr_setschedparam failed, %d.\n", err);
+		return 0;
 	}
 
 	/*	Set affinity. TODO fix!	*/
@@ -69,15 +73,17 @@ pthread_t sntCreateBenchmarkThread(unsigned int mode, SNTConnection* patt){
 	/*sched_getaffinity(0, 1, )	*/
 
 	/*	Create thread.	*/
-	sntVerbosePrintf("Creating benchmark thread.\n");
+	sntDebugPrintf("Creating benchmark thread.\n");
 	err = pthread_create(&thread, &attr, func, patt);
 	if( err != 0 ){
 		fprintf(stderr, "Failed to create thread for client, %s.\n", strerror(errno));
+		return 0;
 	}
 
 	/*	Release thread once done.	*/
 	if( pthread_detach(thread) != 0){
 		fprintf(stderr, "pthread_detach failed, %s.\n", strerror(errno));
+		return 0;
 	}
 
 	err = pthread_attr_destroy(&attr);
@@ -88,7 +94,7 @@ pthread_t sntCreateBenchmarkThread(unsigned int mode, SNTConnection* patt){
 	return thread;
 }
 
-int sntWaitBenchmark(SNTConnection* connection){
+int sntBenchmarkWait(SNTConnection* connection){
 
 	int len;				/*	*/
 	SNTUniformPacket pack;	/*	*/
@@ -114,12 +120,48 @@ int sntWaitBenchmark(SNTConnection* connection){
 }
 
 void sntWaitFrequency(const SNTConnectionOption* conopt){
-	sntNanoSleep(conopt->invfrequency);
+	sntNanoSleep(conopt->invfrequency);	/*	TODO add support for seconds.	*/
 }
+
+int sntDurationExpired(uint64_t elapse, const SNTConnectionOption* option){
+	return elapse > option->duration;
+}
+
+void sntBenchmarkPrintResult(const SNTResultPacket* result){
+
+	float duration;
+
+	/*	*/
+	duration = (float)result->elapse / 1E9f;
+	fprintf(stdout, "%ld Mbit sent.\n", (result->nbytes * 8) / (1024 * 1024));
+	fprintf(stdout, "%3f Mbit average.\n",
+			((result->nbytes * 8) / (1024 * 1024)) / duration);
+	fprintf(stdout, "%ld packets sent.\n", result->npackets);
+	fprintf(stdout, "End of benchmark.\n"
+	"-----------------------------------------------\n");
+}
+
+void sntBenchmarkEnd(SNTConnection* connection, SNTResultPacket* result){
+
+	/*	*/
+	result->timeres = sntGetTimeResolution();
+
+	/*	*/
+	sntSendBenchMarkResult(connection, result);
+
+	/*	*/
+	sntBenchmarkPrintResult(result);
+
+	/*	*/
+	sntDisconnectSocket(connection);
+}
+
+
 
 void* sntClientIntegrityBenchmark(void* patt){
 
 	/*	*/
+	SNTResultPacket result;
 	SNTConnection* con = patt;
 	SNTConnectionOption* conopt = con->option;
 	SNTUniformPacket* pack;
@@ -127,9 +169,9 @@ void* sntClientIntegrityBenchmark(void* patt){
 	int len = 0;
 	SNTDelta delta = {0};
 	SNTDelta inc = {1};
-	long int total = 0;
 	long int starttime = 0;
 
+	memset(&result, 0, sizeof(result));
 	/*	Clear buffer in order remove
 	 *  any sensitive information in the stack.	*/
 	pack = (SNTUniformPacket*)con->mtubuf;
@@ -139,19 +181,18 @@ void* sntClientIntegrityBenchmark(void* patt){
 			SNT_PROTOCOL_STYPE_BENCHMARK, 0);
 
 	/*	Wait intill the client send start packet.	*/
-	if(sntWaitBenchmark(con) == 0){
+	if(sntBenchmarkWait(con) == 0){
 		sntDisconnectSocket(con);
 		return NULL;
 	}
 
 	/*	Start.	*/
-	fprintf(stdout, "Starting benchmark.\n"
+	fprintf(stdout, "Starting integrity benchmark.\n"
 	"-----------------------------------------------\n");
 	starttime = sntGetNanoTime();
-	while(con->flag & SNT_CONNECTION_BENCH){
-		len = sntGenerateDeltaTypeInc(con->option->deltatype, (char*)pack->buf, &delta, &inc);
+	while(sntIsBenchEnable(con) && !sntDurationExpired(sntGetNanoTime() - starttime, conopt)){
 
-		pack->buf[len] = '\0';
+		len = sntGenerateDeltaTypeInc(con->option->deltatype, (char*)pack->buf, &delta, &inc);
 		len++;
 		pack->header.len = len + sizeof(SNTPacketHeader);
 
@@ -159,18 +200,19 @@ void* sntClientIntegrityBenchmark(void* patt){
 		if( len <= 0){
 			break;
 		}
-		total += len;
+		result.nbytes += len;
+		result.npackets++;
 
 		/*	*/
 		sntWaitFrequency(conopt);
 	}
 
-	printf("number of packet failure : %d.\n", g_nfailure);
-	fprintf(stdout, "Kbit %ld.\n", (total * 8) / 1024 );
-	fprintf(stdout, "Ending benchmark.\n"
-	"-----------------------------------------------\n");
+	/*	*/
+	sntInitDefaultHeader(&result.header, SNT_PROTOCOL_STYPE_RESULT, sizeof(result));
+	result.elapse = sntGetNanoTime() - starttime;
+	result.type = 0;
 
-	sntDisconnectSocket(con);
+	sntBenchmarkEnd(con, &result);
 	return NULL;
 }
 
@@ -179,12 +221,12 @@ void* sntClientPerformanceBenchmark(void* patt){
 	SNTConnection* con = patt;
 	SNTConnectionOption* conopt = con->option;
 	SNTUniformPacket* pack;
-	float duration;
+	SNTResultPacket result;
 	size_t clne;
 	int len = 0;
-	long int total = 0;
-	long int startime = 0;
+	uint64_t starttime = 0;
 
+	memset(&result, 0, sizeof(result));
 	/*	Clear buffer in order remove
 	 *  any sensitive information.	*/
 	pack = (SNTUniformPacket*)con->mtubuf;
@@ -193,7 +235,7 @@ void* sntClientPerformanceBenchmark(void* patt){
 	sntInitDefaultHeader(&pack->header, SNT_PROTOCOL_STYPE_BENCHMARK, clne);
 
 	/*	Wait intill the client sends start packet.	*/
-	if(sntWaitBenchmark(con) == 0){
+	if(sntBenchmarkWait(con) == 0){
 		sntDisconnectSocket(con);
 		return NULL;
 	}
@@ -201,26 +243,26 @@ void* sntClientPerformanceBenchmark(void* patt){
 	/*	*/
 	fprintf(stdout, "Starting performance benchmark.\n"
 	"-----------------------------------------------\n");
-	startime = sntGetNanoTime();
-	while(con->flag & SNT_CONNECTION_BENCH){
+	starttime = sntGetNanoTime();
+	while(sntIsBenchEnable(con) && !sntDurationExpired(sntGetNanoTime() - starttime, conopt)){
 		len = sntWriteSocketPacket(con, pack);
 		if( len <= 0){
 			break;
 		}
-		total += len;
+		result.nbytes += len;
+		result.npackets++;
 
 		/*	*/
 		sntWaitFrequency(conopt);
 	}
 
 	/*	*/
-	duration = (float)(sntGetNanoTime() -  startime) / 1E9f;
-	fprintf(stdout, "%ld Mbit sent.\n", (total * 8) / (1024 * 1024) );
-	fprintf(stdout, "%3f Mbit average.\n", ( (total * 8) / (1024 * 1024) ) / duration );
-	fprintf(stdout, "End of benchmark.\n"
-	"-----------------------------------------------\n");
+	sntInitDefaultHeader(&result.header, SNT_PROTOCOL_STYPE_RESULT, sizeof(result));
+	result.elapse = sntGetNanoTime() - starttime;
+	result.type = 0;
 
-	sntDisconnectSocket(con);
+	/*	*/
+	sntBenchmarkEnd(con, &result);
 	return NULL;
 }
 
@@ -229,16 +271,16 @@ void* sntClientFileBenchmark(void* patt){
 	SNTConnection* con = (SNTConnection*)patt;
 	SNTConnectionOption* conopt = con->option;
 	SNTUniformPacket* pack;
-	float duration;
+	SNTResultPacket result;
 	int len;
 	size_t flen;
-	long int total = 0;
-	long int startime = 0;
+	long int starttime = 0;
 	uint32_t asyncblock;
 	FILE* f;
 
 	pack = (SNTUniformPacket*)con->mtubuf;
 	asyncblock = con->option->payload;
+	memset(&result, 0, sizeof(result));
 
 	/*	Clear buffer in order remove
 	 *  any sensitive information.	*/
@@ -249,6 +291,7 @@ void* sntClientFileBenchmark(void* patt){
 	/*	Open file.	*/
 	sntVerbosePrintf("Opening duplicate file stream.\n");
 
+	/*	*/
 	f = fopen(g_filepath, "rb");
 	if(!f){
 		sntSendError(con, SNT_ERROR_SERVER, "Error failed to open file");
@@ -257,7 +300,7 @@ void* sntClientFileBenchmark(void* patt){
 	fseek(f, 0, SEEK_SET);
 
 	/*	Wait intill the client send start packet.	*/
-	if(sntWaitBenchmark(con) == 0){
+	if(sntBenchmarkWait(con) == 0){
 		sntDisconnectSocket(con);
 		return NULL;
 	}
@@ -265,7 +308,7 @@ void* sntClientFileBenchmark(void* patt){
 	/*	*/
 	fprintf(stdout, "Starting file benchmark.\n"
 	"-----------------------------------------------\n");
-	startime = sntGetNanoTime();
+	starttime = sntGetNanoTime();
 	while((flen = fread(pack->buf, 1, asyncblock, f)) > 0 && (con->flag & SNT_CONNECTION_BENCH )){
 		pack->header.len = flen + sizeof(SNTPacketHeader);
 
@@ -273,22 +316,21 @@ void* sntClientFileBenchmark(void* patt){
 		if( len <= 0){
 			break;
 		}
-		total += len;
+		result.nbytes += len;
+		result.npackets++;
 
 		/*	*/
 		sntWaitFrequency(conopt);
 	}
 
-	/*	End connection.	*/
-	duration = (float)(sntGetNanoTime() -  startime) / 1E9f;
-	fprintf(stdout, "%ld Mbit sent.\n", (total * 8) / (1024 * 1024) );
-	fprintf(stdout, "%3f Mbit average.\n", ( (total * 8) / (1024 * 1024) ) / duration );
-	fprintf(stdout, "End of benchmark.\n"
-	"-----------------------------------------------\n");
-	/*sntSendBenchMarkResult(connection);	*/
+	/*	*/
+	sntInitDefaultHeader(&result.header, SNT_PROTOCOL_STYPE_RESULT, sizeof(result));
+	result.elapse = sntGetNanoTime() - starttime;
+	result.type = 0;
 
+	/*	*/
 	fclose(f);
-	sntDisconnectSocket(con);
+	sntBenchmarkEnd(con, &result);
 	return NULL;
 }
 

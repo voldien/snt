@@ -21,7 +21,11 @@
 #include <snt_protocol.h>
 #include"snt_time.h"
 
+/**
+ *	struct forward declartion.
+ */
 typedef struct snt_connection_t SNTConnection;
+typedef struct snt_result_packet_t SNTResultPacket;
 
 /**
  *	Benchmark protocol mode between server and client.
@@ -29,7 +33,7 @@ typedef struct snt_connection_t SNTConnection;
 #define SNT_PROTOCOL_BM_MODE_UNKNOWN		0x0		/*	Unknown protocol mode.	*/
 #define SNT_PROTOCOL_BM_MODE_PERFORMANCE	0x1		/*	Benchmark network performance.	*/
 #define SNT_PROTOCOL_BM_MODE_INTEGRITY		0x2		/*	Performance network integrity check.	*/
-#define SNT_PROTOCOL_BM_MODE_FILE			0x4		/*	Not supported.	*/
+#define SNT_PROTOCOL_BM_MODE_FILE			0x4		/*	File transport mode, sends a file.	*/
 #define SNT_PROTOCOL_BM_MODE_ALL 												\
 		(SNT_PROTOCOL_BM_MODE_PERFORMANCE | SNT_PROTOCOL_BM_MODE_INTEGRITY |	\
 		SNT_PROTOCOL_BM_MODE_FILE)												\
@@ -41,7 +45,7 @@ extern const char* gc_bench_symbol[];
  *
  *	@Return none 0 if successfully.
  */
-extern pthread_t sntCreateBenchmarkThread(unsigned int mode,
+extern pthread_t sntBenchmarkCreateThread(unsigned int mode,
 		SNTConnection* patt);
 
 /**
@@ -49,12 +53,28 @@ extern pthread_t sntCreateBenchmarkThread(unsigned int mode,
  *
  *	@Return non zero if disconnected.
  */
-extern int sntWaitBenchmark(SNTConnection* connection);
+extern int sntBenchmarkWait(SNTConnection* connection);
 
 /**
  *	Sleep thread.
  */
 extern void sntWaitFrequency(const SNTConnectionOption* connection);
+
+/**
+ *	Check time has been expired.
+ */
+extern int sntDurationExpired(uint64_t elapse, const SNTConnectionOption* option);
+
+/**
+ *
+ */
+extern void sntBenchmarkEnd(SNTConnection* __restrict__ connection,
+		SNTResultPacket* __restrict__ packet);
+
+/**
+ *	Print benchmark result.
+ */
+extern void sntBenchmarkPrintResult(const SNTResultPacket* result);
 
 /**
  *	Send packet diagram with ID string.
