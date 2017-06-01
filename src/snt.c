@@ -41,6 +41,7 @@ static void snt_default_con_option(SNTConnectionOption* option, unsigned int isS
 	option->invfrequency = 0;
 	option->payload = 1024;
 	option->listen = 128;
+	option->duration = 10 * sntGetTimeResolution();
 	option->port = SNT_DEFAULT_PORT;
 
 	if(isServer){
@@ -61,7 +62,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 	//unsigned int compretype;											/*	*/
 	unsigned int i;
 	int c;																/*	*/
-	const char* shortopt = "vVD46ySCUTh:b:p:s:c:P:n:B:f:H:F:m:d:A:";	/*	*/
+	const char* shortopt = "vVD46ySCUTh:b:p:s:c:P:n:B:f:H:F:m:d:r:A:";	/*	*/
 
 	static struct option longoption[] = {
 		{"version", 		no_argument, 		NULL, 'v'},	/*	Print out version.	*/
@@ -76,6 +77,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 		{"payload",			required_argument,	NULL, 'm'},	/*	payload.	*/
 		{"frequency",		required_argument,	NULL, 'F'},	/*	frequency.	*/
 		{"delta",			required_argument,	NULL, 'd'},	/**/
+		{"duration",		required_argument,	NULL, 'r'},	/*	Duration.	*/
 		{"compression", 	optional_argument,	NULL, 'C'},	/*	Use compression.	*/
 		{"secure", 			optional_argument,	NULL, 'S'},	/*	Use secure connection.	*/
 		{"server", 			optional_argument,	NULL, 's'},	/*	Server mode.	*/
@@ -270,6 +272,12 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 					exit(EXIT_FAILURE);
 				}
 				sntVerbosePrintf("deltaType set to : %d.\n", option->deltatype );
+			}
+			break;
+		case 'r':
+			if(optarg){
+				option->duration = strtod(optarg, NULL) * sntGetTimeResolution();
+				sntVerbosePrintf("Duration time set to : %ld.\n", option->duration / sntGetTimeResolution() );
 			}
 			break;
 		case 'U':	/*	Use UDP transport protocol.	*/
