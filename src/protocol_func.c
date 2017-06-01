@@ -205,18 +205,20 @@ int sntProtFuncStart(SNTConnection* connection, const SNTUniformPacket* packet){
 
 int sntProtFuncError(SNTConnection* connection, const SNTUniformPacket* packet) {
 
-	const char* codemesg = "";
+	const char* codedesc = "";
 	SNTErrorPacket* error = (SNTErrorPacket*)packet;
 
+
+	/*	Prevent segmentation violation.	*/
+	if(error->errorcode <= sntSymbolArraySize((const void**)gs_error_sym)){
+		codedesc = gs_error_sym[error->errorcode];
+	}
+
 	if(error->meslen > 0){
-		/*	Prevent segmentation violation.	*/
-		if(error->errorcode <= sntSymbolArraySize((const void**)gs_error_sym)){
-			codemesg = gs_error_sym[error->errorcode];
-		}
 		fprintf(stderr, "Error code %d : %s | '%s'.\n", error->errorcode,
-				codemesg, error->message);
+				codedesc, error->message);
 	}else{
-		fprintf(stderr, "Error code %d.\n", error->errorcode);
+		fprintf(stderr, "Error code %d  : %s .\n", error->errorcode, codedesc);
 	}
 	return 0;
 }
