@@ -2,6 +2,7 @@
 #include"snt_utility.h"
 #include"snt_log.h"
 #include"snt_protocol_func.h"
+#include"snt_schd.h"
 #include<unistd.h>
 #include<pthread.h>
 #include<string.h>
@@ -286,7 +287,7 @@ void* sntClientFileBenchmark(void* patt){
 	 *  any sensitive information.	*/
 	memset(pack, 0, asyncblock);
 	sntInitHeader(&pack->header, SNT_PROTOCOL_STYPE_BENCHMARK, asyncblock);
-	asyncblock = sntDatagramCommandSize(&pack->header);
+	asyncblock = sntProtocolHeaderDatagramSize(&pack->header);
 
 	/*	Open file.	*/
 	sntVerbosePrintf("Opening duplicate file stream.\n");
