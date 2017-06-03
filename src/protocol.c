@@ -630,43 +630,47 @@ int sntWriteSocket(const SNTConnection* connection, const void* buffer,
 int sntWriteSocketPacket(const SNTConnection* connection,
 		const SNTUniformPacket* pack) {
 
-	int packcomlen;
 	int translen = 0;
-	SNTPresentationPacket pre;
-	SNTUniformPacket* tranpack = (SNTUniformPacket*)connection->tranbuf;
-	packcomlen = sntDatagramCommandSize( &pack->header );
-	sntCopyPacket(tranpack, pack);
+	SNTUniformPacket* tranpack;
+
+	/*	Set flag of packet.	*/
+	tranpack = (SNTUniformPacket*)connection->tranbuf;
+
+	/*	Copy and set flag.	*/
+	sntCopyHeader(&tranpack->header, &pack->header);
+	tranpack->header.flag = (uint8_t)(
+			sntIsConnectionSecure(connection) ? SNT_PACKET_ENCRYPTION : 0)
+			| (sntIsConnectionCompressed(connection) ? SNT_PACKET_COMPRESSION : 0);
+
+	/*	Update header if using encryption.	*/
+	if(sntPacketHasEncrypted(tranpack->header)){
+		tranpack->header.offset++;
+		tranpack->header.len++;
+	}
+
+	/*	Copy packet payload.	*/
+	sntCopyPacketPayload(&tranpack->totalbuf[sntProtocolHeaderSize(tranpack)],
+			sntDatagramGetBlock(pack), sntProtocolHeaderDatagramSize(pack));
 
 	/*	Construct the packet.	*/
-	translen = sntCreateSendPacket(connection, tranpack->buf,
-			sntDatagramCommandSize(&tranpack->header), &pre.noffset);
+	translen = sntCreateSendPacket(connection, sntDatagramGetBlock(tranpack),
+			sntProtocolHeaderDatagramSize(&tranpack->header), &tranpack->presentation.noffset);
 
 	/*	Update header.	*/
-	tranpack->header.len = translen + sizeof(SNTPacketHeader);
-	tranpack->header.flag = (connection->symchiper != 0 ? SNT_PACKET_ENCRYPTION : 0 ) | (connection->usecompression != 0 ? SNT_PACKET_COMPRESSION : 0);
+	tranpack->header.len = translen + sntProtocolHeaderSize(&tranpack->header);
 
-	/*	Send application header.	*/
-	if(tranpack->header.flag & SNT_PACKET_ENCRYPTION){
-
-		//pre.noffset = translen - packcomlen;
-		sntDebugPrintf("enc off. %d:%d:%d.\n", packcomlen, translen, pre.noffset);
-		tranpack->header.offset += sizeof(pre);
-		tranpack->header.len += sizeof(pre);
-		translen += sntWriteSocket(connection, &tranpack->header, sizeof(SNTPacketHeader), MSG_MORE);
-		translen += sntWriteSocket(connection, &pre, sizeof(pre), MSG_MORE);
-	}
-	else{
-		translen += sntWriteSocket(connection, &tranpack->header, sizeof(SNTPacketHeader), MSG_MORE);
-	}
 	sntDebugPrintf("Sending.\n");
 	sntPrintPacketInfo(tranpack);
-	return translen + sntWriteSocket(connection, tranpack->buf, sntDatagramCommandSize(&tranpack->header), 0);
+	translen = sntWriteSocket(connection, &tranpack->header,
+			sntProtocolHeaderSize(&tranpack->header), MSG_MORE);
+	return translen
+			+ sntWriteSocket(connection, sntDatagramGetBlock(tranpack),
+					sntProtocolHeaderDatagramSize(&tranpack->header), 0);
 }
 
 int sntReadSocketPacket(const SNTConnection* connection, SNTUniformPacket* pack) {
 
 	int len;
-	SNTPresentationPacket pres = {0};
 	/*	Receive header.	*/
 	sntDebugPrintf("Receiving.\n");
 	if((len = sntRecvPacketHeader(connection, &pack->header)) <= 0){
@@ -674,25 +678,24 @@ int sntReadSocketPacket(const SNTConnection* connection, SNTUniformPacket* pack)
 	}
 
 	/*	Read presentation layer.	*/
-	if(pack->header.flag & SNT_PACKET_ENCRYPTION){
+	if(sntPacketHasEncrypted(pack->header)){
 		int preslen;
-		if((preslen = sntReadSocket(connection, &pres, pack->header.offset - len, 0)) <= 0){
+		if((preslen = sntReadSocket(connection, &pack->presentation, pack->header.offset - len, 0)) <= 0){
 			return 0;
 		}
-		sntDebugPrintf("enc off. %d.\n", pres.noffset);
 		len += preslen;
 	}
 
 	/*	Receiving body datagram.	*/
-	if (sntReadSocket(connection, pack->buf,
-			sntDatagramCommandSize(&pack->header), 0)
-			!= sntDatagramCommandSize(&pack->header)) {
+	if (sntReadSocket(connection, sntDatagramGetBlock(pack),
+			sntProtocolHeaderDatagramSize(&pack->header), 0)
+			!= sntProtocolHeaderDatagramSize(&pack->header)) {
 		return 0;
 	}
 
 	/*	Copy to buffer.	*/
-	len += sntCreateRecvPacket(connection, pack->buf,
-			sntDatagramCommandSize(&pack->header), pres.noffset);
+	len += sntCreateRecvPacket(connection, sntDatagramGetBlock(pack),
+			sntProtocolHeaderDatagramSize(&pack->header), pack->presentation.noffset);
 	pack->header.len = len;
 
 	/*	*/
@@ -713,6 +716,10 @@ void sntDropPacket(const SNTConnection* connection){
 	while(sntReadSocket(connection, buf, sizeof(buf), 0) == sizeof(buf));
 }
 
+void sntCopyHeader(SNTPacketHeader* dest, const SNTPacketHeader* source){
+	memcpy(dest, source, sizeof(SNTPacketHeader));
+}
+
 void sntCopyPacket(SNTUniformPacket* dest, const SNTUniformPacket* source){
 	memcpy(dest, source, source->header.len);
 }
@@ -730,10 +737,18 @@ void sntInitHeader(SNTPacketHeader* header, unsigned int command,
 	sntInitDefaultHeader(header, command, buffer + sizeof(SNTPacketHeader));
 }
 
-unsigned int sntDatagramSize(const SNTPacketHeader* header){
+unsigned int sntProtocolPacketSize(const SNTPacketHeader* header){
 	return header->len;
 }
-unsigned int sntDatagramCommandSize(const SNTPacketHeader* header){
+unsigned int sntProtocolHeaderDatagramSize(const SNTPacketHeader* header){
 	return (unsigned int)header->len - (unsigned int)header->offset;
+}
+
+unsigned int sntProtocolHeaderSize(const SNTPacketHeader* header){
+	return header->offset;
+}
+
+void* sntDatagramGetBlock(SNTUniformPacket* packet){
+	return &packet->totalbuf[packet->header.offset];
 }
 

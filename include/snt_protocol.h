@@ -141,6 +141,9 @@ extern const char* gs_error_sym[];
 #define SNT_PACKET_ENCRYPTION	0x1		/*	Packet contains encryption.	*/
 #define SNT_PACKET_COMPRESSION	0x2		/*	Packet contains compression.	*/
 
+#define sntPacketHasEncrypted(head) (head.flag & SNT_PACKET_ENCRYPTION)
+#define snTPacketHasCompress(head)	(head.flag & SNT_PACKET_COMPRESSION)
+
 /**
  *	SNT protocol header. This header will be attached
  *	to all packet with a intention of informing something.
@@ -291,7 +294,7 @@ typedef union snt_unionform_packet_t{
 			SNTPacketHeader enc_header;						/*	*/
 			SNTPresentationPacket presentation;				/*	*/
 			/*	*/
-			uint8_t enc_buf[1500 - sizeof(SNTPacketHeader) - sizeof(SNTPresentationPacket)];
+			uint8_t enc_buf[1500 - (sizeof(SNTPacketHeader) + sizeof(SNTPresentationPacket))];
 		};
 	};
 }__attribute__ ((__packed__))SNTUniformPacket;
@@ -352,6 +355,10 @@ typedef struct snt_connection_t{
  */
 #define sntIsTransportEnable(con) (con->flag & SNT_CONNECTION_TRANS)
 #define sntIsBenchEnable(con) (con->flag & SNT_CONNECTION_BENCH)
+
+
+#define sntIsConnectionSecure(con) (con->symchiper != 0)
+#define sntIsConnectionCompressed(con) (con->usecompression != 0)
 
 /**
  *	Get attribute about the current socket
@@ -449,10 +456,17 @@ extern int sntWriteSocket(const SNTConnection* __restrict__ connection,
 /**
  *	Send packet.
  *
+ *	Will make a copy of the packet to transmit buffer in
+ *	the connection pointer. This will be used in order not
+ *	alter the inputed packet. This is because the packet will
+ *	altered if compression or encryption is used.
+ *
  *	@Return number of bytes sent.
  */
 extern int sntWriteSocketPacket(const SNTConnection* __restrict__ connection,
 			const SNTUniformPacket* __restrict__ pack);
+/*extern int sntWriteSocketPacketFast(const SNTConnection* __restrict__ connection,
+			const SNTUniformPacket* __restrict__ pack);*/
 
 /**
  *	Receiving packet.
@@ -461,6 +475,8 @@ extern int sntWriteSocketPacket(const SNTConnection* __restrict__ connection,
  */
 extern int sntReadSocketPacket(const SNTConnection* __restrict__ connection,
 		SNTUniformPacket* __restrict__ pack);
+/*extern int sntReadSocketPacketFast(const SNTConnection* __restrict__ connection,
+		SNTUniformPacket* __restrict__ pack);*/
 
 /**
  *	Recv header.
@@ -476,7 +492,8 @@ extern int sntRecvPacketHeader(
  */
 extern void sntDropPacket(const SNTConnection* connection);
 
-
+extern void sntCopyHeader(SNTPacketHeader* dest, const SNTPacketHeader* __restrict__ source);
+#define sntCopyPacketPayload(a,b,c) memcpy(a, b, c)
 extern void sntCopyPacket(SNTUniformPacket* __restrict__ dest,
 		const SNTUniformPacket* __restrict__ source);
 
@@ -504,7 +521,7 @@ extern void sntSetDatagramSize(SNTPacketHeader* header, unsigned int buffer);
  *	@Return Total size of packet.
  */
 /*	TODO improve name.	*/
-extern unsigned int sntDatagramSize(const SNTPacketHeader* header);
+extern unsigned int sntProtocolPacketSize(const SNTPacketHeader* header);
 
 /**
  *	Get the size of data inside the packet. This excluses the size
@@ -513,7 +530,16 @@ extern unsigned int sntDatagramSize(const SNTPacketHeader* header);
  *
  *	@Return number of bytes in the data block.
  */
-extern unsigned int sntDatagramCommandSize(const SNTPacketHeader* header);
+extern unsigned int sntProtocolHeaderDatagramSize(const SNTPacketHeader* header);
 
+/**
+ *	Get size of application protocol layer in bytes.
+ */
+extern unsigned int sntProtocolHeaderSize(const SNTPacketHeader* header);
+
+/**
+ *	Get pointer of datagram block.
+ */
+extern void* sntDatagramGetBlock(SNTUniformPacket* packet);
 
 #endif
