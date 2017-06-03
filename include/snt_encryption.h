@@ -198,7 +198,7 @@ extern void sntSymFree(SNTConnection* connection);
  *
  *	@Return	number of bytes encrypted.
  */
-extern int sntSymEncrypt(const SNTConnection* __restrict__ connection,
+extern unsigned int sntSymEncrypt(const SNTConnection* __restrict__ connection,
 		const void* __restrict__ data, unsigned char* __restrict__ output,
 		unsigned int len);
 
@@ -212,7 +212,7 @@ extern int sntSymEncrypt(const SNTConnection* __restrict__ connection,
  *
  *	@Return	number of bytes decrypted.
  */
-extern int sntSymDecrypt(const SNTConnection* __restrict__ connection,
+extern unsigned int sntSymDecrypt(const SNTConnection* __restrict__ connection,
 		const void* __restrict__ data, unsigned char* __restrict__ output,
 		unsigned int len);
 

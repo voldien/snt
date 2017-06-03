@@ -582,11 +582,11 @@ void sntSymFree(SNTConnection* connection){
 }
 
 
-int sntSymEncrypt(const SNTConnection* connection, const void* source,
+unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 		unsigned char* dest, unsigned int soulen) {
 
 	int i;
-	int delen = soulen;
+	unsigned int delen = soulen;
 	const unsigned char* in = source;
 
 	/*	Compute the total block size.	*/
@@ -643,10 +643,10 @@ int sntSymEncrypt(const SNTConnection* connection, const void* source,
 	return delen;
 }
 
-int sntSymDecrypt(const SNTConnection* connection, const void* source,
+unsigned int sntSymDecrypt(const SNTConnection* connection, const void* source,
 		unsigned char* dest, unsigned int soulen) {
 
-	int deslen;
+	unsigned int deslen;
 	int i;
 
 	/*	Compute the total block size.	*/
