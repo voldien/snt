@@ -116,6 +116,19 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 				pack.sec->keybitlen,
 				pack.sec->encrykeyblock);
 		break;
+	case SNT_PROTOCOL_STYPE_RESULT:
+		fprintf(stdout,
+				"type : %u\n"
+				"npackets : %u\n"
+				"nbytes : %u\n"
+				"elapse : %lu\n"
+				"timeres : %lu\n",
+				pack.res->type,
+				pack.res->npackets,
+				pack.res->nbytes,
+				pack.res->elapse,
+				pack.res->timeres);
+		break;
 	case SNT_PROTOCOL_STYPE_READY:
 	case SNT_PROTOCOL_STYPE_STARTTEST:
 	case SNT_PROTOCOL_STYPE_ERROR:
