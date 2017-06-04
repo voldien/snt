@@ -120,8 +120,8 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 	case SNT_PROTOCOL_STYPE_RESULT:
 		fprintf(stdout,
 				"type : %u\n"
-				"npackets : %u\n"
-				"nbytes : %u\n"
+				"npackets : %lu\n"
+				"nbytes : %lu\n"
 				"elapse : %lu\n"
 				"timeres : %lu\n",
 				pack.res->type,
