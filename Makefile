@@ -47,7 +47,7 @@ install : $(TARGET)
 distribution:
 	$(RM) -r $(TARGET)-$(VERSION)
 	$(MKDIR) $(TARGET)-$(VERSION)
-	$(CP) -r src include Makefile README.md LICENSE *.1 $(TARGET)-$(VERSION)
+	$(CP) -r src include Makefile README.md LICENSE *.1 snt.bc $(TARGET)-$(VERSION)
 	tar cf - $(TARGET)-$(VERSION) | gzip -c > $(TARGET)-$(VERSION).tar.gz
 	$(RM) -r $(TARGET)-$(VERSION)
 
