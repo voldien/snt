@@ -24,9 +24,9 @@
  *	Hash types.
  */
 #define SNT_HASH_None		0x0		/*	No hash.	*/
-#define SNT_HASH_MD4		0x1
+#define SNT_HASH_MD4		0x1		/*	MD4 hash.	*/
 #define SNT_HASH_MD5		0x2		/*	MD5 hash.	*/
-#define SNT_HASH_SHA		0x3		/*	Secure hashing algorithm.	*/
+#define SNT_HASH_SHA		0x3		/*	Secure hashing algorithm 128 bits.	*/
 #define SNT_HASH_SHA224		0x4		/*	Secure hashing algorithm 224 bits.	*/
 #define SNT_HASH_SHA256		0x5		/*	Secure hashing algorithm 256 bits.	*/
 #define SNT_HASH_SHA384 	0x6		/*	Secure hashing algorithm 384 bits.	*/
@@ -48,6 +48,8 @@ extern unsigned int sntHash(unsigned int hashtype, const void* __restrict__ bloc
 
 /**
  *	Get fixed hashed size of given hash type.
+ *
+ *	@Return none zero if valid hash type.
  */
 extern unsigned int sntHashGetTypeSize(unsigned int hashtype);
 
