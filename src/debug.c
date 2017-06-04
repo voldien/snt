@@ -9,6 +9,7 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 		const SNTCertificate* cer;
 		const SNTSecureEstablismentPacket* sec;
 		const SNTResultPacket* res;
+		const SNTErrorPacket* error;
 	}pack;
 
 	/*	Check the verbosity.	*/
@@ -129,9 +130,15 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 				pack.res->elapse,
 				pack.res->timeres);
 		break;
+	case SNT_PROTOCOL_STYPE_ERROR:
+		fprintf(stdout,
+				"errorcode : %d\n"
+				"meslen : %u\n",
+				pack.error->errorcode,
+				pack.error->meslen);
+		break;
 	case SNT_PROTOCOL_STYPE_READY:
 	case SNT_PROTOCOL_STYPE_STARTTEST:
-	case SNT_PROTOCOL_STYPE_ERROR:
 	case SNT_PROTOCOL_STYPE_BENCHMARK:
 	default:
 		break;
