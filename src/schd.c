@@ -5,8 +5,23 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <errno.h>
-#include<assert.h>
+#include <assert.h>
+#include <pthread.h>
+#include <sys/mman.h>
 #include "snt_schd.h"
+
+
+void sntMemoryLockAll(void){
+	if(mlockall(MCL_CURRENT | MCL_FUTURE) < 0){
+		fprintf(stderr, "mlockall failed, %s.\n", strerror(errno));
+	}
+}
+
+void sntMemoryUnLockAll(void){
+	if(munlockall() < 0){
+		fprintf(stderr, "munlockall failed, %s.\n", strerror(errno));
+	}
+}
 
 void sntSchdSetAffinity(unsigned int cpu, unsigned int core, unsigned int size){
 

@@ -21,6 +21,19 @@
 #include"snt_def.h"
 
 /**
+ *	Lock memory. This will prevent lazy allocation
+ *	to take place. This means that all memory associated with the
+ *	program gets loaded to memeory and are not allowed to be
+ *	swapped to a storage medium.
+ */
+extern void sntMemoryLockAll(void);
+
+/**
+ *	Unlock all memory.
+ */
+extern void sntMemoryUnLockAll(void);
+
+/**
  *	Set process affinity mapping.
  */
 extern void sntSchdSetAffinity(unsigned int cpu, unsigned int cores,
