@@ -69,9 +69,20 @@ pthread_t sntBenchmarkCreateThread(unsigned int mode, SNTConnection* patt){
 		return 0;
 	}
 
-	/*	Set affinity. TODO fix!	*/
-	/*err = pthread_attr_setaffinity_np();	*/
-	/*sched_getaffinity(0, 1, )	*/
+	/*	Thread schedule priority.	*/
+	err = pthread_attr_setschedpolicy(&attr, SCHED_RR);
+	if(err != 0){
+		fprintf(stderr, "pthread_attr_setschedpolicy failed, %d.\n", err);
+		return 0;
+	}
+
+
+	/*	Set affinity.	*/
+	sntSchdGetAffinity(&cpu, &cores, &size);
+	if(!sntSchdSetThreadAttrAffinity(&attr, cpu, cores, size)){
+		fprintf(stderr, "sntSchdSetThreadAttrAffinity failed.\n");
+		return 0;
+	}
 
 	/*	Create thread.	*/
 	sntDebugPrintf("Creating benchmark thread.\n");
