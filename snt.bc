@@ -1,0 +1,17 @@
+# bash completion for snt(1)
+
+
+_snt() 
+{
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="--version --verbose --debug --quite --ipv6 --ipv4 --TCP --UDP --hash --compression --delta --secure --server --host --port --transport --listen --parallel --benchmarkmode --cipher --public-key -public-nbits --file --afinity --certificate "
+
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+complete -F _snt snt
