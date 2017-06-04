@@ -375,7 +375,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			break;
 		case 'A':
 			if(optarg){
-				int cpu,core,size;
+				unsigned int cpu,core,size;
 				/*	parse input.	*/
 				sscanf(optarg, "%d,%d,%d", &cpu, &core, &size);
 				sntVerbosePrintf("Affinity.\n");
