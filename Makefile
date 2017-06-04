@@ -42,6 +42,7 @@ install : $(TARGET)
 	@echo -n "Installing snt.\n"
 	$(MKDIR) $(INSTALL_LOCATION)/bin
 	$(CP) $(TARGET) $(INSTALL_LOCATION)/bin
+	$(CP) snt.bc /etc/bash_completion.d/snt
 
 distribution:
 	$(RM) -r $(TARGET)-$(VERSION)
