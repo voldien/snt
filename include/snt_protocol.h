@@ -428,14 +428,14 @@ extern int sntSetTransportProcotcol(SNTConnection* connection,
  *	@#eturn number of bytes of the packet body.
  */
 extern unsigned int sntCreateSendPacket(const SNTConnection* __restrict__ connection,
-		void* __restrict__ buffer, unsigned int buflen, unsigned int* __restrict__ noffset);
+		void* __restrict__ buffer, unsigned int buflen, uint8_t* __restrict__ noffset);
 /**
  *	Create packet ready to be received.
  *
  *	@Return number of bytes of the packet body.
  */
 extern unsigned int sntCreateRecvPacket(const SNTConnection* __restrict__ connection,
-		void* __restrict__ buffer, unsigned int buflen, unsigned int noffset);
+		void* __restrict__ buffer, unsigned int buflen, uint8_t noffset);
 
 /**
  *	Read data from socket.
@@ -479,21 +479,34 @@ extern int sntReadSocketPacket(const SNTConnection* __restrict__ connection,
 		SNTUniformPacket* __restrict__ pack);*/
 
 /**
- *	Recv header.
+ *	Recv application protocol header.
  *
- *	@Return 0 if no data.
+ *	@Return none zero if sucesfully fetch. zero otherwise.
  */
 extern int sntRecvPacketHeader(
 		const SNTConnection* __restrict__ connection,
-		SNTPacketHeader* __restrict__ header);
+		SNTUniformPacket* __restrict__ header);
 
 /**
  *	Drop incoming packet.
  */
 extern void sntDropPacket(const SNTConnection* connection);
 
+/**
+ *	Copy application protocol header. This includes layer
+ *	5 to 7 in the OSI model.
+ */
 extern void sntCopyHeader(SNTPacketHeader* dest, const SNTPacketHeader* __restrict__ source);
+
+/**
+ *	Copy packet payload.
+ */
 #define sntCopyPacketPayload(a,b,c) memcpy(a, b, c)
+
+/**
+ *	Copy whole packet based on the values in the application
+ *	protocl header.
+ */
 extern void sntCopyPacket(SNTUniformPacket* __restrict__ dest,
 		const SNTUniformPacket* __restrict__ source);
 
@@ -510,17 +523,19 @@ extern void sntInitDefaultHeader(SNTPacketHeader* header, unsigned int command,
 		unsigned int len);
 
 /**
- *	Initialize header. This will set the size based on the data buffer size.
+ *	Initialize protocol header.
+ *
+ *	\command Application protocol command.
+ *
+ *	\buffer size of the payload in bytes.
  */
 extern void sntInitHeader(SNTPacketHeader* header, unsigned int command,
 		unsigned int buffer);
-
 extern void sntSetDatagramSize(SNTPacketHeader* header, unsigned int buffer);
 
 /**
- *	@Return Total size of packet.
+ *	@Return Total size of packet in bytes.
  */
-/*	TODO improve name.	*/
 extern unsigned int sntProtocolPacketSize(const SNTPacketHeader* header);
 
 /**
@@ -533,12 +548,14 @@ extern unsigned int sntProtocolPacketSize(const SNTPacketHeader* header);
 extern unsigned int sntProtocolHeaderDatagramSize(const SNTPacketHeader* header);
 
 /**
- *	Get size of application protocol layer in bytes.
+ *	Get size of application protocol layer in bytes. This is done by
+ *	reading the offset. Since the offset repesentate the offset to the datablock.
  */
 extern unsigned int sntProtocolHeaderSize(const SNTPacketHeader* header);
 
 /**
- *	Get pointer of datagram block.
+ *	Get pointer of datagram block pointer based on the header
+ *	values.
  */
 extern void* sntDatagramGetBlock(SNTUniformPacket* packet);
 

@@ -495,15 +495,16 @@ int sntSetTransportProcotcol(SNTConnection* connection, unsigned int protocol){
 }
 
 unsigned int sntCreateSendPacket(const SNTConnection* connection, void* buffer,
-		unsigned int buflen, unsigned int* noffset) {
+		unsigned int buflen, uint8_t* noffset) {
 
 	unsigned int size;			/*	*/
 	unsigned char buf[4096];	/*	*/
 	unsigned char* sou;			/*	*/
 	unsigned char* des;			/*	*/
 
-	/*	Don't modify packet if no encryption and compression.	*/
-	if ((connection->symchiper == 0 && connection->usecompression == 0)
+	/*	Don't modify packet if no encryption or compression.	*/
+	if ((!sntIsConnectionSecure(connection)
+			&& !sntIsConnectionCompressed(connection))
 			|| buflen == 0) {
 		return buflen;
 	}
@@ -515,7 +516,7 @@ unsigned int sntCreateSendPacket(const SNTConnection* connection, void* buffer,
 	/*	*/
 	if(connection->symchiper && connection->usecompression){
 		size = sntSymEncrypt(connection, sou, des, size);
-		*noffset = size - buflen;
+		*noffset = (uint8_t)(size - buflen);
 		sntSwapPointer((void**)&des, (void**)&sou);
 		size = sntDeflate(connection->usecompression, (const char*)sou, (char*)des,
 						sntSymTotalBlockSize(size, connection->blocksize));
@@ -538,7 +539,7 @@ unsigned int sntCreateSendPacket(const SNTConnection* connection, void* buffer,
 }
 
 unsigned int sntCreateRecvPacket(const SNTConnection* connection, void* buffer,
-		unsigned int buflen, unsigned int noffset) {
+		unsigned int buflen, uint8_t noffset) {
 
 	unsigned int size;			/*	*/
 	unsigned char buf[4096];	/*	*/
@@ -546,7 +547,8 @@ unsigned int sntCreateRecvPacket(const SNTConnection* connection, void* buffer,
 	unsigned char* des;			/*	*/
 
 	/*	Check if needed to do anything. */
-	if ((connection->symchiper == 0 && connection->usecompression == 0)
+	if ((!sntIsConnectionSecure(connection)
+			&& !sntIsConnectionCompressed(connection))
 			|| buflen == 0) {
 		return buflen;
 	}
@@ -588,11 +590,11 @@ int sntReadSocket(const SNTConnection* connection, void* buffer,
 			switch(connection->option->transport_mode){
 			case SNT_TRANSPORT_TCP:
 				assert(connection->tcpsock > 0);
-				return recv(connection->tcpsock, buffer, (size_t)recvlen, flag);
+				return recv(connection->tcpsock, buffer, recvlen, flag);
 			case SNT_TRANSPORT_UDP:
 				assert(connection->udpsock > 0);
 				len = connection->sclen;
-				return recvfrom(connection->udpsock, buffer, (size_t)recvlen, flag, connection->intaddr, &len);
+				return recvfrom(connection->udpsock, buffer, recvlen, flag, connection->intaddr, &len);
 			default:
 				break;
 			}
@@ -611,10 +613,10 @@ int sntWriteSocket(const SNTConnection* connection, const void* buffer,
 		switch(connection->option->transport_mode){
 		case SNT_TRANSPORT_TCP:
 			assert(connection->tcpsock > 0);
-			return send(connection->tcpsock, buffer, (size_t)senlen, flag);
+			return send(connection->tcpsock, buffer, senlen, flag);
 		case SNT_TRANSPORT_UDP:
 			assert(connection->udpsock > 0);
-			return sendto(connection->udpsock, buffer, (size_t)senlen, flag,
+			return sendto(connection->udpsock, buffer, senlen, flag,
 					connection->extaddr, connection->sclen);
 		default:
 			break;
@@ -622,7 +624,7 @@ int sntWriteSocket(const SNTConnection* connection, const void* buffer,
 	}
 	else{
 		assert(connection->tcpsock > 0);
-		return send(connection->tcpsock, buffer, (size_t)senlen, flag);
+		return send(connection->tcpsock, buffer, senlen, flag);
 	}
 	return 0;
 }
@@ -673,17 +675,9 @@ int sntReadSocketPacket(const SNTConnection* connection, SNTUniformPacket* pack)
 	int len;
 	/*	Receive header.	*/
 	sntDebugPrintf("Receiving.\n");
-	if((len = sntRecvPacketHeader(connection, &pack->header)) <= 0){
+	len = sntRecvPacketHeader(connection, pack);
+	if(len <= 0){
 		return 0;
-	}
-
-	/*	Read presentation layer.	*/
-	if(sntPacketHasEncrypted(pack->header)){
-		int preslen;
-		if((preslen = sntReadSocket(connection, &pack->presentation, pack->header.offset - len, 0)) <= 0){
-			return 0;
-		}
-		len += preslen;
 	}
 
 	/*	Receiving body datagram.	*/
@@ -696,7 +690,9 @@ int sntReadSocketPacket(const SNTConnection* connection, SNTUniformPacket* pack)
 	/*	Copy to buffer.	*/
 	len += sntCreateRecvPacket(connection, sntDatagramGetBlock(pack),
 			sntProtocolHeaderDatagramSize(&pack->header), pack->presentation.noffset);
-	pack->header.len = len;
+
+	/*	Update size.	*/
+	pack->header.len = (uint16_t)len;
 
 	/*	*/
 	sntPrintPacketInfo(pack);
@@ -704,10 +700,21 @@ int sntReadSocketPacket(const SNTConnection* connection, SNTUniformPacket* pack)
 }
 
 int sntRecvPacketHeader(const SNTConnection* connection,
-		SNTPacketHeader* header) {
+		SNTUniformPacket* header) {
 	int n;
 
 	n = sntReadSocket(connection, header, sizeof(SNTPacketHeader), 0);
+
+	/*	Read presentation layer.	*/
+	if(sntPacketHasEncrypted(header->header)){
+		int preslen;
+		if ((preslen = sntReadSocket(connection, &header->presentation,
+				sntProtocolHeaderSize(&header->header) - n, 0)) <= 0) {
+			return 0;
+		}
+		n += preslen;
+	}
+
 	return n;
 }
 
