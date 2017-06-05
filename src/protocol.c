@@ -117,6 +117,8 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 	memcpy(connection->extipv, inet_ntoa(sockaddr->sin_addr), strlen(inet_ntoa(sockaddr->sin_addr)) + 1);
 	connection->externalport = ntohs(sockaddr->sin_port);
 
+	/*	Set socket address size in bytes.	*/
+	connection->sclen = aclen;
 
 	/*	Socket address for UDP.	*/
 	connection->extaddr = (struct sockaddr*)malloc(connection->sclen);
@@ -136,7 +138,7 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 		addrU.addr4.sin_port = htons((uint16_t)connection->externalport);
 		addrU.addr4.sin_family = (sa_family_t)connection->option->affamily;
 		addrU.addr4.sin_addr.s_addr = inet_addr(connection->extipv);
-		connection->sclen = sizeof(addrU.addr4);
+
 		addr = (struct sockaddr*)&addrU.addr4;
 
 		addrU.addr4.sin_port = htons((uint16_t)connection->externalport);
@@ -165,6 +167,7 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 	}
 
 
+
 	/*	Allocate transmission and receive buffer.	*/
 	connection->tranbuf = malloc(1 << 16);
 	assert(connection->tranbuf);
@@ -172,9 +175,10 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 	assert(connection->recvbuf);
 
 	/*	Allocate payload.	*/
-	connection->mtubuf = malloc(connection->option->payload);
+	connection->mtubuf = malloc(
+			connection->option->payload + sizeof(SNTPacketHeader)
+					+ sizeof(SNTPresentationPacket));
 	assert(connection->mtubuf);
-
 
 }
 
