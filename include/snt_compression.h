@@ -48,7 +48,7 @@ extern void sntInitCompression(unsigned int type);
  *
  *	Remark: The max size of inflation is 1024 bytes.
  *
- *	@Return number of bytes.
+ *	@Return if sucesfully number of bytes. otherwise a negative number.
  */
 extern int sntInflate(unsigned int compression, const char* __restrict__ source,
 		char* __restrict__ dest, unsigned int len);
@@ -58,7 +58,7 @@ extern int sntInflate(unsigned int compression, const char* __restrict__ source,
  *
  *	Remark: 'source' and 'dest' can not point at the same address.
  *
- *	@Return number of bytes.
+ *	@Return if sucesfully number of bytes. otherwise a negative number.
  */
 extern int sntDeflate(unsigned int compression, const char* __restrict__ source,
 		char* __restrict__ dest, unsigned int len);
