@@ -40,12 +40,48 @@ void sntSchdSetAffinity(unsigned int cpu, unsigned int core, unsigned int size){
 	}
 }
 
+void sntSchdGetAffinity(unsigned int* cpu, unsigned int* cores,
+		unsigned int* size){
 
-void sntSchdSetThreadAttrAffinity(void* att, unsigned int cpu,
+	int j;
+	cpu_set_t set;
+
+	assert(cpu && cores && size);
+
+	CPU_ZERO(&set);
+	if(sched_getaffinity(0, sizeof(set), &set) != 0){
+		fprintf(stderr, "sched_setaffinity failed, %s.\n", strerror(errno));
+	}
+
+	for (j = 0; j < CPU_SETSIZE; ++j){
+		if (CPU_ISSET(j, &set)){
+
+		}
+	}
+
+	*cpu = 0;
+	*cores = 0;
+	*size = 0;
+
+}
+
+int sntSchdSetThreadAttrAffinity(void* att, unsigned int cpu,
 		unsigned int cores, unsigned int size){
+
+	cpu_set_t set;
+	int err;
+	int i;
 
 	assert(att);
 
+	return 1;
 
+	CPU_ZERO(&set);
+	for(i = 0; i < size; i++){
+		CPU_SET(cores + i, &set);
+	}
 
+	err = pthread_attr_setaffinity_np((pthread_attr_t*)att, sizeof(set), &set);
+
+	return err != 0;
 }

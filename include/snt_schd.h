@@ -48,7 +48,7 @@ extern void sntSchdGetAffinity(unsigned int* cpu, unsigned int* cores,
 /**
  *
  */
-extern void sntSchdSetThreadAttrAffinity(void* att, unsigned int cpu,
+extern int sntSchdSetThreadAttrAffinity(void* att, unsigned int cpu,
 		unsigned int cores, unsigned int size);
 
 #endif
