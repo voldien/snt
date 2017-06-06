@@ -48,22 +48,22 @@ int sntPoolLockMem(SNTPool* poolallocator){
 	return 1;
 }
 
-void* sntPoolObtain(SNTPool* allactor) {
+void* sntPoolObtain(SNTPool* allocator) {
 
 	SNTPoolNode* tmp;
 	void* block;
 
-	if (allactor->pool->next == NULL) {
+	if (allocator->pool->next == NULL) {
 		return NULL;
 	}
 
 	/*	Get next element and assigned new next element.	*/
-	tmp = allactor->pool->next;
-	allactor->pool->next = tmp->next;
+	tmp = allocator->pool->next;
+	allocator->pool->next = tmp->next;
 
 	/*	Get data block.	*/
 	block = tmp->data;
-	memset(block, 0, allactor->itemsize);
+	memset(block, 0, allocator->itemsize);
 	return block;
 }
 
@@ -83,7 +83,7 @@ void* sntPoolReturn(SNTPool* allocator, void* data) {
 	return tmp;
 }
 
-void* sntPoolResize(SNTPool* allocator, unsigned int num, unsigned int itemsize){
+void* sntPoolResize(SNTPool* pool, unsigned int num, unsigned int itemsize){
 	fprintf(stderr, "Not supported.\n");
 	return NULL;
 }
@@ -104,9 +104,12 @@ static void* sntPoolItemByIndex(SNTPool* pool, unsigned int index){
 	return ((char*)pool->pool) + ( (pool->itemsize + sizeof(void*)) * index + sizeof(void*));
 }
 
-void sntPoolFree(SNTPool* allactor){
-	free(allactor->pool);
-	free(allactor);
+void sntPoolFree(SNTPool* pool){
+
+	sntMemsetPoolFrame(pool);
+
+	free(pool->pool);
+	free(pool);
 }
 
 void sntMemsetPoolFrame(SNTPool* pool){
@@ -115,5 +118,4 @@ void sntMemsetPoolFrame(SNTPool* pool){
 	for(i = 0; i < sntPoolNumNodes(pool); i++){
 		memset(sntPoolItemByIndex(pool, i), 0, sntPoolItemSize(pool));
 	}
-	/*memset(pool->pool, 0, sntPoolNumNodes(pool) * sntPoolItemSize(pool));	*/
 }
