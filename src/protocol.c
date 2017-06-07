@@ -295,14 +295,14 @@ SNTConnection* sntAcceptSocket(SNTConnection* bindcon){
 	/*	Create init packet to send to client.	*/
 	sntInitDefaultHeader(&init.header, SNT_PROTOCOL_STYPE_INIT, sizeof(init));
 	init.ssl = connection->option->ssl;
-	init.symchiper = SNT_ENCRYPTION_SYM_ALL * connection->option->ssl ? 1 : 0;
-	init.mode = SNT_PROTOCOL_BM_MODE_ALL;
+	init.symchiper = connection->symchiper * ( connection->option->ssl ? 1 : 0 );
+	init.mode = connection->option->bm_protocol_mode;
 	init.compression = connection->option->compression;
-	init.asymchiper = connection->option->asymmetric * connection->option->ssl ? 1 : 0;
+	init.asymchiper = connection->option->asymmetric * ( connection->option->ssl ? 1 : 0 );
 	init.inetbuffer = (unsigned int)connection->mtu;
-	init.transmode = SNT_TRANSPORT_ALL;
+	init.transmode = connection->option->transport_mode;
 	init.extension = 0;
-	init.deltaTypes = SNT_DELTA_TYPE_ALL;
+	init.deltaTypes = connection->option->deltatype;
 	if(sntWriteSocketPacket(connection, (SNTUniformPacket*)&init) <= 0){
 		fprintf(stderr, "Failed to write to client, %s.\n", strerror(errno));
 		sntDisconnectSocket(connection);
