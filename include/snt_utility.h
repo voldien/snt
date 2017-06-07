@@ -22,7 +22,7 @@
 
 
 /**
- *	Swap pointer value
+ *	Swap pointer value.
  */
 extern void sntSwapPointer(void** __restrict__ a, void** __restrict__ b);
 
@@ -45,6 +45,9 @@ extern int sntMin(int a, int b);
 
 /**
  *	@Return size in number of elements in pointer array.
+ *
+ *	#Remark it requires that the element in succession with the
+ *	last element is a null pointer.
  */
 extern unsigned int sntSymbolArraySize(const void** array);
 
