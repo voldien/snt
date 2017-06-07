@@ -78,7 +78,8 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 				"duplex : %u.\n"
 				"frequency : %lu.\n"
 				"playload : %hu.\n"
-				"extension : %u.\n",
+				"extension : %u.\n"
+				"duration : %lu.\n",
 				pack.cli->ssl,
 				pack.cli->symchiper,
 				pack.cli->compression,
@@ -89,7 +90,8 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 				pack.cli->duplex,
 				pack.cli->invfrequency,
 				pack.cli->playload,
-				pack.cli->extension);
+				pack.cli->extension,
+				pack.cli->duration);
 		break;
 	case SNT_PROTOCOL_STYPE_CERTIFICATE:
 		fprintf(stdout,
