@@ -5,7 +5,7 @@
 #include<lz4.h>
 #include<zlib.h>
 
-static unsigned int g_compressbound = 2000;
+static unsigned int g_compressbound = 4096;
 
 const char* gs_symcompression[] = {
 		"",
