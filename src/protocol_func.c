@@ -197,6 +197,12 @@ int sntProtFuncReady(SNTConnection* connection, const SNTUniformPacket* packet) 
 	}
 	connection->flag |= SNT_CONNECTION_TRANS;
 
+
+	/*	Start.	*/
+	fprintf(stderr, "Starting %s benchmark.\n"
+	"-----------------------------------------------\n",
+	gc_bench_symbol[sntLog2MutExlusive32(connection->option->bm_protocol_mode)]);
+
 	return len;
 }
 
