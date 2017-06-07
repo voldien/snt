@@ -15,12 +15,15 @@ int sntLog2MutExlusive32(unsigned int a){
 	int po = 0;
 	const int bitlen = 32;
 
+	if(a == 0)
+		return 0;
+
 	for(; i < bitlen; i++){
 		if((a >> i) & 0x1)
-			po++;
+			return (i + 1);
 	}
 
-	return po;
+	assert(0);
 }
 
 int sntMax(int a, int b){
