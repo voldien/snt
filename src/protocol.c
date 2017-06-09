@@ -42,6 +42,7 @@ const char* gs_delta_sym[] = {
 		"int",
 		"time",
 		"hrestime",
+		"double",
 		NULL
 };
 

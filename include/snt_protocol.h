@@ -107,9 +107,11 @@ extern const char* gs_symprotocol[];
 #define SNT_DELTA_TYPE_INT				0x2		/*	Delta presented as incremented whole number.	*/
 #define SNT_DELTA_TYPE_TIMESTAMP		0x4		/*	Delta presented in time stamp.	*/
 #define SNT_DELTA_TYPE_HIGHTIMESTAMP	0x8		/*	Delta presented in high resolution time stamp.	*/
-#define SNT_DELTA_TYPE_ALL						\
-	(SNT_DELTA_TYPE_FLOAT | SNT_DELTA_TYPE_INT	\
-	| SNT_DELTA_TYPE_TIMESTAMP)					\
+#define SNT_DELTA_TYPE_DOUBLE			0x10	/*	Delta presented as incremented double.	*/
+#define SNT_DELTA_TYPE_ALL										\
+	(SNT_DELTA_TYPE_FLOAT | SNT_DELTA_TYPE_INT					\
+	| SNT_DELTA_TYPE_TIMESTAMP | SNT_DELTA_TYPE_HIGHTIMESTAMP	\
+	| SNT_DELTA_TYPE_DOUBLE)									\
 
 /**
  *	Delta type symbols.
