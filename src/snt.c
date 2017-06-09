@@ -2,6 +2,7 @@
 #include "snt_utility.h"
 #include "snt_debug.h"
 #include "snt_protocol.h"
+#include "snt_protocol_func.h"
 #include "snt_schd.h"
 #include <assert.h>
 #include <unistd.h>
@@ -10,6 +11,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <errno.h>
+#include <math.h>
 
 unsigned int g_verbosity = SNT_LOG_QUITE;
 unsigned int g_server = 0;
@@ -41,7 +43,7 @@ static void snt_default_con_option(SNTConnectionOption* option, unsigned int isS
 	option->invfrequency = 0;
 	option->payload = 1024;
 	option->listen = 128;
-	option->duration = 10 * sntGetTimeResolution();
+	option->duration = (uint64_t)(10 * sntGetTimeResolution());
 	option->port = SNT_DEFAULT_PORT;
 
 	if(isServer){
@@ -162,7 +164,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 					}
 				}while(gc_bench_symbol[i]);
 
-				option->bm_protocol_mode = (1 << (uint32_t)(i - 1));
+				option->bm_protocol_mode = (uint32_t)(1 << (uint32_t)(i - 1));
 				sntVerbosePrintf("Using %s for benchmark mode .\n", gc_bench_symbol[i]);
 				break;
 			}
@@ -188,7 +190,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 				}while(gs_symcompression[i]);
 
 				sntVerbosePrintf("Using %s for compression.\n", gs_symcompression[i]);
-				option->compression = (1 << (i - 1));
+				option->compression = (uint32_t)(1 << (i - 1));
 				sntInitCompression(option->compression);
 				break;
 			}
@@ -275,7 +277,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			break;
 		case 'r':
 			if(optarg){
-				option->duration = strtod(optarg, NULL) * sntGetTimeResolution();
+				option->duration = (uint64_t)(strtod(optarg, NULL) * (double)sntGetTimeResolution());
 				sntVerbosePrintf("Duration time set to : %ld.\n", option->duration / sntGetTimeResolution() );
 			}
 			break;
@@ -289,7 +291,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			break;
 		case 'm':
 			if(optarg && option){
-				option->payload = (int)strtol(optarg, NULL, 10);
+				option->payload = (uint16_t)strtol(optarg, NULL, 10);
 			}
 			break;
 		case 'l':
@@ -325,7 +327,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 					}
 				}while(gc_symchi_symbol[i]);
 
-				option->symmetric = (1 << (i - 1));
+				option->symmetric = (uint32_t)(1 << (i - 1));
 				sntVerbosePrintf("Using %s for symmetric cipher .\n", gc_symchi_symbol[i]);
 				break;
 			}
@@ -349,7 +351,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 					}
 				}while(gc_asymchi_symbol[i]);
 
-				option->asymmetric = (1 << (i - 1));
+				option->asymmetric = (uint32_t)(1 << (i - 1));
 				sntVerbosePrintf("Using %s for asymmetric cipher .\n", gc_asymchi_symbol[i]);
 				break;
 			}
@@ -493,7 +495,7 @@ void sntServerMain(void){
 						}
 
 						/*	Create benchmark thread.	*/
-						if( (con->flag & SNT_CONNECTION_BENCH) ){
+						if( (sntIsBenchEnable(con)) ){
 							if(con->option->transport_mode & SNT_TRANSPORT_UDP){
 								sntUnMapSocket(g_contable, &fd_active, con->udpsock);
 							}else{
@@ -580,7 +582,9 @@ int sntInitServer(int port, SNTConnectionOption* option){
 	}
 
 	/*	Prevent sensitive information from being swapped to disk.	*/
-	sntPoolLockMem(g_connectionpool);
+	if(!sntPoolLockMem(g_connectionpool)){
+		return 0;
+	}
 
 	/*	Allocate connection hash table.	*/
 	sntVerbosePrintf("Allocating %d connections, size %d bytes.\n", poolsize,
