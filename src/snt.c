@@ -257,22 +257,27 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			break;
 		case 'd':
 			if(optarg && option){
-				if(strcmp(optarg, "time") == 0){
-					option->deltatype = SNT_DELTA_TYPE_TIMESTAMP;
+
+				i = 0;
+				if(strcmp(optarg, "all") == 0){
+					option->deltatype = SNT_DELTA_TYPE_ALL;
+					break;
 				}
-				else if(strcmp(optarg, "hrestime") == 0){
-					option->deltatype = SNT_DELTA_TYPE_HIGHTIMESTAMP;
-				}
-				else if(strcmp(optarg, "float") == 0){
-					option->deltatype = SNT_DELTA_TYPE_FLOAT;
-				}else if(strcmp(optarg, "int") == 0){
-					option->deltatype = SNT_DELTA_TYPE_INT;
-				}
-				else{
-					fprintf(stderr, "Invalid delta type option, %s.\n", optarg);
-					exit(EXIT_FAILURE);
-				}
-				sntVerbosePrintf("deltaType set to : %d.\n", option->deltatype );
+
+				do{
+					if(strcmp(gs_delta_sym[i], optarg) == 0){
+						break;
+					}
+					i++;
+					if(gs_delta_sym[i] == NULL){
+						fprintf(stderr, "Invalid delta type option, %s.\n", optarg);
+						exit(EXIT_FAILURE);
+					}
+				}while(gs_delta_sym[i]);
+
+				sntVerbosePrintf("Using %s for as delta type.\n", gs_delta_sym[i]);
+				option->deltatype = (uint32_t)(1 << (i - 1));
+				break;
 			}
 			break;
 		case 'r':
