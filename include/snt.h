@@ -59,7 +59,7 @@ typedef struct snt_connection_option_t{
 	uint32_t asymmetric_bits;	/*	Asymmetric cipher key bitsize.	*/
 	uint32_t hash;				/*	Hash algorithm.	*/
 	uint32_t deltatype;			/*	Delta type.	*/
-	SNTDelta delta;
+	SNTDelta delta;				/*	Incremental delta.	*/
 	uint32_t invfrequency;		/*	Frequency of number of packet sent per sec.	*/
 	uint32_t freqsec;			/*	TODO resolve to have higher sleep than one second.*/
 	uint16_t payload;			/*	Size of payload.	*/
