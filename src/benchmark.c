@@ -27,7 +27,7 @@ pthread_t sntBenchmarkCreateThread(unsigned int mode, SNTConnection* patt){
 	size_t  guardsize;					/*	*/
 	struct sched_param schparam;		/*	*/
 	int err;							/*	*/
-	int cpu,cores,size;
+	int cpu,cores,size;					/*	*/
 
 	switch(mode){
 	case SNT_PROTOCOL_BM_MODE_PERFORMANCE:
@@ -145,9 +145,11 @@ void sntBenchmarkPrintResult(const SNTResultPacket* result){
 
 	/*	*/
 	duration = (float)result->elapse / 1E9f;
+
+	/*	*/
 	fprintf(stdout, "%ld Mbit sent.\n", (result->nbytes * 8) / (1024 * 1024));
 	fprintf(stdout, "%3f Mbit average.\n",
-			((result->nbytes * 8) / (1024 * 1024)) / duration);
+			(float)((result->nbytes * 8) / (1024 * 1024)) / duration);
 	fprintf(stdout, "%ld packets sent.\n", result->npackets);
 	fprintf(stdout, "End of benchmark.\n"
 	"-----------------------------------------------\n");
@@ -155,8 +157,8 @@ void sntBenchmarkPrintResult(const SNTResultPacket* result){
 
 void sntBenchmarkEnd(SNTConnection* connection, SNTResultPacket* result){
 
-	/*	*/
-	result->timeres = sntGetTimeResolution();
+	/*	Get time resolution.	*/
+	result->timeres = (uint64_t)sntGetTimeResolution();
 
 	/*	*/
 	sntSendBenchMarkResult(connection, result);
@@ -215,7 +217,7 @@ void* sntClientIntegrityBenchmark(void* patt){
 		result.nbytes += len;
 		result.npackets++;
 
-		/*	*/
+		/*	Wait.	*/
 		sntWaitFrequency(conopt);
 	}
 
@@ -264,7 +266,7 @@ void* sntClientPerformanceBenchmark(void* patt){
 		result.nbytes += len;
 		result.npackets++;
 
-		/*	*/
+		/*	Wait.	*/
 		sntWaitFrequency(conopt);
 	}
 
@@ -328,16 +330,16 @@ void* sntClientFileBenchmark(void* patt){
 		if( len <= 0){
 			break;
 		}
-		result.nbytes += len;
+		result.nbytes += (uint64_t)len;
 		result.npackets++;
 
-		/*	*/
+		/*	Wait.	*/
 		sntWaitFrequency(conopt);
 	}
 
 	/*	*/
 	sntInitDefaultHeader(&result.header, SNT_PROTOCOL_STYPE_RESULT, sizeof(result));
-	result.elapse = sntGetNanoTime() - starttime;
+	result.elapse = (uint64_t)(sntGetNanoTime() - starttime);
 	result.type = 0;
 
 	/*	*/
