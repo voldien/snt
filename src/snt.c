@@ -231,9 +231,20 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			break;
 		case 'F':
 			if(optarg && option){
-				option->invfrequency = strtol(optarg, NULL, 10);
-				option->invfrequency = (long int)sntGetTimeResolution() / option->invfrequency;
-				sntVerbosePrintf("frequency set to :%ld hz\n", option->invfrequency);
+				double timefraction;
+				double dummyfraction;
+
+				timefraction = strtod(optarg, NULL);
+				if( modf(timefraction, &dummyfraction) == 0.0){
+					/*	*/
+					option->invfrequency = strtol(optarg, NULL, 10);
+					option->invfrequency = (uint64_t)sntGetTimeResolution() / option->invfrequency;
+					sntVerbosePrintf("frequency set to :%ld hz\n", sntGetTimeResolution() / option->invfrequency);
+				}else{
+					/*	*/
+					option->invfrequency = (uint64_t)((float)sntGetTimeResolution() / timefraction);
+					sntVerbosePrintf("frequency set to :%f hz\n", (float)sntGetTimeResolution() / (float)option->invfrequency);
+				}
 			}
 			break;
 		case 't':	/*	Transport protocol.	*/
