@@ -200,7 +200,7 @@ typedef struct snt_client_option_packet_t{
 	uint32_t deltaTypes;			/*	Delta type.	*/
 	SNTDelta incdelta;				/*	Incremental delta.	*/
 	uint32_t duplex;				/*	Duplex of the communication.	*/
-	uint32_t invfrequency;			/*	Inverse frequency. Aka sleep between each transmission.	*/
+	uint64_t invfrequency;			/*	Inverse frequency. Aka sleep between each transmission.	*/
 	uint16_t playload;				/*	Payload.	*/
 	uint32_t extension;				/*	Not supported.	*/
 	uint64_t duration;				/*	Duration of the benchmark.	*/
