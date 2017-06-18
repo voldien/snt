@@ -132,7 +132,7 @@ int sntBenchmarkWait(SNTConnection* connection){
 }
 
 void sntWaitFrequency(const SNTConnectionOption* conopt){
-	sntNanoSleep(conopt->invfrequency);	/*	TODO add support for seconds.	*/
+	sntNanoSleep(conopt->invfrequency);
 }
 
 int sntDurationExpired(uint64_t elapse, const SNTConnectionOption* option){
