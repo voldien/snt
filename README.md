@@ -44,7 +44,7 @@ snt --server --secure --compression=all --verbose
 ----------------
 In order to compile the program, the following Debian packages has to be installed.
 ```
-apt-get install openssl-dev libzip-dev liblz4-dev libssl-dev
+apt-get install libzip-dev liblz4-dev libssl-dev
 ```
 
 ## License ##
