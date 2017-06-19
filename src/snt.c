@@ -634,11 +634,16 @@ int sntInitServer(int port, SNTConnectionOption* option){
 				gc_asymchi_symbol[sntLog2MutExlusive32(option->asymmetric)], option->asymmetric_bits);
 
 		/*	TODO add support for X509 here.	*/
-		/*	Create asymmetric key and check if successfully.	*/
-		if(sntASymGenerateKey(g_bindconnection, option->asymmetric, option->asymmetric_bits) == 0){
-			fprintf(stderr, "Failed to create asymmetric cipher key.\n");
-			sntDisconnectSocket(g_bindconnection);
+		if(cerficatefilepath){
+			fprintf(stderr, "Failed, X509 not supported.\n");
 			return 0;
+		}else{
+			/*	Create asymmetric key and check if successfully.	*/
+			if(sntASymGenerateKey(g_bindconnection, option->asymmetric, option->asymmetric_bits) == 0){
+				fprintf(stderr, "Failed to create asymmetric cipher key.\n");
+				sntDisconnectSocket(g_bindconnection);
+				return 0;
+			}
 		}
 	}
 	return 1;
