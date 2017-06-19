@@ -29,9 +29,16 @@ extern void sntSwapPointer(void** __restrict__ a, void** __restrict__ b);
 /**
  *	log2 with mutuality exclusive bit flag.
  *
- *	@Return
+ *	@Return exponent of base 2 for a.
  */
 extern int sntLog2MutExlusive32(unsigned int a);
+
+/**
+ * 	Check if a is a power of 2.
+ *
+ *	@Return None zero if a is a power of two.
+ */
+extern int sntIsPower2(unsigned int a);
 
 /**
  *	Return max value of a and b.
