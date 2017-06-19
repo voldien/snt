@@ -31,7 +31,7 @@ extern long int sntGetNanoTime(void);
 extern long int sntGetUnixTime(void);
 
 /**
- *	Get time resolution.
+ *	Get time resolution per second unit.
  */
 extern long int sntGetTimeResolution(void);
 
