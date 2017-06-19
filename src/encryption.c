@@ -332,6 +332,8 @@ void sntASymFree(SNTConnection* connection){
 
 static int sntGetSignHashEnum(unsigned int hash){
 	switch(hash){
+	case SNT_HASH_MD4:
+		return NID_md4;
 	case SNT_HASH_MD5:
 		return NID_md5;
 	case SNT_HASH_SHA:
