@@ -586,7 +586,7 @@ void sntSymFree(SNTConnection* connection){
 unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 		unsigned char* dest, unsigned int soulen) {
 
-	int i;
+	unsigned int i;
 	unsigned int delen = soulen;
 	const unsigned char* in = source;
 
@@ -648,7 +648,8 @@ unsigned int sntSymDecrypt(const SNTConnection* connection, const void* source,
 		unsigned char* dest, unsigned int soulen) {
 
 	unsigned int deslen;
-	int i;
+	const unsigned char* in = source;
+	unsigned int i;
 
 	/*	Compute the total block size.	*/
 	deslen = sntSymTotalBlockSize(soulen, connection->blocksize);
@@ -659,14 +660,14 @@ unsigned int sntSymDecrypt(const SNTConnection* connection, const void* source,
 	case SNT_ENCRYPTION_AES192:
 	case SNT_ENCRYPTION_AES256:
 		for(i = 0; i < deslen; i += connection->blocksize){
-			AES_decrypt(source + i, dest + i, connection->deaes);
+			AES_decrypt(in + i, dest + i, connection->deaes);
 		}
 		break;
 	case SNT_ENCRYPTION_AES_ECB128:
 	case SNT_ENCRYPTION_AES_ECB192:
 	case SNT_ENCRYPTION_AES_ECB256:
 		for(i = 0; i < deslen; i += connection->blocksize){
-			AES_ecb_encrypt(source + i, dest + i, connection->deaes, DES_DECRYPT);
+			AES_ecb_encrypt(in + i, dest + i, connection->deaes, DES_DECRYPT);
 		}
 		break;
 	case SNT_ENCRYPTION_AES_CBC128:
