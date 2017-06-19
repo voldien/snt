@@ -275,6 +275,13 @@ int sntProtFuncBenchmark(SNTConnection* connection, const SNTUniformPacket* pack
 
 int sntValidateCapability(const SNTClientOption* option){
 
+
+	if (!sntIsPower2(option->benchmode) || !sntIsPower2(option->compression)
+			|| !sntIsPower2(option->symchiper)) {
+		fprintf(stderr, "Non mutually exclusive option is not supported.\n");
+		return SNT_ERROR_INVALID_ARGUMENT;
+	}
+
 	/*	Check options are valid to be executed.	*/
 	if(option->compression && g_bindconnection->option->compression == 0){
 		fprintf(stderr, "compression not supported.\n");
@@ -284,6 +291,11 @@ int sntValidateCapability(const SNTClientOption* option){
 	if(option->ssl && g_bindconnection->option->ssl == 0){
 		fprintf(stderr, "ssl/secure connection not supported.\n");
 		return SNT_ERROR_SSL_NOT_SUPPORTED;
+	}
+
+	if(!(option->symchiper & g_bindconnection->option->symmetric)){
+		fprintf(stderr, "cipher option not supported.\n");
+		return SNT_ERROR_INVALID_ARGUMENT;
 	}
 
 	if(!(option->benchmode & SNT_PROTOCOL_BM_MODE_ALL)){
