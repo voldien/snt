@@ -28,7 +28,7 @@ char* cerficatefilepath = NULL;
 
 
 const char* sntGetVersion(void){
-	return SNT_STR_VERSION;
+	return SNT_STR_VERSION " (" SNT_ARCH ") -- " SNT_COMPILER_NAME;
 }
 
 static void snt_default_con_option(SNTConnectionOption* option, unsigned int isServer){
