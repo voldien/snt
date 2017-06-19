@@ -26,6 +26,7 @@
 typedef union snt_delta_t{
 	uint64_t i;		/*	Long int delta type.	*/
 	float f;		/*	Float delta type.	*/
+	double d;		/*	Double delta type.	*/
 }SNTDelta;
 
 /**
@@ -45,6 +46,16 @@ extern int sntGenerateAsciiFloat(char* text, float digit);
  *	@Return
  */
 extern float sntAsciiToFloat(char* text);
+
+/**
+ *	@Return
+ */
+extern int sntGenerateAsciiDouble(char* text, double digit);
+
+/**
+ *	@Return
+ */
+extern double sntAsciiToDouble(char* text);
 
 /**
  *	@Return
