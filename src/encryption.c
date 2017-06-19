@@ -382,8 +382,7 @@ int sntASymVerifyDigSign(const SNTConnection* connection, unsigned int hashtype,
 int sntSymGenerateKey(SNTConnection* connection, unsigned int cipher){
 
 	int status;					/*	*/
-	unsigned char* rand;	/*	*/
-	int len = sizeof(rand);		/*	*/
+	unsigned char* rand;		/*	*/
 
 	/*	*/
 	RAND_poll();
