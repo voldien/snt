@@ -616,9 +616,7 @@ unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 	case SNT_ENCRYPTION_AES_CBC128:
 	case SNT_ENCRYPTION_AES_CBC192:
 	case SNT_ENCRYPTION_AES_CBC256:
-		for(i = 0; i < delen; i += connection->blocksize){
-			/*AES_cbc_encrypt(source + i, dest + i,connection->blocksize, connection->aes, NULL, AES_ENCRYPT);*/
-		}
+		AES_cbc_encrypt(in, dest, delen, connection->aes, tmpiv, AES_ENCRYPT);
 		break;
 	case SNT_ENCRYPTION_AES_CFB128:
 	case SNT_ENCRYPTION_AES_CFB192:
@@ -674,9 +672,7 @@ unsigned int sntSymDecrypt(const SNTConnection* connection, const void* source,
 	case SNT_ENCRYPTION_AES_CBC128:
 	case SNT_ENCRYPTION_AES_CBC192:
 	case SNT_ENCRYPTION_AES_CBC256:
-		for(i = 0; i < deslen; i += connection->blocksize){
-			/*AES_cbc_encrypt(source + i, dest + i,connection->blocksize, connection->aes, NULL, AES_DECRYPT);*/
-		}
+		AES_cbc_encrypt(source, dest, deslen, connection->deaes, tmpiv, AES_DECRYPT);/**/
 		break;
 	case SNT_ENCRYPTION_AES_CFB128:
 	case SNT_ENCRYPTION_AES_CFB192:
