@@ -27,7 +27,7 @@ TARGET ?= snt
 all : $(TARGET)
 	@echo -n "Finished making $(TARGET). \n"
 
-$(TARGET) : CFLAGS += -O2
+$(TARGET) : CFLAGS += -O2 -DNDEBUG
 $(TARGET) : $(OBJS)
 	$(CC) $(CLFAGS) $^ -o $@ $(CLIBS)
 
