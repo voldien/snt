@@ -36,7 +36,7 @@ static void snt_default_con_option(SNTConnectionOption* option, unsigned int isS
 	option->affamily = AF_INET;
 	option->ssl = 0;
 	option->compression = 0;
-	option->symmetric = SNT_ENCRYPTION_AES128;
+	option->symmetric = SNT_ENCRYPTION_AES_ECB128;
 	option->asymmetric = SNT_ENCRYPTION_ASYM_RSA;
 	option->asymmetric_bits = 1024;
 	option->hash = SNT_HASH_SHA256;
