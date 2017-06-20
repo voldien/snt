@@ -410,9 +410,6 @@ int sntSymCreateFromKey(SNTConnection* connection, unsigned int cipher, const vo
 	int symcipsize = 0;
 
 	switch(cipher){
-	case SNT_ENCRYPTION_AES128:
-	case SNT_ENCRYPTION_AES256:
-	case SNT_ENCRYPTION_AES192:
 	case SNT_ENCRYPTION_AES_CBC128:
 	case SNT_ENCRYPTION_AES_CBC192:
 	case SNT_ENCRYPTION_AES_CBC256:
@@ -463,9 +460,6 @@ void sntSymCopyKey(SNTConnection* connection, void** key){
 	assert(*key);
 
 	switch(connection->symchiper){
-	case SNT_ENCRYPTION_AES128:
-	case SNT_ENCRYPTION_AES192:
-	case SNT_ENCRYPTION_AES256:
 	case SNT_ENCRYPTION_AES_ECB128:
 	case SNT_ENCRYPTION_AES_ECB192:
 	case SNT_ENCRYPTION_AES_ECB256:
@@ -493,17 +487,14 @@ void sntSymCopyKey(SNTConnection* connection, void** key){
 
 int sntSymKeyBitSize(unsigned int cipher){
 	switch(cipher){
-	case SNT_ENCRYPTION_AES128:
 	case SNT_ENCRYPTION_AES_ECB128:
 	case SNT_ENCRYPTION_AES_CBC128:
 	case SNT_ENCRYPTION_AES_CFB128:
 		return 128;
-	case SNT_ENCRYPTION_AES192:
 	case SNT_ENCRYPTION_AES_ECB192:
 	case SNT_ENCRYPTION_AES_CBC192:
 	case SNT_ENCRYPTION_AES_CFB192:
 		return 192;
-	case SNT_ENCRYPTION_AES256:
 	case SNT_ENCRYPTION_AES_ECB256:
 	case SNT_ENCRYPTION_AES_CBC256:
 	case SNT_ENCRYPTION_AES_CFB256:
@@ -523,9 +514,6 @@ int sntSymKeyByteSize(unsigned int cipher){
 
 int sntSymBlockSize(unsigned int cipher){
 	switch(cipher){
-	case SNT_ENCRYPTION_AES128:
-	case SNT_ENCRYPTION_AES192:
-	case SNT_ENCRYPTION_AES256:
 	case SNT_ENCRYPTION_AES_CBC128:
 	case SNT_ENCRYPTION_AES_CBC192:
 	case SNT_ENCRYPTION_AES_CBC256:
@@ -548,9 +536,6 @@ int sntSymBlockSize(unsigned int cipher){
 void sntSymFree(SNTConnection* connection){
 
 	switch(connection->symchiper){
-	case SNT_ENCRYPTION_AES128:
-	case SNT_ENCRYPTION_AES192:
-	case SNT_ENCRYPTION_AES256:
 	case SNT_ENCRYPTION_AES_CBC128:
 	case SNT_ENCRYPTION_AES_CBC192:
 	case SNT_ENCRYPTION_AES_CBC256:
@@ -599,13 +584,6 @@ unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 
 	/*	Encryption.	*/
 	switch(connection->symchiper){
-	case SNT_ENCRYPTION_AES128:
-	case SNT_ENCRYPTION_AES192:
-	case SNT_ENCRYPTION_AES256:
-		for(i = 0; i < delen; i += connection->blocksize){
-			AES_encrypt(in + i, dest + i, connection->aes);
-		}
-		break;
 	case SNT_ENCRYPTION_AES_ECB128:
 	case SNT_ENCRYPTION_AES_ECB192:
 	case SNT_ENCRYPTION_AES_ECB256:
@@ -655,13 +633,6 @@ unsigned int sntSymDecrypt(const SNTConnection* connection, const void* source,
 
 	/*	Decryption.	*/
 	switch(connection->symchiper){
-	case SNT_ENCRYPTION_AES128:
-	case SNT_ENCRYPTION_AES192:
-	case SNT_ENCRYPTION_AES256:
-		for(i = 0; i < deslen; i += connection->blocksize){
-			AES_decrypt(in + i, dest + i, connection->deaes);
-		}
-		break;
 	case SNT_ENCRYPTION_AES_ECB128:
 	case SNT_ENCRYPTION_AES_ECB192:
 	case SNT_ENCRYPTION_AES_ECB256:

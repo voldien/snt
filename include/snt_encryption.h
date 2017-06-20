@@ -27,15 +27,12 @@ typedef struct snt_connection_t SNTConnection;
  *	mutually exclusive enumerates.
  */
 #define SNT_ENCRYPTION_NONE				0x0		/*	No symmetric encryption cipher.	*/
-#define SNT_ENCRYPTION_AES128			0x1		/*	AES 128 bit key.	*/
-#define SNT_ENCRYPTION_AES192			0x2		/*	AES 192 bit key.	*/
-#define SNT_ENCRYPTION_AES256			0x4		/*	AES 256 bit key.	*/
+#define SNT_ENCRYPTION_AES_ECB128		0x1		/*	AES 128 bit key Electronic Codebook.	*/
+#define SNT_ENCRYPTION_AES_ECB192		0x2		/*	AES 192 bit key Electronic Codebook.	*/
+#define SNT_ENCRYPTION_AES_ECB256		0x4		/*	AES 256 bit key Electronic Codebook.	*/
 #define SNT_ENCRYPTION_BLOWFISH			0x8		/*	BlowFish.	*/
 #define SNT_ENCRYPTION_DES				0x10	/*	DES. (Data encryption standard), don't use unless you know what you're doing.*/
 #define SNT_ENCRYPTION_3DES				0x20	/*	3DES.	*/
-#define SNT_ENCRYPTION_AES_ECB128		0x40	/*	Electronic Codebook.	*/
-#define SNT_ENCRYPTION_AES_ECB192		0x80	/*	Electronic Codebook.	*/
-#define SNT_ENCRYPTION_AES_ECB256		0x100	/*	Electronic Codebook.	*/
 #define SNT_ENCRYPTION_AES_CBC128		0x200	/*	Cipher Block Chaining.	*/
 #define SNT_ENCRYPTION_AES_CBC192		0x400	/*	Cipher Block Chaining.	*/
 #define SNT_ENCRYPTION_AES_CBC256		0x800	/*	Cipher Block Chaining.	*/
@@ -43,10 +40,13 @@ typedef struct snt_connection_t SNTConnection;
 #define SNT_ENCRYPTION_AES_CFB192		0x2000	/*	Cipher Feedback.	*/
 #define SNT_ENCRYPTION_AES_CFB256		0x4000	/*	Cipher Feedback.	*/
 #define SNT_ENCRYPTION_SYM_ALL									\
-		(SNT_ENCRYPTION_AES128 | SNT_ENCRYPTION_AES192			\
-		| SNT_ENCRYPTION_AES_ECB128 | SNT_ENCRYPTION_AES_CBC128 \
-		| SNT_ENCRYPTION_AES256 | SNT_ENCRYPTION_BLOWFISH 		\
-		| SNT_ENCRYPTION_DES | SNT_ENCRYPTION_3DES)
+		( SNT_ENCRYPTION_BLOWFISH 								\
+		| SNT_ENCRYPTION_DES | SNT_ENCRYPTION_3DES				\
+		| SNT_ENCRYPTION_AES_ECB128 | SNT_ENCRYPTION_AES_ECB192 \
+		| SNT_ENCRYPTION_AES_ECB256 | SNT_ENCRYPTION_AES_CBC128 \
+		| SNT_ENCRYPTION_AES_CBC192 | SNT_ENCRYPTION_AES_CBC256 \
+		| SNT_ENCRYPTION_AES_CFB128 | SNT_ENCRYPTION_AES_CFB192 \
+		| SNT_ENCRYPTION_AES_CFB256)
 
 extern const char* gc_symchi_symbol[];
 
