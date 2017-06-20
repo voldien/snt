@@ -310,6 +310,11 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 				option->payload = (uint16_t)strtol(optarg, NULL, 10);
 			}
 			break;
+		case 'n':
+			if(optarg){
+				g_numcliconne = strtol(optarg, NULL, 10);
+			}
+			break;
 		case 'l':
 			if(optarg && option){
 				option->listen = (int)strtol(optarg, NULL, 10);
