@@ -143,13 +143,14 @@ void sntBenchmarkPrintResult(const SNTResultPacket* result){
 
 	float duration;
 
-	/*	*/
-	duration = (float)result->elapse / 1E9f;
+	/*	Benchmark duration.	*/
+	duration = (float)result->elapse / (float)sntGetTimeResolution();
 
-	/*	*/
-	fprintf(stdout, "%ld Mbit sent.\n", (result->nbytes * 8) / (1024 * 1024));
+	/*	Display benchmark result.	*/
+	fprintf(stdout, "%f duration.\n", duration);
+	fprintf(stdout, "%3f Mbit sent.\n", (float)(result->nbytes * 8) / (float)(1024 * 1024));
 	fprintf(stdout, "%3f Mbit average.\n",
-			(float)((result->nbytes * 8) / (1024 * 1024)) / duration);
+			((float)(result->nbytes * 8) / (float)(1024 * 1024)) / duration);
 	fprintf(stdout, "%ld packets sent.\n", result->npackets);
 	fprintf(stdout, "End of benchmark.\n"
 	"-----------------------------------------------\n");
