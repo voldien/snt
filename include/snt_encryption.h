@@ -220,7 +220,7 @@ extern unsigned int sntSymDecrypt(const SNTConnection* __restrict__ connection,
  *	Compute the total size of encryption data chunk.
  *	The size has to be a multiple of block size.
  */
-extern int sntSymTotalBlockSize(unsigned int len, unsigned int blocksize);
+extern unsigned int sntSymTotalBlockSize(unsigned int len, unsigned int blocksize);
 
 /*
 extern int sntSymPadding(void);

@@ -645,31 +645,38 @@ unsigned int sntSymDecrypt(const SNTConnection* connection, const void* source,
 	case SNT_ENCRYPTION_AES_CFB128:
 	case SNT_ENCRYPTION_AES_CFB192:
 	case SNT_ENCRYPTION_AES_CFB256:
+		AES_cfb128_encrypt(in, dest, deslen, connection->deaes, tmpiv, &dummy, AES_DECRYPT);
 		break;
 	case SNT_ENCRYPTION_DES:
 		for(i = 0; i < deslen; i += connection->blocksize){
-			DES_encrypt1((DES_LONG*)(source + i), connection->symmetrickey, DES_DECRYPT);
+			memcpy((DES_LONG*)(dest + i),(DES_LONG*)(in + i), connection->blocksize);
+			DES_encrypt1((DES_LONG*)(dest + i), connection->symmetrickey, DES_DECRYPT);
 		}
 		break;
 	case SNT_ENCRYPTION_3DES:
 		for(i = 0; i < deslen; i += connection->blocksize){
-			/*DES_encrypt3()*/
+			memcpy((DES_LONG*)(dest + i),(DES_LONG*)(in + i), connection->blocksize);
+			DES_decrypt3((DES_LONG*)(dest + i),
+					&((DES_key_schedule*)connection->des3)[0],
+					&((DES_key_schedule*)connection->des3)[1],
+					&((DES_key_schedule*)connection->des3)[2]);
 		}
 		break;
 	case SNT_ENCRYPTION_BLOWFISH:
 		for(i = 0; i < deslen; i += connection->blocksize){
-			BF_ecb_encrypt((source + i), (dest + i), connection->blowfish, BF_DECRYPT);
+			BF_ecb_encrypt((in + i), (dest + i), connection->blowfish, BF_DECRYPT);
 		}
 		break;
 	default:
 		memcpy(dest, source, deslen);
 		break;
 	}
+
 	/*	*/
 	return deslen;
 }
 
-int sntSymTotalBlockSize(unsigned int len, unsigned int blocksize){
+unsigned int sntSymTotalBlockSize(unsigned int len, unsigned int blocksize){
 	if(len % blocksize == 0)
 		return len;
 	else
