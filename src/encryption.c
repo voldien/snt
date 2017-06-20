@@ -20,15 +20,12 @@
 
 const char* gc_symchi_symbol[] = {
 		"",
-		"aes128",
-		"aes192",
-		"aes256",
-		"blowfish",
-		"des",
-		"3des",
 		"aesecb128",
 		"aesecb192",
 		"aesecb256",
+		"blowfish",
+		"des",
+		"3des",
 		"aescbc128",
 		"aescbc192",
 		"aescbc256",

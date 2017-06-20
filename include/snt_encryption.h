@@ -33,12 +33,12 @@ typedef struct snt_connection_t SNTConnection;
 #define SNT_ENCRYPTION_BLOWFISH			0x8		/*	BlowFish.	*/
 #define SNT_ENCRYPTION_DES				0x10	/*	DES. (Data encryption standard), don't use unless you know what you're doing.*/
 #define SNT_ENCRYPTION_3DES				0x20	/*	3DES.	*/
-#define SNT_ENCRYPTION_AES_CBC128		0x200	/*	Cipher Block Chaining.	*/
-#define SNT_ENCRYPTION_AES_CBC192		0x400	/*	Cipher Block Chaining.	*/
-#define SNT_ENCRYPTION_AES_CBC256		0x800	/*	Cipher Block Chaining.	*/
-#define SNT_ENCRYPTION_AES_CFB128		0x1000	/*	Cipher Feedback.	*/
-#define SNT_ENCRYPTION_AES_CFB192		0x2000	/*	Cipher Feedback.	*/
-#define SNT_ENCRYPTION_AES_CFB256		0x4000	/*	Cipher Feedback.	*/
+#define SNT_ENCRYPTION_AES_CBC128		0x40	/*	Cipher Block Chaining.	*/
+#define SNT_ENCRYPTION_AES_CBC192		0x80	/*	Cipher Block Chaining.	*/
+#define SNT_ENCRYPTION_AES_CBC256		0x100	/*	Cipher Block Chaining.	*/
+#define SNT_ENCRYPTION_AES_CFB128		0x200	/*	Cipher Feedback.	*/
+#define SNT_ENCRYPTION_AES_CFB192		0x400	/*	Cipher Feedback.	*/
+#define SNT_ENCRYPTION_AES_CFB256		0x800	/*	Cipher Feedback.	*/
 #define SNT_ENCRYPTION_SYM_ALL									\
 		( SNT_ENCRYPTION_BLOWFISH 								\
 		| SNT_ENCRYPTION_DES | SNT_ENCRYPTION_3DES				\
