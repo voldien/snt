@@ -561,6 +561,7 @@ void sntSymFree(SNTConnection* connection){
 	/*	Update connection symmetric cipher state.	*/
 	connection->symchiper = SNT_ENCRYPTION_NONE;
 	connection->symmetrickey = NULL;
+	connection->desymmetrickey = NULL;
 	connection->blocksize = 0;
 }
 
