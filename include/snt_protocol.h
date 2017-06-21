@@ -94,10 +94,13 @@ extern const char* gs_symprotocol[];
 /**
  *	Transport layer.
  */
-#define SNT_TRANSPORT_TCP 0x1			/*	TCP - Transfer control protocol, Default.	*/
-#define SNT_TRANSPORT_UDP 0x2			/*	UDP - User datagram protocol.	*/
+#define SNT_TRANSPORT_NONE	0x0			/*	None transport.	*/
+#define SNT_TRANSPORT_TCP	0x1			/*	TCP - Transfer control protocol, Default.	*/
+#define SNT_TRANSPORT_UDP	0x2			/*	UDP - User datagram protocol.	*/
 #define SNT_TRANSPORT_ALL					\
 	(SNT_TRANSPORT_TCP | SNT_TRANSPORT_UDP)	\
+
+extern const char* gs_sym_transport[];
 
 /**
  *	Delta type used for integrity

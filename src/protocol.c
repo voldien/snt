@@ -37,6 +37,13 @@ const char* gs_symprotocol[] = {
 		NULL
 };
 
+const char* gs_sym_transport[] = {
+	"",
+	"tcp",
+	"udp",
+	NULL
+};
+
 const char* gs_delta_sym[] = {
 		"float",
 		"int",
