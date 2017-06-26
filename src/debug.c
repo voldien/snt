@@ -16,6 +16,9 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 	if(g_verbosity < SNT_LOG_DEBUG)
 		return;
 
+	/*	*/
+	pack.uni = packet;
+
 	/*	Application protocol header.	*/
 	fprintf(stdout, "--- header ---\n"
 					"version : %u.%u.\n"
@@ -39,9 +42,6 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 						"--------------\n",
 						packet->totalbuf[sizeof(SNTPacketHeader)]);
 	}
-
-	/*	*/
-	pack.uni = packet;
 
 	/*	*/
 	switch(packet->header.stype){
