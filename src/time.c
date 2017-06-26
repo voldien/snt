@@ -1,12 +1,12 @@
 #include "snt_time.h"
-#include<time.h>
+#include <time.h>
 #include <sys/time.h>
 #include <unistd.h>
 
 long int sntGetNanoTime(void){
 	struct timeval tSpec;
 	gettimeofday(&tSpec, NULL);
-	return (tSpec.tv_sec * (long int)1E6 + tSpec.tv_usec) * 1000;
+	return (tSpec.tv_sec * (long int)1E6L + tSpec.tv_usec) * 1000;
 }
 
 long int sntGetUnixTime(void){
