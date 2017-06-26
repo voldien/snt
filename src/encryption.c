@@ -565,7 +565,8 @@ void sntSymFree(SNTConnection* connection){
 	connection->blocksize = 0;
 }
 
-static char tmpiv[16] = {2,3,3,2,3,2,1};	/*	TODO resolved later, Used for testing */
+static unsigned char tmpiv[16] = {2,3,3,2,3,2,1};	/*	TODO resolved later, Used for testing */
+int dummy = 6;
 
 unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 		unsigned char* dest, unsigned int soulen) {
