@@ -318,7 +318,7 @@ int sntSendCertificate(const SNTConnection* bind, SNTConnection* client){
 	SNTCertificate cert;
 	void* tmphash;
 
-	/*	*/
+	/*	Can't execute here if asymchiper is not set.	*/
 	assert(bind->asymchiper != SNT_ENCRYPTION_ASYM_NONE);
 
 	/*	Copy public key to init packet.	*/
@@ -375,7 +375,7 @@ int sntSendError(const SNTConnection* connection, int code,
 
 	sntInitDefaultHeader(&error.header, SNT_PROTOCOL_STYPE_ERROR, sizeof(error));
 
-	/*	*/
+	/*	Assign error packet.	*/
 	error.errorcode = code;
 	error.meslen = (unsigned int)strlen(message);
 	memcpy(error.message, message, error.meslen);
