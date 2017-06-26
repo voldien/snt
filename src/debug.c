@@ -89,7 +89,7 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 				pack.cli->incdelta.i,
 				pack.cli->duplex,
 				pack.cli->invfrequency,
-				pack.cli->playload,
+				pack.cli->payload,
 				pack.cli->extension,
 				pack.cli->duration);
 		break;
