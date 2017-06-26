@@ -19,7 +19,7 @@ int sntProtFuncInit(SNTConnection* connection, const SNTUniformPacket* packet) {
 	cliopt.incdelta.i = 1;
 	cliopt.duplex = 0;
 	cliopt.invfrequency = connection->option->invfrequency;
-	cliopt.playload = connection->option->payload;
+	cliopt.payload = connection->option->payload;
 	cliopt.extension = 0;
 	cliopt.duration = connection->option->duration;
 
@@ -57,7 +57,7 @@ int sntProtFuncCliOpt(SNTConnection* connection, const SNTUniformPacket* packet)
 	connection->option->transport_mode = cliopt->transprotocol;
 	connection->option->duration = cliopt->duration;
 
-	connection->option->payload = cliopt->playload;
+	connection->option->payload = cliopt->payload;
 	connection->mtubuf = malloc(connection->option->payload);
 	assert(connection->mtubuf);
 
