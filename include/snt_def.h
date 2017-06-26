@@ -107,16 +107,19 @@
 		#define SNT_X32                          /**/
 		#define SNT_WIN32                        /**/
 		#define SNT_WINDOWS                      /**/
+		#define SNT_ARCH "x86"
 	#elif defined(_M_X64) || defined(_WIN64)
 		#define SNT_X64                          /**/
 		#define SNT_WIN64                        /**/
 		#define SNT_WINDOWS                      /**/
+		#define SNT_ARCH "x64"
 	#elif defined(_M_PPC)
 		#define SNT_PPC                          /**/
 		#define SNT_X360                         /**/
 		#define SNT_VMX                          /**/
 	#elif defined(_M_ARM)
 		#define SNT_ARM                          /**/
+		#define SNT_ARCH "arm"
 		#define SNT_ARM_NEON                     /**/
 	#endif
 #elif defined(SNT_GNUC) || defined(SNT_CLANG)
@@ -135,6 +138,7 @@
 		#define SNT_LINUX 1                       /**/
 		#if defined(__amd64) || defined(__x86_64__) || defined(__i386__)
             #define SNT_X86 1
+			#define SNT_ARCH "amd64"
 		#endif
 		#if defined(__arm__)
               #define EX_ARM 1
