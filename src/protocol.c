@@ -191,7 +191,7 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 }
 
 SNTConnection* sntBindSocket(uint16_t port,
-		SNTConnectionOption* option) {
+		const SNTConnectionOption* option) {
 
 	SNTConnection* connection = NULL;	/*	*/
 	socklen_t addrlen;					/*	*/

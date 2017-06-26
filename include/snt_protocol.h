@@ -379,7 +379,7 @@ extern void sntGetInterfaceAttr(SNTConnection* connection);
  *
  *	@Return None null pointer if successful.
  */
-extern SNTConnection* sntBindSocket(uint16_t port, SNTConnectionOption* option);
+extern SNTConnection* sntBindSocket(uint16_t port, const SNTConnectionOption* option);
 
 /**
  *	Accept connections from clients.
