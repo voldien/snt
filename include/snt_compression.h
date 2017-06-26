@@ -28,8 +28,13 @@
 #define SNT_COMPRESSION_NONE		0x0			/*	No compression.	*/
 #define SNT_COMPRESSION_LZ4			0x1			/*	LZ4 compression. Fast but lower compression ratio.	*/
 #define SNT_COMPRESSION_GZIP		0x2			/*	Gzip compression. Slow but high compression ratio.	*/
+#define SNT_COMPRESSION_BZIP2		0x4			/*	BZIP2 compression.	*/
+#define SNT_COMPRESSION_LZMA		0x8			/*	LZMA.	*/
+#define SNT_COMPRESSION_XY			0x10		/*	XY.	*/
 #define SNT_COMPRESSION_ALL								\
 		SNT_COMPRESSION_LZ4	| SNT_COMPRESSION_GZIP		\
+		| SNT_COMPRESSION_BZIP2	| SNT_COMPRESSION_LZMA	\
+		| SNT_COMPRESSION_XY							\
 
 /**
  *	Compression symbol table.
