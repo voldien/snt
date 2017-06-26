@@ -7,11 +7,58 @@ _snt()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--version --verbose --debug --quite --ipv6 --ipv4 --TCP --UDP --hash= --compression= --delta= --secure --server --host= --port= --transport= --listen= --parallel= --benchmarkmode= --cipher= --public-key= -public-nbits= --file= --afinity= --certificate="
+    opts="--version --verbose --debug --quite --ipv6 --ipv4 --tcp --udp --hash= --compression= --delta= --secure --server --host= --port= --transport= --listen= --parallel= --benchmarkmode= --cipher= --public-key= --public-nbits= --file= --affinity= --certificate="
 
-    if [[ ${cur} == -* ]] ; then
-        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
-        return 0
-    fi
+
+	#
+	case "${prev}" in
+		"--cipher")
+			local subopt="des 3des blowfish aesecb128 aesecb192 aesecb256 aescbc128 aescbc192 aescbc256 aesfbc128 aesfbc192 aesfbc256"
+			if [[ ${prev} == =* ]] ; then
+				COMPREPLY=( $(compgen  -W "${subopt}" -- ${cur}) )
+				return 0
+			fi
+			COMPREPLY=( $(compgen -W "${subopt}") )
+			return 0
+		;;
+		"--compression=")
+			local subopt="lz4 gzip"
+			COMPREPLY=( $(compgen -W "${subopt}" -- ${cur}) )
+			return 0
+		;;
+		"--delta=")
+			local subopt="int float timestamp hrestime"
+			COMPREPLY=( $(compgen -W "${subopt}" -- ${cur}) )
+			return 0
+		;;
+		"--file=" | "--certificate=")
+			COMPREPLY=( $(compgen -f ${cur}) )
+			return 0
+		;;
+		"--transport=")
+			local subopt="tcp udp"
+			COMPREPLY=( $(compgen -W "${subopt}" -- ${cur}) )
+			return 0
+		;;
+		"--hash=")
+			local subopt="md4 md5 sha sha224 sha256 sha348 sha512" 
+			COMPREPLY=( $(compgen -W "${subopt}" -- ${cur}) )
+			return 0
+		;;
+		"--benchmarkmode")
+			local subopt="file performance integrity" 
+			COMPREPLY=( $(compgen -W "${subopt}" -- ${cur}) )
+			return 0
+		;;
+		*)
+		;;
+	esac
+
+
+#	Display all possible option if not specified.
+#	if [[ ${cur} == --* ]] ; then
+		COMPREPLY=( $(compgen  -W "${opts}" -- ${cur}) )
+		return 0
+#	fi
 }
-complete -F _snt snt
+complete -o nospace -F _snt snt
