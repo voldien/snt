@@ -275,9 +275,9 @@ int sntProtFuncBenchmark(SNTConnection* connection, const SNTUniformPacket* pack
 
 int sntValidateCapability(const SNTClientOption* option){
 
-
+	/*	Check if options are mutually exclusive.	*/
 	if (!sntIsPower2(option->benchmode) || !sntIsPower2(option->compression)
-			|| !sntIsPower2(option->symchiper)) {
+			|| !sntIsPower2(option->symchiper) || !sntIsPower2(option->symchiper)) {
 		fprintf(stderr, "Non mutually exclusive option is not supported.\n");
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
@@ -298,7 +298,7 @@ int sntValidateCapability(const SNTClientOption* option){
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
 
-	if(!(option->benchmode & SNT_PROTOCOL_BM_MODE_ALL)){
+	if(!(option->benchmode & g_bindconnection->option->bm_protocol_mode)){
 		fprintf(stderr, "%d: Invalid benchmark mode.\n", option->benchmode);
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
