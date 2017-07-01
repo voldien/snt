@@ -168,7 +168,8 @@ extern int sntSymCreateFromKey(SNTConnection* __restrict__ connection,
  *
  *	Remark:
  */
-extern void sntSymCopyKey(SNTConnection* connection, void** key);
+extern void sntSymCopyKey(SNTConnection* __restrict__ connection,
+		void** __restrict__ key);
 
 /**
  *	Get key bit size of given symmetric
