@@ -163,7 +163,11 @@ typedef struct snt_packet_header_t{
 } __attribute__ ((__packed__)) SNTPacketHeader;
 
 /**
- *	Used for encryption.
+ *	Used for encryption. Contains negative offset
+ *	of the packet size. This is used in order get the
+ *	original size since all encryption is block cipher.
+ *	This means the size is always a multiple of blocksize.
+ *	This will remove the padding added in order perform the encryption.
  */
 typedef struct snt_presentation_package_t{
 	uint8_t noffset;			/*	Negative offset.	*/
@@ -206,7 +210,7 @@ typedef struct snt_client_option_packet_t{
 	uint64_t invfrequency;			/*	Inverse frequency. Aka sleep between each transmission.	*/
 	uint16_t payload;				/*	Payload.	*/
 	uint32_t extension;				/*	Not supported.	*/
-	uint64_t duration;				/*	Duration of the benchmark.	*/
+	uint64_t duration;				/*	Duration of the benchmark in nano seconds.	*/
 }__attribute__ ((__packed__))SNTClientOption;
 
 /**
@@ -257,7 +261,7 @@ typedef struct snt_start_packet_t{
 }__attribute__ ((__packed__))SNTstartPacket;
 
 /**
- *	Error message.
+ *	Error message packet.
  */
 typedef struct snt_error_packet_t{
 	SNTPacketHeader header;			/*	Protocol header.	*/
