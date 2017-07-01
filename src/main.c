@@ -35,6 +35,9 @@ static void snt_release(void){
 		sntPoolFree(g_connectionpool);
 		g_connectionpool = NULL;
 	}
+
+	/*	UnLock all memory.	*/
+	sntMemoryUnLockAll();
 }
 
 /*	signal interrupts.	*/
@@ -67,6 +70,9 @@ int main(int argc, const char** argv){
 	signal(SIGPIPE, snt_catch);
 	signal(SIGABRT, snt_catch);
 	atexit(snt_release);
+
+	/*	Lock memory.	*/
+	sntMemoryLockAll();
 
 	/*	Create server.	*/
 	if(g_server){
