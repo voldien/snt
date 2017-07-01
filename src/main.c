@@ -2,8 +2,10 @@
 #include "snt_utility.h"
 #include "snt_debug.h"
 #include "snt_protocol.h"
+#include "snt_schd.h"
 #include "snt_log.h"
 #include <signal.h>
+#include <errno.h>
 #include <netdb.h>
 #include <sys/select.h>
 
