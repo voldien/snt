@@ -308,11 +308,13 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 		case 'm':
 			if(optarg && option){
 				option->payload = (uint16_t)strtol(optarg, NULL, 10);
+				sntVerbosePrintf("Payload set to %d.\n", option->payload);
 			}
 			break;
 		case 'n':
 			if(optarg){
 				g_numcliconne = strtol(optarg, NULL, 10);
+				sntVerbosePrintf("Number of parallel connection set to %d.\n", g_numcliconne);
 			}
 			break;
 		case 'l':
