@@ -43,8 +43,29 @@ void sntInitCompression(unsigned int type){
 			fprintf(stderr, "gzip failed to initialize with error %ld.\n", err);
 			exit(EXIT_FAILURE);
 		}
-
 	}
+	if(type & SNT_COMPRESSION_BZIP2){
+		int err;
+
+		/*	Allocate.	*/
+		bzip2com = malloc(sizeof(bz_stream));
+		bzip2uncom = malloc(sizeof(bz_stream));
+		memset(bzip2com, 0, sizeof(bz_stream));
+		memset(bzip2uncom, 0, sizeof(bz_stream));
+
+		/*	*/
+		err = BZ2_bzCompressInit(bzip2com, 9, 0, 0);
+		if(err < BZ_OK){
+			fprintf(stderr, "bzip2 failed to initialize with error %ld.\n", err);
+			exit(EXIT_FAILURE);
+		}
+		err = BZ2_bzDecompressInit(bzip2uncom, 0, 0);
+		if(err < BZ_OK){
+			fprintf(stderr, "bzip2 failed to initialize with error %ld.\n", err);
+			exit(EXIT_FAILURE);
+		}
+	}
+
 }
 
 int sntInflate(unsigned int com, const char* source, char* dest,
