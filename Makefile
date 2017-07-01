@@ -44,6 +44,10 @@ install : $(TARGET)
 	$(CP) $(TARGET) $(INSTALL_LOCATION)/bin
 	$(CP) snt.bc /etc/bash_completion.d/snt
 
+install_wireshark_dissector:
+	$(MKDIR) $(HOME)/.wireshark/plugins
+	$(CP) init.lua $(HOME)/.wireshark/plugins/snt.lua
+
 distribution:
 	$(RM) -r $(TARGET)-$(VERSION)
 	$(MKDIR) $(TARGET)-$(VERSION)
@@ -55,5 +59,5 @@ clean :
 	$(RM) *.o
 
 
-.PHONY: all install distribution clean debug
+.PHONY: all install distribution clean debug install_wireshark_dissector
 
