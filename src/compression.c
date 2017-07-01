@@ -4,6 +4,7 @@
 #include<assert.h>
 #include<lz4.h>
 #include<zlib.h>
+#include<bzlib.h>
 
 static unsigned int g_compressbound = 4096;
 
@@ -16,6 +17,9 @@ const char* gs_symcompression[] = {
 		"xz",
 		NULL
 };
+
+bz_stream* bzip2com = NULL;
+bz_stream* bzip2uncom = NULL;
 
 void sntInitCompression(unsigned int type){
 
@@ -47,6 +51,7 @@ int sntInflate(unsigned int com, const char* source, char* dest,
 		unsigned int slen) {
 
 	long int inflen = 0;
+	int i;
 	int err;
 
 	switch(com){
@@ -62,6 +67,16 @@ int sntInflate(unsigned int com, const char* source, char* dest,
 		sntDebugPrintf("sntInflate, gzip %u:%d.\n", slen, inflen);
 		assert(inflen >= 0);
 		break;
+	case SNT_COMPRESSION_BZIP2:
+		bzip2uncom->next_in = source;
+		bzip2uncom->avail_in = slen;
+		bzip2uncom->next_out = (char*)dest;
+		bzip2uncom->avail_out = g_compressbound;
+		err = BZ2_bzDecompress(bzip2uncom);
+		assert(err >= BZ_OK);
+		inflen = g_compressbound - bzip2uncom->avail_out;
+		sntDebugPrintf("sntInflate, bzip2 %u:%d.\n", slen, inflen);
+		break;
 	default:
 		return (int)slen;
 	}
@@ -73,6 +88,7 @@ int sntDeflate(unsigned int com, const char* source, char* dest,
 		unsigned int slen) {
 
 	long int deflen;
+	int i;
 	int err;
 
 	switch(com){
@@ -88,6 +104,17 @@ int sntDeflate(unsigned int com, const char* source, char* dest,
 		assert(err == Z_OK);
 		sntDebugPrintf("sntDeflate, gzip %u:%d.\n", slen, deflen);
 		assert(deflen >= 0);
+		break;
+	case SNT_COMPRESSION_BZIP2:
+		bzip2com->next_in = (char*)source;
+		bzip2com->avail_in = slen;
+		bzip2com->next_out = (char*)dest;
+		bzip2com->avail_out = g_compressbound;
+		err = BZ2_bzCompress(bzip2com, BZ_RUN);
+		err = BZ2_bzCompress(bzip2com, BZ_FLUSH);
+		assert(err >= BZ_OK);
+		deflen = g_compressbound - bzip2com->avail_out;
+		sntDebugPrintf("sntDeflate, bzip2 %u:%d.\n", slen, deflen);
 		break;
 	default:
 		return (int)slen;
