@@ -106,13 +106,13 @@ static void* sntPoolItemByIndex(SNTPool* pool, unsigned int index){
 
 void sntPoolFree(SNTPool* pool){
 
-	sntMemsetPoolFrame(pool);
+	sntPoolZeroFrame(pool);
 
 	free(pool->pool);
 	free(pool);
 }
 
-void sntMemsetPoolFrame(SNTPool* pool){
+void sntPoolZeroFrame(SNTPool* pool){
 	unsigned int i;
 
 	for(i = 0; i < sntPoolNumNodes(pool); i++){

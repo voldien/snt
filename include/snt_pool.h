@@ -115,6 +115,6 @@ extern void sntPoolFree(SNTPool* pool);
 /**
  *	Memset each pool node.
  */
-extern void sntMemsetPoolFrame(SNTPool* pool);
+extern void sntPoolZeroFrame(SNTPool* pool);
 
 #endif
