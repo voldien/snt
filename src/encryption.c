@@ -133,6 +133,8 @@ int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned 
 			return 0;
 		}
 
+		asymksize = sizeof(RSA);
+
 		break;
 	default:
 		fprintf(stderr, "Invalid asymmetric cipher.\n");
