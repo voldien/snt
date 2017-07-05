@@ -65,6 +65,7 @@ typedef struct snt_connection_option_t{
 	int32_t listen;				/*	Number of listen. (Server only).	*/
 	uint64_t duration;			/*	Duration.	*/
 	uint32_t port;				/*	Port.	*/
+	uint32_t certificate;		/*	*/
 }SNTConnectionOption;
 
 /**

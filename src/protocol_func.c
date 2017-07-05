@@ -331,7 +331,7 @@ int sntSendCertificate(const SNTConnection* bind, SNTConnection* client){
 		return 0;
 	}
 	sntDebugPrintf("%s.\n", cert.cert);
-	cert.certype = SNT_CERTIFICATE_RSA;	/*	TODO change to a variable.	*/
+	cert.certype = bind->option->certificate;	/*	TODO change to a variable.	*/
 	cert.asymchiper = bind->asymchiper;
 
 	/*	Hash the certificate and meta data.	*/

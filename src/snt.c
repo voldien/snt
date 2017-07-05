@@ -45,6 +45,7 @@ static void snt_default_con_option(SNTConnectionOption* option, unsigned int isS
 	option->listen = 128;
 	option->duration = (uint64_t)(10 * sntGetTimeResolution());
 	option->port = SNT_DEFAULT_PORT;
+	option->certificate = SNT_CERTIFICATE_RSA;
 
 	if(isServer){
 		option->bm_protocol_mode = SNT_PROTOCOL_BM_MODE_ALL;
