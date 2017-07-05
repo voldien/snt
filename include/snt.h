@@ -63,7 +63,7 @@ typedef struct snt_connection_option_t{
 	uint64_t invfrequency;		/*	Frequency of number of packet sent per sec.	*/
 	uint16_t payload;			/*	Size of payload.	*/
 	int32_t listen;				/*	Number of listen. (Server only).	*/
-	uint64_t duration;			/*	Duration.	*/
+	uint64_t duration;			/*	Duration in nano seconds.	*/
 	uint32_t port;				/*	Port.	*/
 	uint32_t certificate;		/*	*/
 }SNTConnectionOption;
