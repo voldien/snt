@@ -148,52 +148,15 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			break;
 		case 'b':	/*	benchmark mode.	*/
 			if(optarg){
-				i = 1;
-				if(strcmp(optarg, "all") == 0){
-					option->symmetric = SNT_PROTOCOL_BM_MODE_ALL;
-					break;
-				}
-
-				do{
-					if(strcmp(gc_bench_symbol[i], optarg) == 0){
-						break;
-					}
-					i++;
-					if(gc_bench_symbol[i] == NULL){
-						fprintf(stderr, "Invalid benchmark mode option, %s.\n", optarg);
-						exit(EXIT_FAILURE);
-					}
-				}while(gc_bench_symbol[i]);
-
-				option->bm_protocol_mode = (uint32_t)(1 << (uint32_t)(i - 1));
-				sntVerbosePrintf("Using %s for benchmark mode .\n", gc_bench_symbol[i]);
-				break;
+				option->bm_protocol_mode = sntParserBitWiseMultiParam(optarg, gc_bench_symbol);
+				sntVerbosePrintf("Using %s for benchmark mode .\n", optarg);
 			}
 			break;
 		case 'C':	/*	Use compression.	*/
 			if(optarg){
-				i = 0;
-				if(strcmp(optarg, "all") == 0){
-					option->compression = SNT_COMPRESSION_ALL;
-					sntInitCompression(option->compression);
-					break;
-				}
-
-				do{
-					if(strcmp(gs_symcompression[i], optarg) == 0){
-						break;
-					}
-					i++;
-					if(gs_symcompression[i] == NULL){
-						fprintf(stderr, "Invalid compression option, %s.\n", optarg);
-						exit(EXIT_FAILURE);
-					}
-				}while(gs_symcompression[i]);
-
-				sntVerbosePrintf("Using %s for compression.\n", gs_symcompression[i]);
-				option->compression = (uint32_t)(1 << (i - 1));
+				option->compression = sntParserBitWiseMultiParam(optarg, gs_symcompression);
+				sntVerbosePrintf("Using %s for compression.\n", optarg);
 				sntInitCompression(option->compression);
-				break;
 			}
 			break;
 		case 'p':	/*	Port.	*/
@@ -334,50 +297,14 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			break;
 		case 'c':
 			if(optarg){
-				i = 0;
-				if(strcmp(optarg, "all") == 0){
-					option->symmetric = SNT_ENCRYPTION_SYM_ALL;
-					break;
-				}
-
-				do{
-					if(strcmp(gc_symchi_symbol[i], optarg) == 0){
-						break;
-					}
-					i++;
-					if(gc_symchi_symbol[i] == NULL){
-						fprintf(stderr, "Invalid symmetric cipher option, %s.\n", optarg);
-						exit(EXIT_FAILURE);
-					}
-				}while(gc_symchi_symbol[i]);
-
-				option->symmetric = (uint32_t)(1 << (i - 1));
+				option->symmetric = sntParserBitWiseMultiParam(optarg, gc_symchi_symbol);
 				sntVerbosePrintf("Using %s for symmetric cipher .\n", gc_symchi_symbol[i]);
-				break;
 			}
 			break;
 		case 'P':	/*	Asymmetric cipher.	*/
 			if(optarg){
-				i = 0;
-				if(strcmp(optarg, "all") == 0){
-					option->asymmetric = SNT_ENCRYPTION_ASYM_ALL;
-					break;
-				}
-
-				do{
-					if(strcmp(gc_asymchi_symbol[i], optarg) == 0){
-						break;
-					}
-					i++;
-					if(gc_asymchi_symbol[i] == NULL){
-						fprintf(stderr, "Invalid asymmetric cipher option, %s.\n", optarg);
-						exit(EXIT_FAILURE);
-					}
-				}while(gc_asymchi_symbol[i]);
-
-				option->asymmetric = (uint32_t)(1 << (i - 1));
+				option->asymmetric = sntParserBitWiseMultiParam(optarg, gc_asymchi_symbol);
 				sntVerbosePrintf("Using %s for asymmetric cipher .\n", gc_asymchi_symbol[i]);
-				break;
 			}
 			break;
 		case 'B':	/*	Number of bits.	*/
