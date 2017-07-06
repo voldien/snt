@@ -118,7 +118,7 @@ int sntProtFuncCertificate(SNTConnection* connection, const SNTUniformPacket* pa
 
 	/*	Free memory and cleanup public key.	*/
 	free(localhash);
-	memset(&cer->certype, 0, cer->localhashedsize);
+	sntMemZero(&cer->certype, cer->localhashedsize);
 
 
 	/*	Generate symmetric key to use.	*/
@@ -135,8 +135,9 @@ int sntProtFuncCertificate(SNTConnection* connection, const SNTUniformPacket* pa
 		fprintf(stderr, "sntAsymPubEncrypt failed.\n");
 		return 0;
 	}
+
 	/*	*/
-	memset(key, 0, sntSymKeyByteSize(connection->symchiper));
+	sntMemZero(key, sntSymKeyByteSize(connection->symchiper));
 	free(key);
 
 	/*	Send packet.	*/
@@ -177,7 +178,7 @@ int sntProtFuncSecure(SNTConnection* connection, const SNTUniformPacket* packet)
 
 	/*	Clean up from memory.	*/
 	free(symkey);
-	memset(sec, 0, sizeof(SNTUniformPacket));
+	sntMemZero(sec, sizeof(SNTUniformPacket));
 
 	/*	TODO FIX!	*/
 	connection->flag |= SNT_CONNECTION_BENCH;
