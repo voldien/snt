@@ -305,6 +305,11 @@ int sntValidateCapability(const SNTClientOption* option){
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
 
+	if(!(option->transprotocol & g_bindconnection->option->transport_mode)){
+		fprintf(stderr, "%d: Invalid transport protocol.\n", option->benchmode);
+		return SNT_ERROR_INVALID_ARGUMENT;
+	}
+
 	if(SNT_GET_MAJ_VERSION(option->header.version) < SNT_GET_MAJ_VERSION(SNT_VERSION)){
 		fprintf(stderr, "Invalid version.\n");
 		return SNT_ERROR_INCOMPATIBLE_VERSION;
