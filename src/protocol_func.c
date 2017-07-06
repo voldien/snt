@@ -302,7 +302,13 @@ int sntValidateCapability(const SNTClientOption* option){
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
 
-	if(option->benchmode == 0 && !(option->benchmode & g_bindconnection->option->bm_protocol_mode)){
+	if(option->deltaTypes && !(option->deltaTypes & g_bindconnection->option->deltatype)){
+		fprintf(stderr, "%d: Invalid delta type.\n", option->benchmode);
+		return SNT_ERROR_INVALID_ARGUMENT;
+	}
+
+	/*	Check asymmetric cipher support and requested.	*/
+	if(!(option->benchmode & g_bindconnection->option->bm_protocol_mode)){
 		fprintf(stderr, "%d: Invalid benchmark mode.\n", option->benchmode);
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
