@@ -293,12 +293,12 @@ int sntValidateCapability(const SNTClientOption* option){
 		return SNT_ERROR_SSL_NOT_SUPPORTED;
 	}
 
-	if(!(option->symchiper & g_bindconnection->option->symmetric)){
+	if(option->symchiper && !(option->symchiper & g_bindconnection->option->symmetric)){
 		fprintf(stderr, "cipher option not supported.\n");
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
 
-	if(!(option->benchmode & g_bindconnection->option->bm_protocol_mode)){
+	if(option->benchmode == 0 && !(option->benchmode & g_bindconnection->option->bm_protocol_mode)){
 		fprintf(stderr, "%d: Invalid benchmark mode.\n", option->benchmode);
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
