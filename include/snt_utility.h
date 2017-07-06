@@ -58,4 +58,11 @@ extern int sntMin(int a, int b);
  */
 extern unsigned int sntSymbolArraySize(const void** array);
 
+
+/**
+ *	Memset memory for data chunk containing sensetive information.
+ *	The memory will be memset three times in succession.
+ */
+extern void sntMemZero(volatile void* __restrict__ pbuf, size_t size);
+
 #endif

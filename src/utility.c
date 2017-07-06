@@ -49,3 +49,9 @@ unsigned int sntSymbolArraySize(const void** array){
 
 	return i;
 }
+
+void sntMemZero(volatile void* __restrict__ pbuf, size_t size){
+	memset(pbuf, 0, size);
+	memset(pbuf, 0, size);
+	memset(pbuf, 0, size);
+}
