@@ -45,6 +45,7 @@ const char* gs_sym_transport[] = {
 };
 
 const char* gs_delta_sym[] = {
+		"",
 		"float",
 		"int",
 		"time",
