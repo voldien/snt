@@ -1,5 +1,6 @@
 #include "snt_encryption.h"
 #include "snt_protocol.h"
+#include "snt_log.h"
 #include <stdarg.h>
 #include <assert.h>
 #include <sys/mman.h>
@@ -200,9 +201,10 @@ int sntASymCreateKeyFromData(SNTConnection* connection,
 		return 0;
 	}
 
-	/*	*/
+	/*	Assign assoicated information of asymmetric key.	*/
 	connection->asymchiper = cipher;
-	connection->asynumbits = bitsize;
+	connection->asynumbits = (unsigned int)bitsize;
+	sntDebugPrintf("Created asymmetric %s : %d bits.\n", gc_asymchi_symbol[sntLog2MutExlusive32(cipher)], bitsize);
 
 	/*	*/
 	BIO_free_all(keybio);
