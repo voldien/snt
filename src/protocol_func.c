@@ -277,7 +277,9 @@ int sntValidateCapability(const SNTClientOption* option){
 
 	/*	Check if options are mutually exclusive.	*/
 	if (!sntIsPower2(option->benchmode) || !sntIsPower2(option->compression)
-			|| !sntIsPower2(option->symchiper) || !sntIsPower2(option->symchiper)) {
+			|| !sntIsPower2(option->symchiper)
+			|| !sntIsPower2(option->transprotocol)
+			|| !sntIsPower2(option->deltaTypes)) {
 		fprintf(stderr, "Non mutually exclusive option is not supported.\n");
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
