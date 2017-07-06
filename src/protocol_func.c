@@ -283,7 +283,7 @@ int sntValidateCapability(const SNTClientOption* option){
 	}
 
 	/*	Check options are valid to be executed.	*/
-	if(!(option->compression & g_bindconnection->option->compression)){
+	if(option->compression && !(option->compression & g_bindconnection->option->compression)){
 		fprintf(stderr, "compression not supported.\n");
 		return SNT_ERROR_COMPRESSION_NOT_SUPPORTED;
 	}
