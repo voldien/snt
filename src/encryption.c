@@ -53,7 +53,7 @@ int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned 
 
 	int e;					/*	*/
 	int ret;				/*	*/
-	int asymksize = 0;		/*	*/
+	size_t asymksize = 0;	/*	*/
 	/*	RSA	*/
 	const RSA_METHOD* method;	/*	*/
 	BIGNUM* ebnum;				/*	*/
@@ -159,10 +159,10 @@ int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned 
 int sntASymCreateKeyFromData(SNTConnection* connection,
 		unsigned int cipher, const void* key, int len) {
 
-	int e;					/*	*/
-	int asymksize = 0;		/*	*/
-	int bitsize = 0;		/*	*/
-	BIO* keybio = NULL;		/*	*/
+	int e;						/*	*/
+	size_t asymksize = 0;		/*	*/
+	int bitsize = 0;			/*	*/
+	BIO* keybio = NULL;			/*	*/
 
 	switch(cipher){
 	case SNT_ENCRYPTION_ASYM_RSA:
@@ -190,7 +190,7 @@ int sntASymCreateKeyFromData(SNTConnection* connection,
 		}
 		RSA_set_method(connection->RSAkey, RSA_get_default_method());
 		asymksize = sizeof(RSA);
-		bitsize = RSA_size(connection->RSAkey);
+		bitsize = RSA_size(connection->RSAkey) * 8;
 
 		break;
 	case SNT_ENCRYPTION_ASYM_ECD:
