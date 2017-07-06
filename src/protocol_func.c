@@ -290,11 +290,13 @@ int sntValidateCapability(const SNTClientOption* option){
 		return SNT_ERROR_COMPRESSION_NOT_SUPPORTED;
 	}
 
+	/*	Check if secure connection is supported and requested.	*/
 	if(option->ssl && g_bindconnection->option->ssl == 0){
 		fprintf(stderr, "ssl/secure connection not supported.\n");
 		return SNT_ERROR_SSL_NOT_SUPPORTED;
 	}
 
+	/*	Check symmetric cipher support and requested.	*/
 	if(option->symchiper && !(option->symchiper & g_bindconnection->option->symmetric)){
 		fprintf(stderr, "cipher option not supported.\n");
 		return SNT_ERROR_INVALID_ARGUMENT;
