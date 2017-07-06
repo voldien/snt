@@ -355,7 +355,7 @@ static int sntGetSignHashEnum(unsigned int hash){
 int sntASymSignDigSign(const SNTConnection* connection, unsigned int hashtype,
 		const void* hash, unsigned int len, void* output, unsigned int* diglen) {
 
-	int res;
+	int res = 0;
 
 	/*	Sign.	*/
 	res = RSA_sign(sntGetSignHashEnum(hashtype), hash, len, output, diglen, connection->RSAkey);
@@ -368,7 +368,7 @@ int sntASymSignDigSign(const SNTConnection* connection, unsigned int hashtype,
 int sntASymVerifyDigSign(const SNTConnection* connection, unsigned int hashtype,
 		const void* hash, unsigned int len, void* digital, unsigned int diglen) {
 
-	int res;
+	int res = 0;
 
 	/*	Verify.	*/
 	res = RSA_verify(sntGetSignHashEnum(hashtype), hash, len, digital, diglen, connection->RSAkey);
