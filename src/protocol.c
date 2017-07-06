@@ -301,6 +301,8 @@ SNTConnection* sntAcceptSocket(SNTConnection* bindcon){
 	/*	Get attribute about connection interface.	*/
 	sntGetInterfaceAttr(connection);
 
+	connection->udpsock = dup(bindcon->udpsock);
+
 	/*	Create init packet to send to client.	*/
 	sntInitDefaultHeader(&init.header, SNT_PROTOCOL_STYPE_INIT, sizeof(init));
 	init.ssl = connection->option->ssl;
@@ -607,7 +609,8 @@ int sntReadSocket(const SNTConnection* connection, void* buffer,
 			case SNT_TRANSPORT_UDP:
 				assert(connection->udpsock > 0);
 				len = connection->sclen;
-				return recvfrom(connection->udpsock, buffer, recvlen, flag, connection->intaddr, &len);
+				return recvfrom(connection->udpsock, buffer, recvlen, 0,
+						connection->intaddr, &len);
 			default:
 				break;
 			}
@@ -629,7 +632,7 @@ int sntWriteSocket(const SNTConnection* connection, const void* buffer,
 			return send(connection->tcpsock, buffer, senlen, flag);
 		case SNT_TRANSPORT_UDP:
 			assert(connection->udpsock > 0);
-			return sendto(connection->udpsock, buffer, senlen, flag,
+			return sendto(connection->udpsock, buffer, senlen, 0,
 					connection->extaddr, connection->sclen);
 		default:
 			break;
