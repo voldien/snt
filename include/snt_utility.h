@@ -58,6 +58,12 @@ extern int sntMin(int a, int b);
  */
 extern unsigned int sntSymbolArraySize(const void** array);
 
+/**
+ *	Load file content from filesystem.
+ *
+ *	@Return number of bytes loaded.
+ */
+extern long int sntLoadFile(const char* cfilename, void** pbuf);
 
 /**
  *	Memset memory for data chunk containing sensetive information.

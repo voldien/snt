@@ -50,6 +50,35 @@ unsigned int sntSymbolArraySize(const void** array){
 	return i;
 }
 
+long int sntLoadFile(const char* cfilename, void** pbuf){
+
+	long int nbytes;
+	long int size;
+	FILE* f;
+
+	/*	Open file.	*/
+	f = fopen(cfilename, "rb");
+	assert(f);
+
+	/*	Get size of the file.	*/
+	fseek(f, 0, SEEK_END);
+	size = ftell(f);
+	fseek(f, 0, SEEK_SET);
+
+	/*	Allocate chunk.	*/
+	*pbuf = malloc(size);
+	assert(*pbuf);
+
+	/*	Read whole file and copy to allocate buffer.	*/
+	nbytes = fread(*pbuf, 1, size, f);
+
+	/*	Close file.	*/
+	fclose(f);
+
+	return nbytes;
+}
+
+
 void sntMemZero(volatile void* __restrict__ pbuf, size_t size){
 	memset(pbuf, 0, size);
 	memset(pbuf, 0, size);
