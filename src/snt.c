@@ -213,46 +213,14 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			break;
 		case 't':	/*	Transport protocol.	*/
 			if(optarg && option){
-				if(strcmp(optarg, "udp") == 0){
-					sntVerbosePrintf("Transport protocol set to UDP.\n");
-					option->transport_mode = SNT_TRANSPORT_UDP;
-				}
-				else if(strcmp(optarg, "tcp") == 0){
-					sntVerbosePrintf("Transport protocol set to TCP.\n");
-					option->transport_mode = SNT_TRANSPORT_TCP;
-				}
-				else if(strcmp(optarg, "all") == 0){
-					option->transport_mode = SNT_TRANSPORT_ALL;
-				}
-				else{
-					fprintf(stderr, "Invalid transport protocol %s.\n", optarg);
-					exit(EXIT_FAILURE);
-				}
+				option->transport_mode = sntParserBitWiseMultiParam(optarg, gs_sym_transport);
+				sntVerbosePrintf("Using %s for transport layer.\n", optarg);
 			}
 			break;
 		case 'd':
 			if(optarg && option){
-
-				i = 0;
-				if(strcmp(optarg, "all") == 0){
-					option->deltatype = SNT_DELTA_TYPE_ALL;
-					break;
-				}
-
-				do{
-					if(strcmp(gs_delta_sym[i], optarg) == 0){
-						break;
-					}
-					i++;
-					if(gs_delta_sym[i] == NULL){
-						fprintf(stderr, "Invalid delta type option, %s.\n", optarg);
-						exit(EXIT_FAILURE);
-					}
-				}while(gs_delta_sym[i]);
-
-				sntVerbosePrintf("Using %s for as delta type.\n", gs_delta_sym[i]);
-				option->deltatype = (uint32_t)(1 << (i - 1));
-				break;
+				option->deltatype = sntParserBitWiseMultiParam(optarg, gs_delta_sym);
+				sntVerbosePrintf("Using %s for as delta type.\n", optarg);
 			}
 			break;
 		case 'r':
