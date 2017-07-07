@@ -399,7 +399,7 @@ int sntSymGenerateKey(SNTConnection* connection, unsigned int cipher){
 	RAND_seed((const void*)rand, status);
 
 	status = sntSymCreateFromKey(connection, cipher, rand);
-	memset(rand, 0, sntSymKeyByteSize(cipher));
+	sntMemZero(rand, sntSymKeyByteSize(cipher));
 	free(rand);
 
 	return status;
