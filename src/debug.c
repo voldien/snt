@@ -134,8 +134,8 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 		break;
 	case SNT_PROTOCOL_STYPE_ERROR:
 		fprintf(stdout,
-				"errorcode : %d\n"
-				"meslen : %u\n",
+				"errorcode  : %d\n"
+				"meslen     : %u\n",
 				pack.error->errorcode,
 				pack.error->meslen);
 		break;
