@@ -35,7 +35,7 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 					sntProtocolPacketSize(&packet->header),
 					packet->header.flag);
 
-	/*	*/
+	/*	Presentation layer if present.	*/
 	if(packet->header.flag & SNT_PACKET_ENCRYPTION){
 		fprintf(stdout, "--- presentation layer ---\n"
 						"noffset : %u.\n"
@@ -142,6 +142,7 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 	case SNT_PROTOCOL_STYPE_READY:
 	case SNT_PROTOCOL_STYPE_STARTTEST:
 	case SNT_PROTOCOL_STYPE_BENCHMARK:
+		/*	NO additional attributes.	*/
 	default:
 		break;
 	}
