@@ -249,15 +249,15 @@ function dissectSNT(tvbuf, pktinfo, root, offset)
 end
 
 ----------------------------------------
--- Get pr
--- @Return
+-- Get protocol header size in bytes.
+-- @Return size in bytes.
 function sntProtocolHeaderSize(tvbuf)
   return bit.band( tvbuf(3, 1):le_uint(), 0xffff)
 end
 
 ----------------------------------------
 -- Check if packet contains encrypted data.
--- @Return  true if packet is encrypted.
+-- @Return true if packet is encrypted.
 function sntProtocolIsEncrypted(tvbuf)
   return bit.band(tvbuf(6, 1):le_uint(), SNT_MSG_FLAG_ENCR) == SNT_MSG_FLAG_ENCR
 end
