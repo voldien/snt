@@ -308,8 +308,7 @@ unsigned int sntASymGetBlockSize(unsigned int cipher, const void* key){
 
 	switch(cipher){
 	case SNT_ENCRYPTION_ASYM_RSA:
-		return RSA_size((RSA*)key);
-		break;
+		return (unsigned int)RSA_size((RSA*)key);
 	default:
 		break;
 	}
