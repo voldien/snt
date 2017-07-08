@@ -37,6 +37,15 @@ const char* gs_symprotocol[] = {
 		NULL
 };
 
+const char* gs_sym_cert[] = {
+		"",
+		"rsa",
+		"ec",
+		"x509",
+		NULL
+};
+
+
 const char* gs_sym_transport[] = {
 	"",
 	"tcp",

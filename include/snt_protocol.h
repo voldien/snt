@@ -92,6 +92,11 @@ extern const char* gs_symprotocol[];
 #define SNT_CERTIFICATE_X509	0x4		/*	X509 certificate standard.	*/
 
 /**
+ *
+ */
+extern const char* gs_sym_cert[];
+
+/**
  *	Transport layer.
  */
 #define SNT_TRANSPORT_NONE	0x0			/*	None transport.	*/
