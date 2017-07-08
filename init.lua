@@ -174,7 +174,7 @@ function snt.dissector(buf, pkt, root)
     sntDissectPresentationLayer(buf, pkt, subtree, bytes_consumed)
   end
   
-  -- Check if packet is compresses.
+  -- Check if packet is compressed.
   if sntProtocolIsCompressed(buf(0, SNT_MSG_HDR_LEN)) then
     local subtree = root:add(buf:range(bytes_consumed), "Compressed:" )    
   end
