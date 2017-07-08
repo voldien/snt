@@ -359,11 +359,18 @@ int sntASymSignDigSign(const SNTConnection* connection, unsigned int hashtype,
 
 	int res = 0;
 
-	/*	Sign.	*/
-	res = RSA_sign(sntGetSignHashEnum(hashtype), hash, len, output, diglen, connection->RSAkey);
-	if(res != 1){
-		sntSSLPrintError();
-		return 0;
+	switch(connection->asymchiper){
+	case SNT_ENCRYPTION_ASYM_RSA:
+		/*	Sign.	*/
+		res = RSA_sign(sntGetSignHashEnum(hashtype), hash, len, output, diglen, connection->RSAkey);
+		if(res != 1){
+			sntSSLPrintError();
+			return 0;
+		}
+		break;
+	default:
+		fprintf(stderr, "not supported.\n");
+		break;
 	}
 	return res;
 }
@@ -372,11 +379,18 @@ int sntASymVerifyDigSign(const SNTConnection* connection, unsigned int hashtype,
 
 	int res = 0;
 
-	/*	Verify.	*/
-	res = RSA_verify(sntGetSignHashEnum(hashtype), hash, len, digital, diglen, connection->RSAkey);
-	if(res != 1){
-		sntSSLPrintError();
-		return 0;
+	switch(connection->asymchiper){
+	case SNT_ENCRYPTION_ASYM_RSA:
+		/*	Verify.	*/
+		res = RSA_verify(sntGetSignHashEnum(hashtype), hash, len, digital, diglen, connection->RSAkey);
+		if(res != 1){
+			sntSSLPrintError();
+			return 0;
+		}
+		break;
+	default:
+		fprintf(stderr, "not supported.\n");
+		break;
 	}
 	return res;
 }
