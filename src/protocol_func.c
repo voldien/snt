@@ -319,10 +319,13 @@ int sntValidateCapability(const SNTClientOption* option){
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
 
+	/*	Check version compatibility.	*/
 	if(SNT_GET_MAJ_VERSION(option->header.version) < SNT_GET_MAJ_VERSION(SNT_VERSION)){
 		fprintf(stderr, "Invalid version.\n");
 		return SNT_ERROR_INCOMPATIBLE_VERSION;
 	}
+
+	/*	No error.	*/
 	return SNT_ERROR_NONE;
 }
 
