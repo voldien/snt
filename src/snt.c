@@ -64,8 +64,8 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 		SNTConnectionOption* option) {
 
 	unsigned int i;
-	int c;																/*	*/
-	const char* shortopt = "vVD46ySCUTh:b:p:s:c:P:n:B:f:H:F:m:d:r:A:";	/*	*/
+	int c;																	/*	*/
+	const char* shortopt = "vVD46ySCUTh:b:p:s:c:P:n:B:f:H:F:m:d:r:A:X:x:";	/*	*/
 
 	static struct option longoption[] = {
 		{"version", 		no_argument, 		NULL, 'v'},	/*	Print out version.	*/
@@ -79,7 +79,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 		{"tcp",				no_argument,		NULL, 'T'},	/*	TCP protocol for transfer.	*/
 		{"payload",			required_argument,	NULL, 'm'},	/*	payload.	*/
 		{"frequency",		required_argument,	NULL, 'F'},	/*	frequency.	*/
-		{"delta",			required_argument,	NULL, 'd'},	/**/
+		{"delta",			required_argument,	NULL, 'd'},	/*	Delta type.	*/
 		{"duration",		required_argument,	NULL, 'r'},	/*	Duration.	*/
 		{"compression", 	optional_argument,	NULL, 'C'},	/*	Use compression.	*/
 		{"secure", 			optional_argument,	NULL, 'S'},	/*	Use secure connection.	*/
@@ -97,6 +97,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 		{"file",			required_argument,	NULL, 'f'},	/*	File to be transfered.	*/
 		{"affinity",		required_argument,	NULL, 'A'},	/*	-A, --affinity n/n,m 	*/
 		{"certificate",		required_argument,	NULL, 'X'},	/*	Certificate.	*/
+		{"private-key",		required_argument,	NULL, 'x'},	/*	Private key.	*/
 
 		{NULL, 0, NULL, 0}
 	};
