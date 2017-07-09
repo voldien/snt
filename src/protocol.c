@@ -72,6 +72,8 @@ const char* gs_error_sym[] = {
 		"SSL not supported",
 		"Bad request",
 		"Service unavailable",
+		"Cipher not supported",
+		"Benchmark mode not supported",
 		NULL
 };
 

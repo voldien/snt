@@ -138,7 +138,8 @@ extern const char* gs_delta_sym[];
 #define SNT_ERROR_COMPRESSION_NOT_SUPPORTED	0x6	/*	Specified compression algorithm not supported.	*/
 #define SNT_ERROR_BAD_REQUEST				0x7	/*	Invalid application protocol command.	*/
 #define SNT_ERROR_SERVICE_UNAVAILABLE		0x8	/*	Server can't provide the service.	*/
-
+#define SNT_ERROR_CIPHER_NOT_SUPPORTED		0x9	/*	Cipher not supported.	*/
+#define SNT_ERROR_BENCHMARK_NOT_SUPPORTED	0x10/*	Benchmark not supported.	*/
 /**
  *	Error code symbols.
  */
