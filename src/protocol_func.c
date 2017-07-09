@@ -57,11 +57,12 @@ int sntProtFuncCliOpt(SNTConnection* connection, const SNTUniformPacket* packet)
 	connection->option->transport_mode = cliopt->transprotocol;
 	connection->option->duration = cliopt->duration;
 
+	/*	*/
 	connection->option->payload = cliopt->payload;
 	connection->mtubuf = malloc(connection->option->payload);
 	assert(connection->mtubuf);
 
-
+	/*	*/
 	connection->option->compression = cliopt->compression;
 	connection->usecompression = cliopt->compression;
 
@@ -303,6 +304,7 @@ int sntValidateCapability(const SNTClientOption* option){
 		return SNT_ERROR_CIPHER_NOT_SUPPORTED;
 	}
 
+	/*	Check delta mode is supported.	*/
 	if(option->deltaTypes && !(option->deltaTypes & g_bindconnection->option->deltatype)){
 		fprintf(stderr, "%d: Invalid delta type.\n", option->benchmode);
 		return SNT_ERROR_INVALID_ARGUMENT;
@@ -314,6 +316,7 @@ int sntValidateCapability(const SNTClientOption* option){
 		return SNT_ERROR_BENCHMARK_NOT_SUPPORTED;
 	}
 
+	/*	Check if transport protocol supported.	*/
 	if(!(option->transprotocol & g_bindconnection->option->transport_mode)){
 		fprintf(stderr, "%d: Invalid transport protocol.\n", option->benchmode);
 		return SNT_ERROR_INVALID_ARGUMENT;
