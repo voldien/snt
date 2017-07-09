@@ -268,13 +268,13 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 		case 'c':
 			if(optarg){
 				option->symmetric = sntParserBitWiseMultiParam(optarg, gc_symchi_symbol);
-				sntVerbosePrintf("Using %s for symmetric cipher .\n", gc_symchi_symbol[i]);
+				sntVerbosePrintf("Using %s for symmetric cipher .\n", optarg);
 			}
 			break;
 		case 'P':	/*	Asymmetric cipher.	*/
 			if(optarg){
 				option->asymmetric = sntParserBitWiseMultiParam(optarg, gc_asymchi_symbol);
-				sntVerbosePrintf("Using %s for asymmetric cipher .\n", gc_asymchi_symbol[i]);
+				sntVerbosePrintf("Using %s for asymmetric cipher .\n", optarg);
 			}
 			break;
 		case 'B':	/*	Number of bits.	*/
