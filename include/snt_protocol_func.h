@@ -51,16 +51,21 @@ extern int sntValidateCapability(const SNTClientOption* option);
 
 /**
  *	Send certificate to client.
+ *
+ *	@Return none zero if successful.
  */
 extern int sntSendCertificate(const SNTConnection* __restrict__ bind,
 		SNTConnection* __restrict__ client);
 /**
  *	Send error code.
+ *
+ *	@Return number of bytes sent.
  */
 extern int sntSendError(const SNTConnection* __restrict__ connection,
 		int code, const char* __restrict__ message);
 /**
  *
+ *	@Return number of bytes sent.
  */
 extern int sntSendBenchMarkResult(const SNTConnection* connection, const SNTResultPacket* result);
 
