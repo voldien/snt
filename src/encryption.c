@@ -1,9 +1,9 @@
 #include "snt_encryption.h"
 #include "snt_protocol.h"
 #include "snt_log.h"
+#include "snt_schd.h"
 #include <stdarg.h>
 #include <assert.h>
-#include <sys/mman.h>
 #include <openssl/ssl.h>
 #include <openssl/rsa.h>
 #include <openssl/obj_mac.h>
@@ -52,7 +52,6 @@ static void sntSSLPrintError(void){
 
 int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned int numbits){
 
-	int e;					/*	*/
 	int ret;				/*	*/
 	size_t asymksize = 0;	/*	*/
 	/*	RSA	*/
@@ -143,9 +142,7 @@ int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned 
 	}
 
 	/*	Prevent sensitive information from being swapped to disk.	*/
-	e = mlock(connection->asymkey, asymksize);
-	if( e != 0){
-		fprintf(stderr, "mlock failed, %s.\n", strerror(errno));
+	if(!sntLockMemory(connection->asymkey, asymksize)){
 		sntASymFree(connection);
 		return 0;
 	}
@@ -160,7 +157,6 @@ int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned 
 int sntASymCreateKeyFromData(SNTConnection* connection,
 		unsigned int cipher, const void* key, int len) {
 
-	int e;						/*	*/
 	size_t asymksize = 0;		/*	*/
 	int bitsize = 0;			/*	*/
 	BIO* keybio = NULL;			/*	*/
@@ -210,9 +206,7 @@ int sntASymCreateKeyFromData(SNTConnection* connection,
 	BIO_free_all(keybio);
 
 	/*	Prevent sensitive information from being swapped to disk.	*/
-	e = mlock(connection->asymkey, asymksize);
-	if( e != 0){
-		fprintf(stderr, "mlock failed, %s.\n", strerror(e));
+	if(!sntLockMemory(connection->asymkey, asymksize)){
 		sntASymFree(connection);
 		return 0;
 	}
@@ -423,7 +417,6 @@ int sntSymGenerateKey(SNTConnection* connection, unsigned int cipher){
 
 int sntSymCreateFromKey(SNTConnection* connection, unsigned int cipher, const void* pkey){
 
-	int e;
 	int symcipsize = 0;
 
 	switch(cipher){
@@ -458,9 +451,7 @@ int sntSymCreateFromKey(SNTConnection* connection, unsigned int cipher, const vo
 	}
 
 	/*	Prevent key to be swapped to storage.	*/
-	e = mlock(connection->symmetrickey, symcipsize);
-	if( e != 0){
-		fprintf(stderr, "mlock failed, %s.\n", strerror(e));
+	if(!sntLockMemory(connection->symmetrickey, symcipsize)){
 		return 0;
 	}
 

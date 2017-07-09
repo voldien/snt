@@ -1,8 +1,9 @@
 #include <assert.h>
-#include <sys/mman.h>
 #include <errno.h>
-#include <snt_pool.h>
 #include <string.h>
+#include <snt_pool.h>
+#include <snt_schd.h>
+
 
 SNTPool* sntPoolCreate(unsigned int num, unsigned int itemsize) {
 
@@ -36,16 +37,8 @@ SNTPool* sntPoolCreate(unsigned int num, unsigned int itemsize) {
 }
 
 int sntPoolLockMem(SNTPool* poolallocator){
-	int e;
-
-	e = mlock(poolallocator->pool,
+	return sntLockMemory(poolallocator->pool,
 			sntPoolNumNodes(poolallocator) * sntPoolItemSize(poolallocator));
-	if( e != 0){
-		fprintf(stderr, "mlock failed, %s.\n", strerror(errno));
-		return 0;
-	}
-
-	return 1;
 }
 
 void* sntPoolObtain(SNTPool* allocator) {
