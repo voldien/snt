@@ -300,7 +300,7 @@ int sntValidateCapability(const SNTClientOption* option){
 	/*	Check symmetric cipher support and requested.	*/
 	if(option->symchiper && !(option->symchiper & g_bindconnection->option->symmetric)){
 		fprintf(stderr, "cipher option not supported.\n");
-		return SNT_ERROR_INVALID_ARGUMENT;
+		return SNT_ERROR_CIPHER_NOT_SUPPORTED;
 	}
 
 	if(option->deltaTypes && !(option->deltaTypes & g_bindconnection->option->deltatype)){
@@ -311,7 +311,7 @@ int sntValidateCapability(const SNTClientOption* option){
 	/*	Check asymmetric cipher support and requested.	*/
 	if(!(option->benchmode & g_bindconnection->option->bm_protocol_mode)){
 		fprintf(stderr, "%d: Invalid benchmark mode.\n", option->benchmode);
-		return SNT_ERROR_INVALID_ARGUMENT;
+		return SNT_ERROR_BENCHMARK_NOT_SUPPORTED;
 	}
 
 	if(!(option->transprotocol & g_bindconnection->option->transport_mode)){
