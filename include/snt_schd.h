@@ -34,6 +34,11 @@ extern void sntMemoryLockAll(void);
 extern void sntMemoryUnLockAll(void);
 
 /**
+ *	Lock memory adddress region.
+ */
+extern int sntLockMemory(const void* mem, size_t size);
+
+/**
  *	Set process affinity mapping.
  */
 extern void sntSchdSetAffinity(unsigned int cpu, unsigned int cores,

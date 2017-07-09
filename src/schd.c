@@ -23,6 +23,17 @@ void sntMemoryUnLockAll(void){
 	}
 }
 
+int sntLockMemory(const void* mem, size_t size){
+	int e;
+	e = mlock(mem, size);
+	if( e != 0){
+		fprintf(stderr, "mlock failed, %s.\n", strerror(errno));
+		return 0;
+	}
+
+	return 1;
+}
+
 void sntSchdSetAffinity(unsigned int cpu, unsigned int core, unsigned int size){
 
 	/*	*/
