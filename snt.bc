@@ -7,7 +7,7 @@ _snt()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--version --verbose --debug --quite --ipv6 --ipv4 --tcp --udp --hash= --compression= --delta= --secure --server --host= --port= --transport= --listen= --parallel= --duration= --benchmarkmode= --cipher= --public-key= --public-nbits= --file= --affinity= --certificate= --private-key="
+    opts="--version --verbose --debug --quite --ipv6 --ipv4 --tcp --udp --hash= --compression= --delta= --secure --server --host= --port= --transport= --listen= --parallel= --duration= --benchmarkmode= --cipher= --public-key= --public-nbits= --file= --affinity= --certificate= --private-key= --payload="
 
 
 	#
