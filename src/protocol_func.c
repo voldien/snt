@@ -306,19 +306,19 @@ int sntValidateCapability(const SNTClientOption* option){
 
 	/*	Check delta mode is supported.	*/
 	if(option->deltaTypes && !(option->deltaTypes & g_bindconnection->option->deltatype)){
-		fprintf(stderr, "%d: Invalid delta type.\n", option->benchmode);
+		fprintf(stderr, "%d: Invalid delta type.\n", option->deltaTypes);
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
 
 	/*	Check asymmetric cipher support and requested.	*/
 	if(!(option->benchmode & g_bindconnection->option->bm_protocol_mode)){
-		fprintf(stderr, "%d: Invalid benchmark mode.\n", option->benchmode);
+		fprintf(stderr, "%d: Invalid benchmark mode.\n", option->symchiper);
 		return SNT_ERROR_BENCHMARK_NOT_SUPPORTED;
 	}
 
 	/*	Check if transport protocol supported.	*/
 	if(!(option->transprotocol & g_bindconnection->option->transport_mode)){
-		fprintf(stderr, "%d: Invalid transport protocol.\n", option->benchmode);
+		fprintf(stderr, "%d: Invalid transport protocol.\n", option->transprotocol);
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
 
