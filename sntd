@@ -1,0 +1,88 @@
+#!/bin/bash
+#
+# SNT -- Simple-Network-Tool
+#
+# chkconfig 2345 90 60
+# description: This is a service for running snt server.
+
+#
+name="snt"
+
+command="/usr/bin/snt"
+
+command_args=" --server --verbose --cipher=all --delta=all --compression=all --transport=all --secure --listen=128 "
+
+daemon="/usr/bin/daemon"
+
+# Check if daemon and snt program is installed.
+[ -x "$daemon" ] && [ -x "$command" ] || exit 0
+
+
+daemon_start_args=""
+
+pidfiles="/var/run"
+
+user=""
+
+chroot=""
+
+chdir=""
+
+umask=""
+
+stdout="daemon.info"
+stderr="daemon.err"
+
+# 
+case "$1" in
+        start)
+                if "$daemon" --running --name "$name" --pidfiles "$pidfiles"
+                then
+                        echo "$name is already running."
+                else
+                        echo -n "Starting $name..."
+                        # read config file.
+
+                        "$daemon" --respawn $daemon_start_args  \
+                        --name "$name"  --pidfiles "$pidfiles"  \
+                        ${user:+--user $user} ${chroot:+--chroot $<E2>chroot}\
+                        ${chdir:+--chdir $chdir} ${umask:+--umask $umask} \
+                        ${stdout:+--stdout $stdout} ${stderr:+--stderr $stderr} \
+                        -- \
+                        "$command" $command_args
+                        echo done
+                fi
+        ;;
+        stop)
+                if "$daemon" --running --name "$name" --pidfiles "$pidfiles"
+                then
+                        echo -n "Stopping $name..."
+                        "$daemon" --stop --name "$name" --pidfiles "$pidfiles"
+                        echo "done"
+                else
+                        echo "$name is not running."
+                fi
+
+        ;;
+        restart|reload)
+                if "$daemon" --running --name "$name" --pidfiles "$pidfiles"
+                then
+                        echo -n "Restarting $name..."
+                        "$daemon" --restart --name "$name" --pidfiles "$pidfiles"
+                else
+                        echo "$name is not runnning."
+                        exit 1
+                fi
+
+        ;;
+        status)
+                "$daemon" --running --name "$name" --pidfiles "$pidfiles" --verbose
+
+        ;;
+        *)
+        echo "usage: $0 <start|stop|restart|reload|status>" >&2
+        exit 1
+        ;;
+esac
+
+exit 0
