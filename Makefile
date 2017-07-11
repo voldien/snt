@@ -22,6 +22,7 @@ CLIBS = -lssl -lcrypto -lz -llz4 -lpthread -lbz2
 VPATH = ./src
 SRC = $(wildcard src/*.c)
 OBJS = $(notdir $(subst .c,.o,$(SRC)))
+SERVICE := sntd
 TARGET ?= snt
 
 all : $(TARGET)
@@ -48,6 +49,10 @@ install_wireshark_dissector:
 	$(MKDIR) $(HOME)/.wireshark/plugins
 	$(CP) init.lua $(HOME)/.wireshark/plugins/snt.lua
 
+install_service:
+	$(CP) $(SERVICE) /etc/init.d
+	@echo -n "Installed service daemon.\n"
+
 distribution:
 	$(RM) -r $(TARGET)-$(VERSION)
 	$(MKDIR) $(TARGET)-$(VERSION)
@@ -59,5 +64,5 @@ clean :
 	$(RM) *.o
 
 
-.PHONY: all install distribution clean debug install_wireshark_dissector
+.PHONY: all install distribution clean debug install_wireshark_dissector install_service
 
