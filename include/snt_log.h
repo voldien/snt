@@ -37,6 +37,12 @@ extern void sntVerbosityLevelSet(unsigned int verbosity);
  */
 extern int sntLogPrintfInternal(unsigned int verbosity, const char* fmt,...);
 
+/**
+ *	Print error.
+ *
+ *	@Return number of bytes.
+ */
+extern int sntLogErrorPrintf(const char* fmt, ...);
 
 /**
  *	Print.

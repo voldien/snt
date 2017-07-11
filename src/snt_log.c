@@ -18,3 +18,16 @@ int sntLogPrintfInternal(unsigned int verbosity, const char* fmt,...){
 
 	return l;
 }
+
+
+int sntLogErrorPrintf(const char* fmt, ...){
+
+	int l;
+	va_list vl;
+
+	va_start(vl, fmt);
+	l = vfprintf(stderr, fmt, vl);
+	va_end(vl);
+
+	return l;
+}
