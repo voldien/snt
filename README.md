@@ -23,6 +23,22 @@ The program is installed with the following commands.
 make
 make install
 ```
+#wireshark#
+The wireshark dissector for decoding snt packets with wireshark program can be installed with the following command:
+```
+make install_wireshark
+```
+This will install a lua script in the $(USER)/.wireshark.
+
+#service#
+service script can be installed to run the snt program as a service. This can be done with the following command:
+```bash
+make insall_service 
+```
+The the service can be started as followed:
+```bash
+service sntd start
+```
 
 # Examples #
 ----
