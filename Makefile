@@ -2,7 +2,7 @@
 
 # Versions
 MAJOR := 0
-MINOR := 10
+MINOR := 11
 PATCH := 1
 STATE := a
 VERSION := $(MAJOR).$(MINOR)$(STATE)$(PATCH)
