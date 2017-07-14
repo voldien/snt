@@ -32,25 +32,25 @@
 /**
  *	Protocol sequence diagram.
  *
- *		Client			server
- *		  |	->	connec -> |
- *		  |				  |
- *		  |	<-	init   <- |
- *		  |				  |
+ *		Client          Server
+ *		  | ->	connec -> |
+ *		  |               |
+ *		  | <-	init   <- |
+ *		  |               |
  *		  | ->	cliopt -> |
- *		  |				  |
+ *		  |               |
  *		 [[ <-	certi  <- ]]
- *		 [[				  ]]	Optional.
+ *		 [[               ]]	Optional.
  *		 [[ ->	symm  ->  ]]
- *		  |				  |
- *		  |	<-	ready  <- |
- *		  |				  |
+ *		  |               |
+ *		  | <-	ready  <- |
+ *		  |               |
  *		  | ->	start  -> |
- *		  |				  |
- *		 [.				  .]
- *		 [.	  benchmark	  .]	Execution based
- *		 [.				  .]	on benchmark mode.
- *		  |		end		  |
+ *		  |               |
+ *		 [.               .]
+ *		 [.   benchmark   .]	Execution based
+ *		 [.               .]	on benchmark mode.
+ *		  |      end      |
  *		  ^^^^^^^^^^^^^^^^^
  *
  *	The error code message command can be
