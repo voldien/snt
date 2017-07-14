@@ -47,6 +47,7 @@ static void snt_default_con_option(SNTConnectionOption* option, unsigned int isS
 	option->duration = (uint64_t)(10 * sntGetTimeResolution());
 	option->port = SNT_DEFAULT_PORT;
 	option->certificate = SNT_CERTIFICATE_RSA;
+	option->duplex = SNT_DUPLEX_SIMPLE;
 
 	if(isServer){
 		option->bm_protocol_mode = SNT_PROTOCOL_BM_MODE_ALL;
@@ -81,6 +82,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 		{"frequency",		required_argument,	NULL, 'F'},	/*	frequency.	*/
 		{"delta",			required_argument,	NULL, 'd'},	/*	Delta type.	*/
 		{"duration",		required_argument,	NULL, 'r'},	/*	Duration.	*/
+		{"duplex",			required_argument,	NULL, 'M'},	/*	Duplex.	*/
 		{"compression", 	optional_argument,	NULL, 'C'},	/*	Use compression.	*/
 		{"secure", 			optional_argument,	NULL, 'S'},	/*	Use secure connection.	*/
 		{"server", 			optional_argument,	NULL, 's'},	/*	Server mode.	*/
@@ -229,6 +231,12 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			if(optarg){
 				option->duration = (uint64_t)(strtod(optarg, NULL) * (double)sntGetTimeResolution());
 				sntVerbosePrintf("Duration time set to : %ld.\n", option->duration / sntGetTimeResolution() );
+			}
+			break;
+		case 'M':
+			if(optarg){
+				option->duplex = sntParserBitWiseMultiParam(optarg, gs_sym_duplex);
+				sntVerbosePrintf("Using %s duplex.\n", optarg);
 			}
 			break;
 		case 'U':	/*	Use UDP transport protocol.	*/
