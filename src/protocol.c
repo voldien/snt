@@ -45,6 +45,13 @@ const char* gs_sym_cert[] = {
 		NULL
 };
 
+const char* gs_sym_duplex[] = {
+		"",
+		"simple",
+		"half",
+		"full",
+		NULL
+};
 
 const char* gs_sym_transport[] = {
 	"",

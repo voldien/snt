@@ -97,6 +97,22 @@ extern const char* gs_symprotocol[];
 extern const char* gs_sym_cert[];
 
 /**
+ *	Duplex mode.
+ */
+#define SNT_DUPLEX_NONE		0x0		/*	.	*/
+#define SNT_DUPLEX_SIMPLE	0x1		/*	Transmit from single point.	*/
+#define SNT_DUPLEX_HALF		0x2		/*	Transmit from between point, one at a time.	*/
+#define SNT_DUPLEX_FULL		0x4		/*	Transmit and receive between the point simultaneously.*/
+#define SNT_DUPLEX_ALL						\
+	(SNT_DUPLEX_SIMPLE | SNT_DUPLEX_HALF	\
+	| SNT_DUPLEX_ALL)						\
+
+/**
+ *	Duplex symbol table
+ */
+extern const char* gs_sym_duplex[];
+
+/**
  *	Transport layer.
  */
 #define SNT_TRANSPORT_NONE	0x0			/*	None transport.	*/
