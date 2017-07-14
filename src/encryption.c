@@ -2,6 +2,7 @@
 #include "snt_protocol.h"
 #include "snt_log.h"
 #include "snt_schd.h"
+#include "snt_rand.h"
 #include <stdarg.h>
 #include <assert.h>
 #include <openssl/ssl.h>
@@ -395,19 +396,11 @@ int sntSymGenerateKey(SNTConnection* connection, unsigned int cipher){
 	int status;					/*	*/
 	unsigned char* rand;		/*	*/
 
-	/*	*/
-	RAND_poll();
-
-	/*	Generate random string.	*/
+	/*	Generate random key.	*/
 	rand = (unsigned char*)malloc(sntSymKeyByteSize(cipher));
-	status = RAND_bytes(rand, sntSymKeyByteSize(cipher));
-	if(status != 1){
-		printf("error : %d\n", RAND_status());
-		return 0;
-	}
-	/*	set seed.	*/
-	RAND_seed((const void*)rand, status);
+	sntGenRandom(rand, sntSymKeyByteSize(cipher));
 
+	/*	Create symmetric key.	*/
 	status = sntSymCreateFromKey(connection, cipher, rand);
 	sntMemZero(rand, sntSymKeyByteSize(cipher));
 	free(rand);
