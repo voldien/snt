@@ -336,14 +336,16 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 	optarg = NULL;
 }
 
-static void sntMapSocket(SNTConnection** table, SNTConnection* con, fd_set* fdset, int socket){
+static void sntMapSocket(SNTConnection** table, SNTConnection* __restrict__ con,
+		fd_set* __restrict__ fdset, int socket) {
 	if(socket > 0){
 		FD_SET(socket, fdset);
 		table[socket] = con;
 	}
 }
 
-static void sntUnMapSocket(SNTConnection** table, fd_set* fdset, int socket){
+static void sntUnMapSocket(SNTConnection** __restrict__ table,
+		fd_set* __restrict__ fdset, int socket) {
 	if(socket > 0){
 		FD_CLR(socket, fdset);
 		table[socket] = NULL;
