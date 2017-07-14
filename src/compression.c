@@ -30,7 +30,7 @@ void sntInitCompression(unsigned int type){
 		g_compressbound = (unsigned int)compbound;
 		err = LZ4_compressBound(compbound);
 		if(err <= 0){
-			fprintf(stderr, "lz4 failed to initialize with error %d.\n", err);
+			sntLogErrorPrintf("lz4 failed to initialize with error %d.\n", err);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -40,7 +40,7 @@ void sntInitCompression(unsigned int type){
 		g_compressbound = (unsigned int)err;
 		sntDebugPrintf("Initialize gzip, %d.\n", g_compressbound);
 		if(err < g_compressbound){
-			fprintf(stderr, "gzip failed to initialize with error %ld.\n", err);
+			sntLogErrorPrintf("gzip failed to initialize with error %ld.\n", err);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -56,12 +56,12 @@ void sntInitCompression(unsigned int type){
 		/*	*/
 		err = BZ2_bzCompressInit(bzip2com, 9, 0, 0);
 		if(err < BZ_OK){
-			fprintf(stderr, "bzip2 failed to initialize with error %ld.\n", err);
+			sntLogErrorPrintf("bzip2 failed to initialize with error %ld.\n", err);
 			exit(EXIT_FAILURE);
 		}
 		err = BZ2_bzDecompressInit(bzip2uncom, 0, 0);
 		if(err < BZ_OK){
-			fprintf(stderr, "bzip2 failed to initialize with error %ld.\n", err);
+			sntLogErrorPrintf("bzip2 failed to initialize with error %ld.\n", err);
 			exit(EXIT_FAILURE);
 		}
 	}

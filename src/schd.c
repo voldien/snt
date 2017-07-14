@@ -13,13 +13,13 @@
 
 void sntMemoryLockAll(void){
 	if(mlockall(MCL_CURRENT | MCL_FUTURE) < 0){
-		fprintf(stderr, "mlockall failed, %s.\n", strerror(errno));
+		sntLogErrorPrintf("mlockall failed, %s.\n", strerror(errno));
 	}
 }
 
 void sntMemoryUnLockAll(void){
 	if(munlockall() < 0){
-		fprintf(stderr, "munlockall failed, %s.\n", strerror(errno));
+		sntLogErrorPrintf("munlockall failed, %s.\n", strerror(errno));
 	}
 }
 
@@ -27,7 +27,7 @@ int sntLockMemory(const void* mem, size_t size){
 	int e;
 	e = mlock(mem, size);
 	if( e != 0){
-		fprintf(stderr, "mlock failed, %s.\n", strerror(errno));
+		sntLogErrorPrintf("mlock failed, %s.\n", strerror(errno));
 		return 0;
 	}
 
@@ -47,7 +47,7 @@ void sntSchdSetAffinity(unsigned int cpu, unsigned int core, unsigned int size){
 
 	/*	*/
 	if(sched_setaffinity(0, sizeof(set), &set) != 0){
-		fprintf(stderr, "sched_setaffinity failed, %s.\n", strerror(errno));
+		sntLogErrorPrintf("sched_setaffinity failed, %s.\n", strerror(errno));
 	}
 }
 
@@ -61,7 +61,7 @@ void sntSchdGetAffinity(unsigned int* cpu, unsigned int* cores,
 
 	CPU_ZERO(&set);
 	if(sched_getaffinity(0, sizeof(set), &set) != 0){
-		fprintf(stderr, "sched_setaffinity failed, %s.\n", strerror(errno));
+		sntLogErrorPrintf("sched_setaffinity failed, %s.\n", strerror(errno));
 	}
 
 	for (j = 0; j < CPU_SETSIZE; ++j){

@@ -102,7 +102,7 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 
 	/*	Get interface list associated with the socket.	*/
 	if(ioctl(connection->tcpsock, SIOCGIFCONF, &ifcon) < 0){
-		fprintf(stderr, "ioctl %s.\n", strerror(errno));
+		sntLogErrorPrintf("ioctl %s.\n", strerror(errno));
 	}
 
 	/*	*/
@@ -115,7 +115,7 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 				&ifcr->ifr_ifrn.ifrn_name[0], IFNAMSIZ);
 		*/
 		if(ioctl(connection->tcpsock, SIOCGIFMTU, &ifr) < 0){
-			fprintf(stderr, "ioctl %s.\n", strerror(errno));
+			sntLogErrorPrintf("ioctl %s.\n", strerror(errno));
 		}
 		connection->mtu = ifr.ifr_ifru.ifru_mtu;
 		printf("%d.+n", connection->mtu);
@@ -125,14 +125,14 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 
 	/*	Get port used by socket on the host.	*/
 	if(getsockname(connection->tcpsock, (struct sockaddr*)sockaddr, &aclen) != 0){
-		fprintf(stderr, "getsockname failed, %s.\n", strerror(errno));
+		sntLogErrorPrintf("getsockname failed, %s.\n", strerror(errno));
 	}
 	memcpy(connection->ip, inet_ntoa(sockaddr->sin_addr), strlen(inet_ntoa(sockaddr->sin_addr)) + 1);
 	connection->port = ntohs(sockaddr->sin_port);
 
 	/*	Get external port on the connected host.	*/
 	if(getpeername(connection->tcpsock, (struct sockaddr *)sockaddr, &aclen) != 0){
-		fprintf(stderr, "getpeername failed, %s.\n", strerror(errno));
+		sntLogErrorPrintf("getpeername failed, %s.\n", strerror(errno));
 	}
 	memcpy(connection->extipv, inet_ntoa(sockaddr->sin_addr), strlen(inet_ntoa(sockaddr->sin_addr)) + 1);
 	connection->externalport = ntohs(sockaddr->sin_port);
@@ -241,14 +241,14 @@ SNTConnection* sntBindSocket(uint16_t port,
 		addrlen = sizeof(addrU.addr6);
 		addr = (struct sockaddr*)&addrU.addr6;
 	}else{
-		fprintf(stderr, "Invalid address family.\n");
+		sntLogErrorPrintf("Invalid address family.\n");
 		sntDisconnectSocket(connection);
 		return NULL;
 	}
 
 	/*	Bind process to socket.	*/
 	if( bind(connection->tcpsock, (struct sockaddr *)addr, addrlen) < 0){
-		fprintf(stderr, "Failed to bind TCP socket, %s.\n", strerror(errno));
+		sntLogErrorPrintf("Failed to bind TCP socket, %s.\n", strerror(errno));
 		sntDisconnectSocket(connection);
 		return NULL;
 	}
@@ -256,7 +256,7 @@ SNTConnection* sntBindSocket(uint16_t port,
 	/*	Bind UDP socket to process. Optional.	*/
 	if(connection->udpsock > 0){
 		if( bind(connection->udpsock, (struct sockaddr *)addr, addrlen) < 0){
-			fprintf(stderr, "Failed to bind UDP socket, %s.\n", strerror(errno));
+			sntLogErrorPrintf("Failed to bind UDP socket, %s.\n", strerror(errno));
 			sntDisconnectSocket(connection);
 			return NULL;
 		}
@@ -264,7 +264,7 @@ SNTConnection* sntBindSocket(uint16_t port,
 
 	/*	Listen.	*/
 	if( listen(connection->tcpsock, option->listen) < 0){
-		fprintf(stderr, "listen failed, %s.\n", strerror(errno));
+		sntLogErrorPrintf("listen failed, %s.\n", strerror(errno));
 		sntDisconnectSocket(connection);
 		return NULL;
 	}
@@ -295,7 +295,7 @@ SNTConnection* sntAcceptSocket(SNTConnection* bindcon){
 	/*	Accept incoming connection and get file descriptor.	*/
 	connection->tcpsock = accept(bindcon->tcpsock, &tobuffer, &aclen);
 	if( connection->tcpsock < 0 ){
-		fprintf(stderr, "Failed to accept, %s.\n", strerror(errno));
+		sntLogErrorPrintf("Failed to accept, %s.\n", strerror(errno));
 		sntDisconnectSocket(connection);
 		return NULL;
 	}
@@ -304,7 +304,7 @@ SNTConnection* sntAcceptSocket(SNTConnection* bindcon){
 	tv.tv_sec = 10;
 	tv.tv_usec = 0;
 	if(setsockopt(connection->tcpsock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) != 0){
-		fprintf(stderr, "setsockopt failed, %s.\n", strerror(errno));
+		sntLogErrorPrintf("setsockopt failed, %s.\n", strerror(errno));
 		sntDisconnectSocket(connection);
 		return NULL;
 	}
@@ -326,7 +326,7 @@ SNTConnection* sntAcceptSocket(SNTConnection* bindcon){
 	init.extension = 0;
 	init.deltaTypes = connection->option->deltatype;
 	if(sntWriteSocketPacket(connection, (SNTUniformPacket*)&init) <= 0){
-		fprintf(stderr, "Failed to write to client, %s.\n", strerror(errno));
+		sntLogErrorPrintf("Failed to write to client, %s.\n", strerror(errno));
 		sntDisconnectSocket(connection);
 		return NULL;
 	}
@@ -365,7 +365,7 @@ SNTConnection* sntConnectSocket(const char* host, uint16_t port,
 	/*	Create socket.	*/
 	if(sntInitSocket(connection, domain, option->transport_mode | SNT_TRANSPORT_TCP) == 0){
 		sntDisconnectSocket(connection);
-		fprintf(stderr, "Failed to create socket, %s.\n", strerror(errno));
+		sntLogErrorPrintf("Failed to create socket, %s.\n", strerror(errno));
 		return NULL;
 	}
 
@@ -396,7 +396,7 @@ SNTConnection* sntConnectSocket(const char* host, uint16_t port,
 		addrlen = sizeof(addrU.addr6);
 		addr = (const struct sockaddr*)&addrU.addr6;
 	}else{
-		fprintf(stderr, "Invalid address family.\n");
+		sntLogErrorPrintf("Invalid address family.\n");
 		sntDisconnectSocket(connection);
 		return NULL;
 	}
@@ -404,7 +404,7 @@ SNTConnection* sntConnectSocket(const char* host, uint16_t port,
 	/*	Establish connection.	*/
 	sntVerbosePrintf("Connecting to %s:%d.\n", host, port);
 	if( connect(connection->tcpsock, addr, addrlen) < 0){
-		fprintf(stderr, "Failed to connect TCP, %s.\n", strerror(errno));
+		sntLogErrorPrintf("Failed to connect TCP, %s.\n", strerror(errno));
 		sntDisconnectSocket(connection);
 		return NULL;
 	}
@@ -416,7 +416,7 @@ SNTConnection* sntConnectSocket(const char* host, uint16_t port,
 	/*	Create UDP if UDP is used, optional.	*/
 	if(connection->udpsock > 0){
 		if( bind(connection->udpsock, connection->intaddr, addrlen) < 0){
-			fprintf(stderr, "Failed to connect UDP, %s.\n", strerror(errno));
+			sntLogErrorPrintf("Failed to connect UDP, %s.\n", strerror(errno));
 			sntDisconnectSocket(connection);
 			return NULL;
 		}
@@ -471,7 +471,7 @@ int sntInitSocket(SNTConnection* connection, int affamily,
 		sntDebugPrintf("Create stream socket.\n");
 		connection->tcpsock = socket(affamily, SOCK_STREAM, 0);
 		if(connection->tcpsock < 0){
-			fprintf(stderr, "Failed to create socket, %s.\n", strerror(errno));
+			sntLogErrorPrintf("Failed to create socket, %s.\n", strerror(errno));
 			return 0;
 		}
 	}
@@ -479,7 +479,7 @@ int sntInitSocket(SNTConnection* connection, int affamily,
 		sntDebugPrintf("Create datagram socket.\n");
 		connection->udpsock = socket(affamily, SOCK_DGRAM, IPPROTO_UDP);
 		if(connection->udpsock < 0){
-			fprintf(stderr, "Failed to create socket, %s.\n", strerror(errno));
+			sntLogErrorPrintf("Failed to create socket, %s.\n", strerror(errno));
 			return 0;
 		}
 	}
@@ -495,7 +495,7 @@ int sntSetTransportProcotcol(SNTConnection* connection, unsigned int protocol){
 		if(connection->tcpsock <= 0){
 			connection->tcpsock = socket(connection->option->affamily, SOCK_STREAM, 0);
 			if(connection->tcpsock < 0){
-				fprintf(stderr, "Failed to create socket, %s.\n", strerror(errno));
+				sntLogErrorPrintf("Failed to create socket, %s.\n", strerror(errno));
 				return 0;
 			}
 		}
@@ -506,7 +506,7 @@ int sntSetTransportProcotcol(SNTConnection* connection, unsigned int protocol){
 		if(connection->udpsock <= 0){
 			connection->udpsock = socket(connection->option->affamily, SOCK_DGRAM, 0);
 			if(connection->udpsock < 0){
-				fprintf(stderr, "Failed to create socket, %s.\n", strerror(errno));
+				sntLogErrorPrintf("Failed to create socket, %s.\n", strerror(errno));
 				return 0;
 			}
 		}

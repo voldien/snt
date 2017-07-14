@@ -41,7 +41,7 @@ pthread_t sntBenchmarkCreateThread(unsigned int mode, SNTConnection* patt){
 		break;
 	case SNT_PROTOCOL_BM_MODE_UNKNOWN:
 	default:
-		fprintf(stderr, "Invalid benchmark mode, %x.\n", mode);
+		sntLogErrorPrintf("Invalid benchmark mode, %x.\n", mode);
 		return 0;
 	}
 
@@ -50,14 +50,14 @@ pthread_t sntBenchmarkCreateThread(unsigned int mode, SNTConnection* patt){
 
 	/*	Thread attributes.	*/
 	if(pthread_attr_init(&attr) != 0){
-		fprintf(stderr, "pthread_attr_init failed, %s.\n", strerror(errno));
+		sntLogErrorPrintf("pthread_attr_init failed, %s.\n", strerror(errno));
 		return 0;
 	}
 
 	/*	Set guardsize. 	*/
 	guardsize = (1 << 14);
 	if(pthread_attr_setguardsize(&attr, guardsize) != 0){
-		fprintf(stderr, "pthread_attr_getguardsize failed, %s.\n", strerror(errno));
+		sntLogErrorPrintf("pthread_attr_getguardsize failed, %s.\n", strerror(errno));
 		return 0;
 	}
 
@@ -65,14 +65,14 @@ pthread_t sntBenchmarkCreateThread(unsigned int mode, SNTConnection* patt){
 	schparam.__sched_priority = 0;
 	err = pthread_attr_setschedparam(&attr, &schparam);
 	if(err != 0){
-		fprintf(stderr, "pthread_attr_setschedparam failed, %d.\n", err);
+		sntLogErrorPrintf("pthread_attr_setschedparam failed, %d.\n", err);
 		return 0;
 	}
 
 	/*	Thread schedule priority.	*/
 	err = pthread_attr_setschedpolicy(&attr, SCHED_RR);
 	if(err != 0){
-		fprintf(stderr, "pthread_attr_setschedpolicy failed, %d.\n", err);
+		sntLogErrorPrintf("pthread_attr_setschedpolicy failed, %d.\n", err);
 		return 0;
 	}
 
@@ -80,7 +80,7 @@ pthread_t sntBenchmarkCreateThread(unsigned int mode, SNTConnection* patt){
 	/*	Set affinity.	*/
 	sntSchdGetAffinity(&cpu, &cores, &size);
 	if(!sntSchdSetThreadAttrAffinity(&attr, cpu, cores, size)){
-		fprintf(stderr, "sntSchdSetThreadAttrAffinity failed.\n");
+		sntLogErrorPrintf("sntSchdSetThreadAttrAffinity failed.\n");
 		return 0;
 	}
 
@@ -88,19 +88,19 @@ pthread_t sntBenchmarkCreateThread(unsigned int mode, SNTConnection* patt){
 	sntDebugPrintf("Creating benchmark thread.\n");
 	err = pthread_create(&thread, &attr, func, patt);
 	if( err != 0 ){
-		fprintf(stderr, "Failed to create thread for client, %s.\n", strerror(errno));
+		sntLogErrorPrintf("Failed to create thread for client, %s.\n", strerror(errno));
 		return 0;
 	}
 
 	/*	Release thread once done.	*/
 	if( pthread_detach(thread) != 0){
-		fprintf(stderr, "pthread_detach failed, %s.\n", strerror(errno));
+		sntLogErrorPrintf("pthread_detach failed, %s.\n", strerror(errno));
 		return 0;
 	}
 
 	err = pthread_attr_destroy(&attr);
 	if(err != 0){
-		fprintf(stderr, "pthread_attr_destroy failed, %s.\n", strerror(errno));
+		sntLogErrorPrintf("pthread_attr_destroy failed, %s.\n", strerror(errno));
 	}
 
 	return thread;

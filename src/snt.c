@@ -186,7 +186,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 					}
 					i++;
 					if(gc_hash_symbol[i] == NULL){
-						fprintf(stderr, "Invalid hash algorithm, %s.\n", optarg);
+						sntLogErrorPrintf("Invalid hash algorithm, %s.\n", optarg);
 						exit(EXIT_FAILURE);
 					}
 				}while(gc_hash_symbol[i]);
@@ -281,7 +281,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 			if(optarg){
 				option->asymmetric_bits = (unsigned int)strtol(optarg, NULL, 10);
 				if(option->asymmetric_bits <= 0){
-					fprintf(stderr, "Invalid asymmetric bit size, %s.\n", optarg);
+					sntLogErrorPrintf("Invalid asymmetric bit size, %s.\n", optarg);
 					exit(EXIT_FAILURE);
 				}
 			}
@@ -291,7 +291,7 @@ void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
 				sntVerbosePrintf("Opening %s.\n", optarg);
 				g_filepath = optarg;
 				if(access(g_filepath, F_OK | R_OK) != 0){
-					fprintf(stderr, "File %s is not accessible, %s.\n", optarg, strerror(errno));
+					sntLogErrorPrintf("File %s is not accessible, %s.\n", optarg, strerror(errno));
 					exit(EXIT_FAILURE);
 				}
 			}
@@ -385,7 +385,7 @@ void sntServerMain(void){
 					if(i == g_bindconnection->tcpsock){
 						con = sntAcceptSocket(g_bindconnection);
 						if(con == NULL){
-							fprintf(stderr, "Failed to accept connection.\n");
+							sntLogErrorPrintf("Failed to accept connection.\n");
 							continue;
 						}
 						/*	Map connection to socket table.	*/
@@ -498,7 +498,7 @@ int sntInitServer(int port, SNTConnectionOption* option){
 			option->listen, sizeof(SNTConnection) * option->listen);
 	g_connectionpool = (SNTPool*)sntPoolCreate(poolsize, sizeof(SNTConnection));
 	if(g_connectionpool == NULL){
-		fprintf(stderr, "Failed to allocate connection pool.\n");
+		sntLogErrorPrintf("Failed to allocate connection pool.\n");
 		return 0;
 	}
 
@@ -512,7 +512,7 @@ int sntInitServer(int port, SNTConnectionOption* option){
 			sizeof(SNTConnection*) * option->listen);
 	g_contable = (SNTConnection**)malloc(FD_SETSIZE * sizeof(SNTConnection**));
 	if( g_contable == NULL){
-		fprintf(stderr, "Failed to allocate connection hash mapping table.\n");
+		sntLogErrorPrintf("Failed to allocate connection hash mapping table.\n");
 		return 0;
 	}
 	memset(g_contable, 0, FD_SETSIZE * sizeof(pthread_t));
@@ -520,7 +520,7 @@ int sntInitServer(int port, SNTConnectionOption* option){
 	/*	Allocate thread hash pool.	*/
 	g_threadtable = (pthread_t*)malloc(poolsize * sizeof(pthread_t));
 	if( g_contable == NULL){
-		fprintf(stderr, "Failed to allocate connection hash mapping table.\n");
+		sntLogErrorPrintf("Failed to allocate connection hash mapping table.\n");
 		return 0;
 	}
 	memset(g_threadtable, 0, poolsize * sizeof(pthread_t));
@@ -545,7 +545,7 @@ int sntInitServer(int port, SNTConnectionOption* option){
 		}else{
 			/*	Create asymmetric key and check if successfully.	*/
 			if(sntASymGenerateKey(g_bindconnection, option->asymmetric, option->asymmetric_bits) == 0){
-				fprintf(stderr, "Failed to create asymmetric cipher key.\n");
+				sntLogErrorPrintf("Failed to create asymmetric cipher key.\n");
 				sntDisconnectSocket(g_bindconnection);
 				return 0;
 			}
@@ -562,7 +562,7 @@ int sntInitClient(int poolsize){
 			poolsize, sizeof(SNTConnection) * poolsize);
 	g_connectionpool = (SNTPool*)sntPoolCreate(poolsize, sizeof(SNTConnection));
 	if(g_connectionpool == NULL){
-		fprintf(stderr, "Failed to allocate connection pool.\n");
+		sntLogErrorPrintf("Failed to allocate connection pool.\n");
 		return 0;
 	}
 
@@ -617,7 +617,7 @@ int sntPacketInterpreter(SNTConnection* connection){
 	case SNT_PROTOCOL_STYPE_STARTTEST:
 		break;
 	default:
-		fprintf(stderr, "Undefined packet command type: %d.\n", unipackbuf.header.stype);
+		sntLogErrorPrintf("Undefined packet command type: %d.\n", unipackbuf.header.stype);
 		break;
 	}
 	return len;

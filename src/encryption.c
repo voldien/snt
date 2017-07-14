@@ -47,7 +47,7 @@ static void sntSSLPrintError(void){
 	char buf[256];
 	ERR_load_crypto_strings();
 	ERR_error_string(ERR_get_error(), buf);
-	fprintf(stderr, "Error encrypting message: %s\n", buf);
+	sntLogErrorPrintf("Error encrypting message: %s\n", buf);
 }
 
 int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned int numbits){
@@ -65,7 +65,7 @@ int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned 
 
 	switch(cipher){
 	case SNT_ENCRYPTION_ASYM_ECD:
-		fprintf(stderr, "Not supported.\n");
+		sntLogErrorPrintf("Not supported.\n");
 		return 0;
 		key = EC_KEY_new_by_curve_name(NID_secp224r1);
 		if(key == NULL){
@@ -137,7 +137,7 @@ int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned 
 
 		break;
 	default:
-		fprintf(stderr, "Invalid asymmetric cipher.\n");
+		sntLogErrorPrintf("Invalid asymmetric cipher.\n");
 		return 0;
 	}
 
@@ -191,7 +191,7 @@ int sntASymCreateKeyFromData(SNTConnection* connection,
 
 		break;
 	case SNT_ENCRYPTION_ASYM_ECD:
-		fprintf(stderr, "Not supported.\n");
+		sntLogErrorPrintf("Not supported.\n");
 		return 0;
 	default:
 		return 0;

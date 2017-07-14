@@ -45,7 +45,7 @@ int sntProtFuncCliOpt(SNTConnection* connection, const SNTUniformPacket* packet)
 	error = sntValidateCapability(cliopt);
 	if(error != SNT_ERROR_NONE){
 		sntSendError(connection, error, "");
-		fprintf(stderr, "Invalid options. denying client.\n");
+		sntLogErrorPrintf("Invalid options. denying client.\n");
 		sntDisconnectSocket(connection);
 		return 0;
 	}
@@ -105,7 +105,7 @@ int sntProtFuncCertificate(SNTConnection* connection, const SNTUniformPacket* pa
 	/*	Generate hash and compare to remote and local hash.	*/
 	if(sntHash(cer->hashtype, cer->cert, cer->localhashedsize, localhash) !=
 			sntHashGetTypeSize(cer->hashtype)){
-		fprintf(stderr, "sntHash failed.\n");
+		sntLogErrorPrintf("sntHash failed.\n");
 		return 0;
 	}
 
@@ -113,7 +113,7 @@ int sntProtFuncCertificate(SNTConnection* connection, const SNTUniformPacket* pa
 	if (!sntASymVerifyDigSign(connection, cer->hashtype, localhash,
 			sntHashGetTypeSize(cer->hashtype), cer->hash,
 			cer->encryedhashsize)) {
-		fprintf(stderr, "None matching hashes.\n");
+		sntLogErrorPrintf("None matching hashes.\n");
 		return 0;
 	}
 
@@ -121,10 +121,11 @@ int sntProtFuncCertificate(SNTConnection* connection, const SNTUniformPacket* pa
 	free(localhash);
 	sntMemZero(&cer->certype, cer->localhashedsize);
 
+	/*	TODO add support for condition for generate or use DH.	*/
 
 	/*	Generate symmetric key to use.	*/
 	if(!sntSymGenerateKey(connection, connection->option->symmetric)){
-		fprintf(stderr, "sntSymmetricGenerateKey failed.\n");
+		sntLogErrorPrintf("sntSymmetricGenerateKey failed.\n");
 		return 0;
 	}
 
@@ -133,7 +134,7 @@ int sntProtFuncCertificate(SNTConnection* connection, const SNTUniformPacket* pa
 	sec.encrykeyblock = sntASymPubEncrypt(connection->asymchiper, key,
 			sntSymKeyByteSize(connection->symchiper), sec.key, connection->asymkey);
 	if(sec.encrykeyblock <= 0){
-		fprintf(stderr, "sntAsymPubEncrypt failed.\n");
+		sntLogErrorPrintf("sntAsymPubEncrypt failed.\n");
 		return 0;
 	}
 
@@ -201,7 +202,7 @@ int sntProtFuncReady(SNTConnection* connection, const SNTUniformPacket* packet) 
 
 
 	/*	Start.	*/
-	fprintf(stderr, "Starting %s benchmark.\n"
+	sntLogErrorPrintf("Starting %s benchmark.\n"
 	"-----------------------------------------------\n",
 	gc_bench_symbol[sntLog2MutExlusive32(connection->option->bm_protocol_mode)]);
 
@@ -225,10 +226,10 @@ int sntProtFuncError(SNTConnection* connection, const SNTUniformPacket* packet) 
 	}
 
 	if(error->meslen > 0){
-		fprintf(stderr, "Error code %d : %s | '%s'.\n", error->errorcode,
+		sntLogErrorPrintf("Error code %d : %s | '%s'.\n", error->errorcode,
 				codedesc, error->message);
 	}else{
-		fprintf(stderr, "Error code %d : %s .\n", error->errorcode, codedesc);
+		sntLogErrorPrintf("Error code %d : %s .\n", error->errorcode, codedesc);
 	}
 	return 0;
 }
@@ -248,7 +249,7 @@ int sntProtFuncBenchmark(SNTConnection* connection, const SNTUniformPacket* pack
 		break;
 	case SNT_PROTOCOL_BM_MODE_FILE:
 		/*	TODO check how to pipe and redirect the data better.	*/
-		/*fprintf(stderr, "%d.\n", sntDatagramCommandSize(&packet->header));*/
+		/*sntLogErrorPrintf("%d.\n", sntDatagramCommandSize(&packet->header));*/
 		fwrite(sntDatagramGetBlock(packet), 1, sntProtocolHeaderDatagramSize(&packet->header), stdout);
 		break;
 	case SNT_PROTOCOL_BM_MODE_INTEGRITY:
@@ -282,37 +283,37 @@ int sntValidateCapability(const SNTClientOption* option){
 			|| !sntIsPower2(option->symchiper)
 			|| !sntIsPower2(option->transprotocol)
 			|| !sntIsPower2(option->deltaTypes)) {
-		fprintf(stderr, "Non mutually exclusive option is not supported.\n");
+		sntLogErrorPrintf("Non mutually exclusive option is not supported.\n");
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
 
 	/*	Check options are valid to be executed.	*/
 	if(option->compression && !(option->compression & g_bindconnection->option->compression)){
-		fprintf(stderr, "compression not supported.\n");
+		sntLogErrorPrintf("compression not supported.\n");
 		return SNT_ERROR_COMPRESSION_NOT_SUPPORTED;
 	}
 
 	/*	Check if secure connection is supported and requested.	*/
 	if(option->ssl && g_bindconnection->option->ssl == 0){
-		fprintf(stderr, "ssl/secure connection not supported.\n");
+		sntLogErrorPrintf("ssl/secure connection not supported.\n");
 		return SNT_ERROR_SSL_NOT_SUPPORTED;
 	}
 
 	/*	Check symmetric cipher support and requested.	*/
 	if(option->symchiper && !(option->symchiper & g_bindconnection->option->symmetric)){
-		fprintf(stderr, "cipher option not supported.\n");
+		sntLogErrorPrintf("cipher option not supported.\n");
 		return SNT_ERROR_CIPHER_NOT_SUPPORTED;
 	}
 
 	/*	Check delta mode is supported.	*/
 	if(option->deltaTypes && !(option->deltaTypes & g_bindconnection->option->deltatype)){
-		fprintf(stderr, "%d: Invalid delta type.\n", option->deltaTypes);
+		sntLogErrorPrintf("%d: Invalid delta type.\n", option->deltaTypes);
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
 
 	/*	Check asymmetric cipher support and requested.	*/
 	if(!(option->benchmode & g_bindconnection->option->bm_protocol_mode)){
-		fprintf(stderr, "%d: Invalid benchmark mode.\n", option->symchiper);
+		sntLogErrorPrintf("%d: Invalid benchmark mode.\n", option->symchiper);
 		return SNT_ERROR_BENCHMARK_NOT_SUPPORTED;
 	}
 
@@ -324,7 +325,7 @@ int sntValidateCapability(const SNTClientOption* option){
 
 	/*	Check version compatibility.	*/
 	if(SNT_GET_MAJ_VERSION(option->header.version) < SNT_GET_MAJ_VERSION(SNT_VERSION)){
-		fprintf(stderr, "Invalid version.\n");
+		sntLogErrorPrintf("Invalid version.\n");
 		return SNT_ERROR_INCOMPATIBLE_VERSION;
 	}
 
@@ -349,7 +350,7 @@ int sntSendCertificate(const SNTConnection* bind, SNTConnection* client){
 	cert.certlen = sntASymCopyPublicKey(bind, &cert.cert[0]);
 	if(cert.certlen <= 0){
 		sntSendError(client, SNT_ERROR_SERVER, "");
-		fprintf(stderr, "sntAsymmetricCopyPublicKey failed.\n");
+		sntLogErrorPrintf("sntAsymmetricCopyPublicKey failed.\n");
 		return 0;
 	}
 	sntDebugPrintf("%s.\n", cert.cert);
@@ -361,7 +362,7 @@ int sntSendCertificate(const SNTConnection* bind, SNTConnection* client){
 	cert.localhashedsize = sizeof(cert.cert);
 	if(!sntHash(cert.hashtype, cert.cert, cert.localhashedsize, cert.hash)){
 		sntSendError(client, SNT_ERROR_SERVER, "");
-		fprintf(stderr, "sntHash failed.\n");
+		sntLogErrorPrintf("sntHash failed.\n");
 		return 0;
 	}
 
