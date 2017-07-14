@@ -196,6 +196,15 @@ typedef struct snt_presentation_package_t{
 } __attribute__ ((__packed__)) SNTPresentationPacket;
 
 /**
+ *	Presentation initialization vector. Used for cryptographic
+ *	that uses initial vector.
+ */
+typedef struct snt_presentation_iv_package_t{
+	uint8_t len;	/*	size of IV in bytes.	*/
+	uint8_t iv[0];	/*	IV pointer only.	*/
+} __attribute__ ((__packed__)) SNTPresentationIVPacket;
+
+/**
  *	Packet used by the server that will be
  *	the first packet a client receives.
  *
