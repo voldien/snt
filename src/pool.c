@@ -77,7 +77,7 @@ void* sntPoolReturn(SNTPool* allocator, void* data) {
 }
 
 void* sntPoolResize(SNTPool* pool, unsigned int num, unsigned int itemsize){
-	fprintf(stderr, "Not supported.\n");
+	sntLogErrorPrintf("Not supported.\n");
 	return NULL;
 }
 
