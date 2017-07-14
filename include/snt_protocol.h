@@ -222,6 +222,7 @@ typedef struct snt_init_package_t{
 	uint32_t transmode;			/*	Default transport mode.	*/
 	uint32_t extension;			/*	Not supported.	*/
 	uint32_t deltaTypes;		/*	Delta type supported.	*/
+	uint32_t duplex;			/*	Duplex mode supported.	*/
 }__attribute__ ((__packed__)) SNTInitPackage;
 
 /**

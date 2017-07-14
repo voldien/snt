@@ -332,6 +332,7 @@ SNTConnection* sntAcceptSocket(SNTConnection* bindcon){
 	init.transmode = connection->option->transport_mode;
 	init.extension = 0;
 	init.deltaTypes = connection->option->deltatype;
+	init.duplex = connection->option->duplex;
 	if(sntWriteSocketPacket(connection, (SNTUniformPacket*)&init) <= 0){
 		sntLogErrorPrintf("Failed to write to client, %s.\n", strerror(errno));
 		sntDisconnectSocket(connection);
