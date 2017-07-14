@@ -457,8 +457,27 @@ extern int sntSetTransportProcotcol(SNTConnection* connection,
 /**
  *	Each packet sent will consist of a header
  *	and body. The header will never be compressed
- *	nor encrypted. In order for the protocol
- *	to
+ *	nor encrypted. However this might change in future version.
+ *
+ *	The presentation layer is an extension of the header.
+ *	It will only added when using secure connection.
+ *	The header uses the flag member for informing the receiver
+ *	it contains a presentation layer.
+ *
+ *		|---------------|]
+ *		|     header    |]	Application protocol header.
+ *		|  OSI Layer 7  |]	Describe incoming packets.
+ *		|---------------|
+ *		| presentation  |]	Only used when using symmetric
+ *		|  OSI Layer 6  |]	cryptographic.
+ *		|---------------|
+ *		|---------------|]	Application protocol data
+ *		|   payload.    |]	chunk.
+ *		|  OSI Layer 4  |]
+ *		|^^^^^^^^^^^^^^^|
+ *
+ *	The max size of the packet depends if the transport
+ *	layer uses TCP or UDP.
  *
  */
 
