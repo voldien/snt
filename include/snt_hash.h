@@ -41,7 +41,7 @@ extern const char* gc_hash_symbol[];
  *	Compute hash out of the data
  *	block.
  *
- *	@Return hash size
+ *	@Return hash size in bytes.
  */
 extern unsigned int sntHash(unsigned int hashtype, const void* __restrict__ block,
 		unsigned int len, void* __restrict__ result);
