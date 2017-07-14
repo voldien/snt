@@ -92,7 +92,7 @@ extern const char* gs_symprotocol[];
 #define SNT_CERTIFICATE_X509	0x4		/*	X509 certificate standard.	*/
 
 /**
- *
+ *	Certificate type symbol.
  */
 extern const char* gs_sym_cert[];
 
