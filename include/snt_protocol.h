@@ -391,7 +391,7 @@ typedef struct snt_connection_t{
 #define SNT_CONNECTION_BENCH	0x2	/*	Benchmark mode.	*/
 
 /**
- *
+ *	Check connection flag status.
  */
 #define sntIsTransportEnable(con) (con->flag & SNT_CONNECTION_TRANS)
 #define sntIsBenchEnable(con) (con->flag & SNT_CONNECTION_BENCH)
