@@ -20,7 +20,7 @@ dprint = function(...)
   info(table.concat({"Lua: ", ...}," "))
 end
 
---
+-- Default settings of the dissector.
 local default_settings =
 {
     enabled      = true,          -- whether this dissector is enabled or not
@@ -163,7 +163,7 @@ function snt.dissector(buf, pkt, root)
 	local result = dissectSNT(buf(0, SNT_MSG_HDR_LEN), pkt, root, bytes_consumed)
 	bytes_consumed = sntProtocolHeaderSize(buf(0, SNT_MSG_HDR_LEN))
 
-  --
+  -- Check if to continue the dissection.
   if not default_settings.subdissect then
     return pktlen
   end
@@ -185,7 +185,7 @@ function snt.dissector(buf, pkt, root)
     -- Create subtree for packet command type.
     local subtree = root:add(buf:range(bytes_consumed), "Message type: " .. stype_hdr_symbol[result])
     
-    -- 
+    -- Set default coloums information.
     pkt.cols.info:set(stype_col_info[result])
     
     -- Display information only if compression or encryption not used.
@@ -244,7 +244,7 @@ function dissectSNT(tvbuf, pktinfo, root, offset)
   tree:add(snt_hdr_fields.flag, tvbuf(offset + 6, 1))
   
 	--
-	--
+	-- Return stype of the packet datagram.
 	return stype_val
 end
 
