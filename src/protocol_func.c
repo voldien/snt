@@ -319,7 +319,7 @@ int sntValidateCapability(const SNTClientOption* option){
 
 	/*	Check if transport protocol supported.	*/
 	if(!(option->transprotocol & g_bindconnection->option->transport_mode)){
-		fprintf(stderr, "%d: Invalid transport protocol.\n", option->transprotocol);
+		sntLogErrorPrintf("%d: Invalid transport protocol.\n", option->transprotocol);
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
 
