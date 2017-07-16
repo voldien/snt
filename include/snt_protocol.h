@@ -164,11 +164,13 @@ extern const char* gs_error_sym[];
 /**
  *	Packet flag option.
  */
-#define SNT_PACKET_NONE			0x0		/*	None.	*/
-#define SNT_PACKET_ENCRYPTION	0x1		/*	Packet contains encryption.	*/
-#define SNT_PACKET_COMPRESSION	0x2		/*	Packet contains compression.	*/
+#define SNT_PACKET_NONE				0x0		/*	None.	*/
+#define SNT_PACKET_ENCRYPTION		0x1		/*	Packet contains encryption.	*/
+#define SNT_PACKET_COMPRESSION		0x2		/*	Packet contains compression.	*/
+#define SNT_PACKET_IV_ENCRYPTION	0x4		/*	Packet contains initilize vector.	*/
 
 #define sntPacketHasEncrypted(head) (head.flag & SNT_PACKET_ENCRYPTION)
+#define sntPacketHasIV(head)		(head.flag & SNT_PACKET_IV_ENCRYPTION)
 #define snTPacketHasCompress(head)	(head.flag & SNT_PACKET_COMPRESSION)
 
 /**
