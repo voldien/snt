@@ -498,14 +498,14 @@ extern int sntSetTransportProcotcol(SNTConnection* connection,
  *	@#eturn number of bytes of the packet body.
  */
 extern unsigned int sntCreateSendPacket(const SNTConnection* __restrict__ connection,
-		void* __restrict__ buffer, unsigned int buflen, uint8_t* __restrict__ noffset);
+		void* __restrict__ buffer, unsigned int buflen, SNTPresentationUnion* __restrict__ pres);
 /**
  *	Create packet ready to be received.
  *
  *	@Return number of bytes of the packet body.
  */
 extern unsigned int sntCreateRecvPacket(const SNTConnection* __restrict__ connection,
-		void* __restrict__ buffer, unsigned int buflen, uint8_t noffset);
+		void* __restrict__ buffer, unsigned int buflen, SNTPresentationUnion* __restrict__ pres);
 
 /**
  *	Read data from socket.

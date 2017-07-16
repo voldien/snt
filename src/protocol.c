@@ -529,7 +529,7 @@ int sntSetTransportProcotcol(SNTConnection* connection, unsigned int protocol){
 }
 
 unsigned int sntCreateSendPacket(const SNTConnection* connection, void* buffer,
-		unsigned int buflen, uint8_t* noffset) {
+		unsigned int buflen, SNTPresentationUnion* __restrict__ pres) {
 
 	unsigned int size;			/*	*/
 	unsigned char buf[4096];	/*	*/
@@ -549,8 +549,8 @@ unsigned int sntCreateSendPacket(const SNTConnection* connection, void* buffer,
 
 	/*	*/
 	if(connection->symchiper && connection->usecompression){
-		size = sntSymEncrypt(connection, sou, des, size);
-		*noffset = (uint8_t)(size - buflen);
+		size = sntSymEncrypt(connection, sou, des, size, pres->iv.iv);
+		pres->offset.noffset = (uint8_t)(size - buflen);
 		sntSwapPointer((void**)&des, (void**)&sou);
 		size = sntDeflate(connection->usecompression, (const char*)sou, (char*)des,
 						sntSymTotalBlockSize(size, connection->blocksize));
@@ -563,8 +563,8 @@ unsigned int sntCreateSendPacket(const SNTConnection* connection, void* buffer,
 		}
 		/*	Encryption.	*/
 		if(connection->symchiper){
-			size = sntSymEncrypt(connection, sou, des, size);
-			*noffset = size - buflen;
+			size = sntSymEncrypt(connection, sou, des, size, pres->iv.iv);
+			pres->offset.noffset = size - buflen;
 		}
 
 		memcpy(buffer, des, size);
@@ -573,7 +573,7 @@ unsigned int sntCreateSendPacket(const SNTConnection* connection, void* buffer,
 }
 
 unsigned int sntCreateRecvPacket(const SNTConnection* connection, void* buffer,
-		unsigned int buflen, uint8_t noffset) {
+		unsigned int buflen, SNTPresentationUnion* __restrict__ pres) {
 
 	unsigned int size;			/*	*/
 	unsigned char buf[4096];	/*	*/
@@ -593,17 +593,18 @@ unsigned int sntCreateRecvPacket(const SNTConnection* connection, void* buffer,
 	des = buf;
 
 	if(connection->symchiper && connection->usecompression){
-		size = sntInflate(connection->usecompression, (const char*)sou, (char*)des, size - noffset);
+		size = sntInflate(connection->usecompression, (const char*)sou, (char*)des, size);
 		sntSwapPointer((void**)&sou, (void**)&des);
-		size = sntSymDecrypt(connection, sou, des, size);
+		size = sntSymDecrypt(connection, sou, des, size, pres->iv.iv);
+		size -= pres->offset.noffset;
 		return size;
 	}
 	else{
 		/*	Decrypt.	*/
 		if(connection->symchiper){
 			sntDebugPrintf("Receiving encrypted data, %d.\n", size);
-			size = sntSymDecrypt(connection, sou, des, size);
-			size -= noffset;
+			size = sntSymDecrypt(connection, sou, des, size, pres->iv.iv);
+			size -= pres->offset.noffset ;
 		}
 		/*	Decompress.	*/
 		if(connection->usecompression){
@@ -685,13 +686,22 @@ int sntWriteSocketPacket(const SNTConnection* connection,
 		tranpack->header.len++;
 	}
 
+	/*	Update header if IV is used.	*/
+	if(sntPacketHasIV(tranpack->header)){
+		tranpack->header.offset += sntSymBlockSize(connection->symchiper) + 1;
+		tranpack->header.len  += sntSymBlockSize(connection->symchiper) + 1;
+		pres = (SNTPresentationUnion*)&tranpack->presentation;
+		pres->iv.len = sntSymBlockSize(connection->symchiper);
+	}
+
 	/*	Copy packet payload.	*/
-	sntCopyPacketPayload(&tranpack->totalbuf[sntProtocolHeaderSize(tranpack)],
+	sntCopyPacketPayload((void*)&tranpack->totalbuf[sntProtocolHeaderSize(tranpack)],
 			sntDatagramGetBlock(pack), sntProtocolHeaderDatagramSize(pack));
 
 	/*	Construct the packet.	*/
 	translen = sntCreateSendPacket(connection, sntDatagramGetBlock(tranpack),
-			sntProtocolHeaderDatagramSize(&tranpack->header), &tranpack->presentation.noffset);
+			sntProtocolHeaderDatagramSize(&tranpack->header),
+			(SNTPresentationUnion*)&tranpack->presentation);
 
 	/*	Update header.	*/
 	tranpack->header.len = translen + sntProtocolHeaderSize(&tranpack->header);
@@ -724,7 +734,8 @@ int sntReadSocketPacket(const SNTConnection* connection, SNTUniformPacket* pack)
 
 	/*	Copy to buffer.	*/
 	len += sntCreateRecvPacket(connection, sntDatagramGetBlock(pack),
-			sntProtocolHeaderDatagramSize(&pack->header), pack->presentation.noffset);
+			sntProtocolHeaderDatagramSize(&pack->header),
+			(SNTPresentationUnion*) &pack->presentation);
 
 	/*	Update size.	*/
 	pack->header.len = (uint16_t)len;
