@@ -17,7 +17,7 @@ int sntProtFuncInit(SNTConnection* connection, const SNTUniformPacket* packet) {
 	cliopt.transprotocol = connection->option->transport_mode;
 	cliopt.deltaTypes = connection->option->deltatype;
 	cliopt.incdelta.i = 1;
-	cliopt.duplex = 0;
+	cliopt.duplex = connection->option->duplex;
 	cliopt.invfrequency = connection->option->invfrequency;
 	cliopt.payload = connection->option->payload;
 	cliopt.extension = 0;
