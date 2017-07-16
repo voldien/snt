@@ -568,9 +568,8 @@ void sntSymFree(SNTConnection* connection){
 		free(connection->blowfish);
 		break;
 	case SNT_ENCRYPTION_3DES:
-		free(connection->des3);
-		break;
 	case SNT_ENCRYPTION_DES:
+		free(connection->des3);
 		break;
 	case SNT_ENCRYPTION_NONE:
 	default:
