@@ -256,17 +256,24 @@ function sntProtocolHeaderSize(tvbuf)
 end
 
 ----------------------------------------
+-- Get protocol header flag.
+-- @Return flag.
+function sntProtocolHeaderFlag(tvbuf)
+  return tvbuf(6, 1):le_uint()
+end
+
+----------------------------------------
 -- Check if packet contains encrypted data.
 -- @Return true if packet is encrypted.
 function sntProtocolIsEncrypted(tvbuf)
-  return bit.band(tvbuf(6, 1):le_uint(), SNT_MSG_FLAG_ENCR) == SNT_MSG_FLAG_ENCR
+  return bit.band(sntProtocolHeaderFlag(tvbuf), SNT_MSG_FLAG_ENCR) == SNT_MSG_FLAG_ENCR
 end
 
 ----------------------------------------
 -- Check if packet is compressed.
 -- @Return true if packet is compressed.
 function sntProtocolIsCompressed(tvbuf)
-  return bit.band(tvbuf(6, 1):le_uint(), SNT_MSG_FLAG_COMP) == SNT_MSG_FLAG_COMP
+  return bit.band(sntProtocolHeaderFlag(tvbuf), SNT_MSG_FLAG_COMP) == SNT_MSG_FLAG_COMP
 end
 
 ----------------------------------------
