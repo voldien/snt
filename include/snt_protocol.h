@@ -345,7 +345,7 @@ typedef union snt_unionform_packet_t{
 			SNTPacketHeader enc_header;						/*	*/
 			SNTPresentationPacket presentation;				/*	*/
 			/*	*/
-			uint8_t enc_buf[1500 - (sizeof(SNTPacketHeader) + sizeof(SNTPresentationPacket))];
+			uint8_t enc_buf[1500 - ((sizeof(SNTPacketHeader) + sizeof(SNTPresentationPacket)))];
 		};
 	};
 }__attribute__ ((__packed__))SNTUniformPacket;
