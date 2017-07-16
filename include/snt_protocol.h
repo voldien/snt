@@ -205,6 +205,14 @@ typedef struct snt_presentation_iv_package_t{
 } __attribute__ ((__packed__)) SNTPresentationIVPacket;
 
 /**
+ *
+ */
+typedef struct snt_presentation_union_t{
+	SNTPresentationPacket offset;
+	SNTPresentationIVPacket iv;
+} __attribute__ ((__packed__)) SNTPresentationUnion;
+
+/**
  *	Packet used by the server that will be
  *	the first packet a client receives.
  *
