@@ -534,6 +534,21 @@ int sntSymBlockSize(unsigned int cipher){
 	}
 }
 
+unsigned int sntSymNeedIV(unsigned int cipher){
+	switch(cipher){
+	case SNT_ENCRYPTION_AES_CBC128:
+	case SNT_ENCRYPTION_AES_CBC192:
+	case SNT_ENCRYPTION_AES_CBC256:
+	case SNT_ENCRYPTION_AES_CFB128:
+	case SNT_ENCRYPTION_AES_CFB192:
+	case SNT_ENCRYPTION_AES_CFB256:
+		return 1;
+	default:
+		break;
+	}
+	return 0;
+}
+
 void sntSymFree(SNTConnection* connection){
 
 	switch(connection->symchiper){

@@ -184,6 +184,11 @@ extern int sntSymKeyByteSize(unsigned int cipher);
 extern int sntSymBlockSize(unsigned int cipher);
 
 /**
+ *	@Return none zero if cipher enumerator uses IV.
+ */
+extern unsigned int sntSymNeedIV(unsigned int cipher);
+
+/**
  *	Free all associated symmetric cipher data that is
  *	associated with the connection.
  */
