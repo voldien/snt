@@ -77,7 +77,7 @@ extern const char* sntGetVersion(void);
 /**
  *	Read option arguments.
  */
-extern void sntReadArgument(int argc, const char** __restrict__ argv,
+extern void sntReadArgument(int argc,  char *const * __restrict__ argv,
 		char* __restrict__ ip, unsigned int* __restrict__ port,
 		SNTConnectionOption* __restrict__ option);
 

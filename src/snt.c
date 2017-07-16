@@ -61,7 +61,7 @@ static void snt_default_con_option(SNTConnectionOption* option, unsigned int isS
 	}
 }
 
-void sntReadArgument(int argc, const char** argv, char* ip, unsigned int* port,
+void sntReadArgument(int argc,  char *const * argv, char* ip, unsigned int* port,
 		SNTConnectionOption* option) {
 
 	unsigned int i;
