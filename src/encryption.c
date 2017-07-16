@@ -610,10 +610,12 @@ unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 		break;
 	case SNT_ENCRYPTION_AES_CBC128:
 	case SNT_ENCRYPTION_AES_CBC192:
-	case SNT_ENCRYPTION_AES_CBC256:
-		sntGenRandom(iv, sntSymBlockSize(connection->symchiper));
-		AES_cbc_encrypt(in, dest, delen, connection->aes, iv, AES_ENCRYPT);
-		break;
+	case SNT_ENCRYPTION_AES_CBC256:{
+		unsigned char iiv[16];
+		sntGenRandom(iiv, sntSymBlockSize(connection->symchiper));
+		memcpy(iv, iiv, 16);
+		AES_cbc_encrypt(in, dest, delen, connection->aes, iiv, AES_ENCRYPT);
+	}break;
 	case SNT_ENCRYPTION_AES_CFB128:
 	case SNT_ENCRYPTION_AES_CFB192:
 	case SNT_ENCRYPTION_AES_CFB256:
