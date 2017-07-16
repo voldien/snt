@@ -573,7 +573,7 @@ static unsigned char tmpiv[16] = {2,3,3,2,3,2,1};	/*	TODO resolved later, Used f
 int dummy = 6;
 
 unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
-		unsigned char* dest, unsigned int soulen) {
+		unsigned char* dest, unsigned int soulen, void* __restrict__ iv) {
 
 	unsigned int i;
 	unsigned int delen = soulen;
@@ -597,7 +597,8 @@ unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 	case SNT_ENCRYPTION_AES_CBC128:
 	case SNT_ENCRYPTION_AES_CBC192:
 	case SNT_ENCRYPTION_AES_CBC256:
-		AES_cbc_encrypt(in, dest, delen, connection->aes, tmpiv, AES_ENCRYPT);
+		sntGenRandom(iv, sntSymBlockSize(connection->symchiper));
+		AES_cbc_encrypt(in, dest, delen, connection->aes, iv, AES_ENCRYPT);
 		break;
 	case SNT_ENCRYPTION_AES_CFB128:
 	case SNT_ENCRYPTION_AES_CFB192:
@@ -625,7 +626,7 @@ unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 }
 
 unsigned int sntSymDecrypt(const SNTConnection* connection, const void* source,
-		unsigned char* dest, unsigned int soulen) {
+		unsigned char* dest, unsigned int soulen, void* __restrict__ iv) {
 
 	unsigned int deslen;
 	const unsigned char* in = source;
@@ -646,12 +647,12 @@ unsigned int sntSymDecrypt(const SNTConnection* connection, const void* source,
 	case SNT_ENCRYPTION_AES_CBC128:
 	case SNT_ENCRYPTION_AES_CBC192:
 	case SNT_ENCRYPTION_AES_CBC256:
-		AES_cbc_encrypt(source, dest, deslen, connection->deaes, tmpiv, AES_DECRYPT);/**/
+		AES_cbc_encrypt(source, dest, deslen, connection->deaes, iv, AES_DECRYPT);
 		break;
 	case SNT_ENCRYPTION_AES_CFB128:
 	case SNT_ENCRYPTION_AES_CFB192:
 	case SNT_ENCRYPTION_AES_CFB256:
-		AES_cfb128_encrypt(in, dest, deslen, connection->deaes, tmpiv, &dummy, AES_DECRYPT);
+		AES_cfb128_encrypt(in, dest, deslen, connection->deaes, iv, &dummy, AES_DECRYPT);
 		break;
 	case SNT_ENCRYPTION_DES:
 		for(i = 0; i < deslen; i += connection->blocksize){
