@@ -323,6 +323,12 @@ int sntValidateCapability(const SNTClientOption* option){
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
 
+	/*	Check if duplex protocol is supported.	*/
+	if(!(option->duplex & g_bindconnection->option->duplex)){
+		sntLogErrorPrintf("%d: Invalid duplex mode.\n", option->duplex);
+		return SNT_ERROR_INVALID_ARGUMENT;
+	}
+
 	/*	Check version compatibility.	*/
 	if(SNT_GET_MAJ_VERSION(option->header.version) < SNT_GET_MAJ_VERSION(SNT_VERSION)){
 		sntLogErrorPrintf("Invalid version.\n");
