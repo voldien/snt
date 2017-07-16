@@ -69,11 +69,13 @@ int main(int argc, const char** argv){
 	signal(SIGABRT, snt_catch);
 	atexit(snt_release);
 
-	/*	Lock memory.	*/
-	sntMemoryLockAll();
 
 	/*	Create server.	*/
 	if(g_server){
+
+		/*	Lock memory.	*/
+		sntMemoryLockAll();
+
 		sntVerbosePrintf("Creating server socket.\n");
 		if(sntInitServer(port, &conopt) == 0){
 			return EXIT_FAILURE;
