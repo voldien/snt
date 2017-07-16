@@ -178,9 +178,13 @@ extern void sntSymCopyKey(SNTConnection* __restrict__ connection,
 extern int sntSymKeyBitSize(unsigned int cipher);
 
 /**
- *
+ *	@Return key size in bytes.
  */
 extern int sntSymKeyByteSize(unsigned int cipher);
+
+/**
+ *	@Return block size in bytes.
+ */
 extern int sntSymBlockSize(unsigned int cipher);
 
 /**
