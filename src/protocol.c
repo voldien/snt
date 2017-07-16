@@ -670,6 +670,7 @@ int sntWriteSocketPacket(const SNTConnection* connection,
 
 	int translen = 0;
 	SNTUniformPacket* tranpack;
+	SNTPresentationUnion* pres;
 
 	/*	Set flag of packet.	*/
 	tranpack = (SNTUniformPacket*)connection->tranbuf;
@@ -677,8 +678,9 @@ int sntWriteSocketPacket(const SNTConnection* connection,
 	/*	Copy and set flag.	*/
 	sntCopyHeader(&tranpack->header, &pack->header);
 	tranpack->header.flag = (uint8_t)(
-			sntIsConnectionSecure(connection) ? SNT_PACKET_ENCRYPTION : 0)
-			| (sntIsConnectionCompressed(connection) ? SNT_PACKET_COMPRESSION : 0);
+			(sntIsConnectionSecure(connection) ? SNT_PACKET_ENCRYPTION : 0)
+			| (sntIsConnectionCompressed(connection) ? SNT_PACKET_COMPRESSION : 0)
+			| (sntSymNeedIV(connection->symchiper) ? SNT_PACKET_IV_ENCRYPTION : 0));
 
 	/*	Update header if using encryption.	*/
 	if(sntPacketHasEncrypted(tranpack->header)){
