@@ -34,7 +34,7 @@ $(TARGET) : $(OBJS)
 
 debug : CFLAGS += -g3 -O0
 debug : $(OBJS)
-	$(CC) $(CLFAGS) $^ -o $@ $(CLIBS)
+	$(CC) $(CLFAGS) $^ -o $(TARGET) $(CLIBS)
 
 %.o : %.c
 	$(CC) $(CFLAGS) -c $^ -o $@
