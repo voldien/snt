@@ -109,6 +109,6 @@ void sntPoolZeroFrame(SNTPool* pool){
 	unsigned int i;
 
 	for(i = 0; i < sntPoolNumNodes(pool); i++){
-		memset(sntPoolItemByIndex(pool, i), 0, sntPoolItemSize(pool));
+		sntMemZero(sntPoolItemByIndex(pool, i), sntPoolItemSize(pool));
 	}
 }
