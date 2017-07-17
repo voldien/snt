@@ -29,6 +29,7 @@ static void snt_release(void){
 		g_threadtable = NULL;
 	}
 
+	/*	Free connection pool.	*/
 	if(g_connectionpool){
 		sntPoolFree(g_connectionpool);
 		g_connectionpool = NULL;
