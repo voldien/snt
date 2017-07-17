@@ -88,7 +88,7 @@ int main(int argc, const char** argv){
 	if(g_client){
 		sntVerbosePrintf("Creating client socket.\n");
 		if(sntInitClient(g_numcliconne) == 0){
-			fprintf(stderr, "Failed to connect to %s:%d.\n", host, port);
+			sntLogErrorPrintf("Failed to connect to %s:%d.\n", host, port);
 			return EXIT_FAILURE;
 		}
 		sntClientMain(host, port, g_numcliconne, &conopt);
