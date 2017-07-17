@@ -99,8 +99,10 @@ static void* sntPoolItemByIndex(SNTPool* pool, unsigned int index){
 
 void sntPoolFree(SNTPool* pool){
 
+	/*	Zero out each pool item.	*/
 	sntPoolZeroFrame(pool);
 
+	/*	Release memory.	*/
 	free(pool->pool);
 	free(pool);
 }
