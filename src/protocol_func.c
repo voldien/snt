@@ -22,6 +22,7 @@ int sntProtFuncInit(SNTConnection* connection, const SNTUniformPacket* packet) {
 	cliopt.payload = connection->option->payload;
 	cliopt.extension = 0;
 	cliopt.duration = connection->option->duration;
+	cliopt.dh = connection->option->dh;
 
 	/*	Send option.	*/
 	sntInitDefaultHeader(&cliopt.header, SNT_PROTOCOL_STYPE_CLIENTOPT, sizeof(cliopt));
@@ -123,6 +124,11 @@ int sntProtFuncCertificate(SNTConnection* connection, const SNTUniformPacket* pa
 	sntMemZero(&cer->certype, cer->localhashedsize);
 
 	/*	TODO add support for condition for generate or use DH.	*/
+	if(connection->option->dh > 0){
+		SNTPacketHeader pack;
+		sntInitDefaultHeader(&pack, SNT_PROTOCOL_STYPE_DH_REQ, sizeof(pack));
+		return sntWriteSocketPacket(connection, &pack);
+	}
 
 	/*	Generate symmetric key to use.	*/
 	if(!sntSymGenerateKey(connection, connection->option->symmetric)){
