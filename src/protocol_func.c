@@ -216,7 +216,7 @@ int sntProtFuncReady(SNTConnection* connection, const SNTUniformPacket* packet) 
 }
 
 int sntProtFuncStart(SNTConnection* connection, const SNTUniformPacket* packet){
-
+	/*	Do nothing.	*/
 	return 1;
 }
 
