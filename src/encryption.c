@@ -646,11 +646,17 @@ unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 	case SNT_ENCRYPTION_AES_CFB256:
 		break;
 	case SNT_ENCRYPTION_DES:
-
+		for(i = 0; i < delen; i += connection->blocksize){
+			memcpy((DES_LONG*)(dest + i), (DES_LONG*)(in + i), connection->blocksize);
+			DES_encrypt1((unsigned int*)(dest + i), connection->symmetrickey, DES_ENCRYPT);
+		}
 		break;
 	case SNT_ENCRYPTION_3DES:
 		for(i = 0; i < delen; i += connection->blocksize){
-			DES_encrypt1((unsigned int*)(source + i), connection->des3, 0);
+			memcpy((DES_LONG*)(dest + i), (DES_LONG*)(in + i), connection->blocksize);
+			DES_encrypt3((DES_LONG*)(dest + i), 					&((DES_key_schedule*)connection->des3)[0],
+					&((DES_key_schedule*)connection->des3)[1],
+					&((DES_key_schedule*)connection->des3)[2]);
 		}
 		break;
 	case SNT_ENCRYPTION_BLOWFISH:
