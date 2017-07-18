@@ -645,6 +645,12 @@ int sntPacketInterpreter(SNTConnection* connection){
 		break;
 	case SNT_PROTOCOL_STYPE_STARTTEST:
 		break;
+	case SNT_PROTOCOL_STYPE_DH_REQ:
+		return sntProtFuncDHReq(connection, &unipackbuf);
+	case SNT_PROTOCOL_STYPE_DH_INIT:
+		return sntProtFuncDHInit(connection, &unipackbuf);
+	case SNT_PROTOCOL_STYPE_DH_EXCH:
+		return sntProtFuncDHExch(connection, &unipackbuf);
 	default:
 		sntLogErrorPrintf("Undefined packet command type: %d.\n", unipackbuf.header.stype);
 		break;
