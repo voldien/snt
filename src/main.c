@@ -52,7 +52,7 @@ void snt_catch(int signal){
 	exit(EXIT_SUCCESS);
 }
 
-int main(int argc, const char** argv){
+int main(int argc,  char *const * argv){
 
 	/*	*/
 	SNTConnectionOption conopt;				/*	*/
