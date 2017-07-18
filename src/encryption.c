@@ -434,10 +434,33 @@ int sntSymCreateFromKey(SNTConnection* connection, unsigned int cipher, const vo
 		symcipsize = sizeof(BF_KEY);
 		break;
 	case SNT_ENCRYPTION_DES:
-	case SNT_ENCRYPTION_3DES:
-		printf("DES3 not supported.\n");
 		connection->des3 = malloc(sizeof(DES_key_schedule));
 		symcipsize = sizeof(DES_key_schedule);
+		/*if(DES_set_key_checked((const_DES_cblock*)&pkey, connection->des3) != 0){
+			sntSSLPrintError();
+			return 0;
+		}*/
+		if(DES_set_key((const_DES_cblock*)pkey, (DES_key_schedule *)connection->des3) != 0){
+			sntSSLPrintError();
+			return 0;
+		}
+		break;
+	case SNT_ENCRYPTION_3DES:
+		printf("DES3 not supported.\n");
+		connection->des3 = malloc(sizeof(DES_key_schedule) * 3);
+		symcipsize = sizeof(DES_key_schedule) * 3;
+		if(DES_set_key(&((const_DES_cblock*)pkey)[0], &((DES_key_schedule*)connection->des3)[0]) != 0){
+			sntSSLPrintError();
+			return 0;
+		}
+		if(DES_set_key(&((const_DES_cblock*)pkey)[1], &((DES_key_schedule*)connection->des3)[1]) != 0){
+			sntSSLPrintError();
+			return 0;
+		}
+		if(DES_set_key(&((const_DES_cblock*)pkey)[2], &((DES_key_schedule*)connection->des3)[2]) != 0){
+			sntSSLPrintError();
+			return 0;
+		}
 		break;
 	default:
 		return 0;
@@ -504,6 +527,8 @@ int sntSymKeyBitSize(unsigned int cipher){
 		return 192;
 	case SNT_ENCRYPTION_DES:
 		return 56;
+	case SNT_ENCRYPTION_3DES:
+		return sntSymKeyBitSize(SNT_ENCRYPTION_DES) * 3;
 	default:
 		return 0;
 	}
@@ -528,7 +553,8 @@ int sntSymBlockSize(unsigned int cipher){
 	case SNT_ENCRYPTION_BLOWFISH:
 		return BF_BLOCK;
 	case SNT_ENCRYPTION_DES:
-		return DES_KEY_SZ;
+	case SNT_ENCRYPTION_3DES:
+		return sizeof(DES_cblock);
 	default:
 		return 0;
 	}
