@@ -102,6 +102,7 @@ void sntReadArgument(int argc,  char *const * argv, char* ip, unsigned int* port
 		{"affinity",		required_argument,	NULL, 'A'},	/*	-A, --affinity n/n,m 	*/
 		{"certificate",		required_argument,	NULL, 'X'},	/*	Certificate.	*/
 		{"private-key",		required_argument,	NULL, 'x'},	/*	Private key.	*/
+		{"dh",				required_argument,	NULL, 'i'},	/*	Diffie hellman parameter.	*/
 
 		{NULL, 0, NULL, 0}
 	};
@@ -323,6 +324,14 @@ void sntReadArgument(int argc,  char *const * argv, char* ip, unsigned int* port
 					fprintf(stderr, "File %s is not accessible, %s.\n", optarg, strerror(errno));
 					exit(EXIT_FAILURE);
 				}
+			}
+			break;
+		case 'i':
+			if(optarg){
+				option->dh = strtol(optarg, NULL, 10);
+				sntVerbosePrintf("Diffie hellman set to %d bit.\n", option->dh);
+			}else{
+				option->dh = 1;
 			}
 			break;
 		default:
@@ -558,6 +567,14 @@ int sntInitServer(int port, SNTConnectionOption* option){
 			/*	Create asymmetric key and check if successfully.	*/
 			if(sntASymGenerateKey(g_bindconnection, option->asymmetric, option->asymmetric_bits) == 0){
 				sntLogErrorPrintf("Failed to create asymmetric cipher key.\n");
+				sntDisconnectSocket(g_bindconnection);
+				return 0;
+			}
+		}
+
+		if(option->dh > 0){
+			if(!sntDHCreate(&g_bindconnection->dh, option->dh)){
+				sntLogErrorPrintf("Failed to create diffie hellman.\n");
 				sntDisconnectSocket(g_bindconnection);
 				return 0;
 			}
