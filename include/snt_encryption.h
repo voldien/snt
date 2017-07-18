@@ -48,6 +48,9 @@ typedef struct snt_connection_t SNTConnection;
 		| SNT_ENCRYPTION_AES_CFB128 | SNT_ENCRYPTION_AES_CFB192 \
 		| SNT_ENCRYPTION_AES_CFB256)
 
+/**
+ *	Symmetric cipher symbol table.
+ */
 extern const char* gc_symchi_symbol[];
 
 /**
