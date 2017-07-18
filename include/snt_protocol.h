@@ -161,6 +161,8 @@ extern const char* gs_delta_sym[];
 #define SNT_ERROR_SERVICE_UNAVAILABLE		0x8	/*	Server can't provide the service.	*/
 #define SNT_ERROR_CIPHER_NOT_SUPPORTED		0x9	/*	Cipher not supported.	*/
 #define SNT_ERROR_BENCHMARK_NOT_SUPPORTED	0x10/*	Benchmark not supported.	*/
+#define SNT_ERROR_DH_NOT_SUPPORTED			0x11/*	Diffie hellman not supported.	*/
+
 /**
  *	Error code symbols.
  */
