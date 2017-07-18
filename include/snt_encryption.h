@@ -235,8 +235,4 @@ extern unsigned int sntSymDecrypt(const SNTConnection* __restrict__ connection,
  */
 extern unsigned int sntSymTotalBlockSize(unsigned int len, unsigned int blocksize);
 
-/*
-extern int sntSymPadding(void);
-*/
-
 #endif
