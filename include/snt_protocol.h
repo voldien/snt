@@ -76,6 +76,10 @@
 #define SNT_PROTOCOL_STYPE_ERROR		0x7		/*	Error packet. Informing about the error.	*/
 #define SNT_PROTOCOL_STYPE_BENCHMARK	0x8		/*	Benchmark specific packet.	*/
 #define SNT_PROTOCOL_STYPE_RESULT		0x9		/*	Result from server.	*/
+#define SNT_PROTOCOL_STYPE_DH_REQ		0xA		/*	Request diffie hellman p and g.	*/
+#define SNT_PROTOCOL_STYPE_DH_INIT		0xB		/*	Initialize common number.	*/
+#define SNT_PROTOCOL_STYPE_DH_EXCH		0xC		/*	Exchange computed q.	*/
+
 
 /**
  *	protocol symbol table used
@@ -283,6 +287,27 @@ typedef struct snt_secure_establishment_packet_t{
 	int32_t encrykeyblock;			/*	Size in bytes of encrypted data block.	*/
 	uint8_t key[512];				/*	Encrypted symmetric Key.	*/
 }__attribute__ ((__packed__))SNTSecureEstablismentPacket;
+
+/**
+ *	Initialized number agreed between the parties.
+ */
+typedef struct snt_diffe_hellman_init_t{
+	SNTPacketHeader header;		/*	Protocol header.	*/
+	uint32_t bitsize;			/*	Size of diffie hellman in bits.	*/
+	uint32_t plen;				/*	p length in bytes.	*/
+	uint32_t glen;				/*	g length in bytes.	*/
+	uint32_t offset;			/*	Offset to data block.	*/
+}__attribute__ ((__packed__))SNTDHInit;
+
+/**
+ *	Exchange computed modular number.
+ */
+typedef struct snt_diffe_hellman_exch_t{
+	SNTPacketHeader header;			/*	Protocol header.	*/
+	uint32_t qlen;					/*	size of q in bytes.	*/
+	uint32_t offset;				/*	offset in bytes to q.	*/
+	uint32_t sym;					/*	symmetric key to generate from diffie hellman.	*/
+}__attribute__ ((__packed__))SNTDHExch;
 
 /**
  *	Packet sent from server to

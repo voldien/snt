@@ -34,6 +34,9 @@ const char* gs_symprotocol[] = {
 		"Error",
 		"Benchmark",
 		"Result",
+		"DHReq",
+		"DHInit",
+		"DHExch",
 		NULL
 };
 
