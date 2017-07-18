@@ -44,7 +44,7 @@ const char* gc_asymchi_symbol[] = {
 		NULL,
 };
 
-static void sntSSLPrintError(void){
+void sntSSLPrintError(void){
 	char buf[256];
 	ERR_load_crypto_strings();
 	ERR_error_string(ERR_get_error(), buf);
