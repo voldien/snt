@@ -385,6 +385,12 @@ int sntValidateCapability(const SNTClientOption* option){
 		return SNT_ERROR_SSL_NOT_SUPPORTED;
 	}
 
+	/*	Check if diffie hellman is supported.	*/
+	if(option->dh && !(g_bindconnection->option->dh)){
+		sntLogErrorPrintf("Diffie hellman supported.\n");
+		return SNT_ERROR_DH_NOT_SUPPORTED;
+	}
+
 	/*	Check symmetric cipher support and requested.	*/
 	if(option->symchiper && !(option->symchiper & g_bindconnection->option->symmetric)){
 		sntLogErrorPrintf("cipher option not supported.\n");
