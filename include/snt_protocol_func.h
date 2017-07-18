@@ -41,6 +41,12 @@ extern int sntProtFuncResult(SNTConnection* __restrict__ connection,
 		const SNTUniformPacket* __restrict__ packet);
 extern int sntProtFuncBenchmark(SNTConnection* __restrict__ connection,
 		const SNTUniformPacket* __restrict__ packet);
+extern int sntProtFuncDHReq(SNTConnection* __restrict__ connection,
+		const SNTUniformPacket* __restrict__ packet);
+extern int sntProtFuncDHInit(SNTConnection* __restrict__ connection,
+		const SNTUniformPacket* __restrict__ packet);
+extern int sntProtFuncDHExch(SNTConnection* __restrict__ connection,
+		const SNTUniformPacket* __restrict__ packet);
 
 /**
  *	Validate capability of system.
@@ -56,6 +62,17 @@ extern int sntValidateCapability(const SNTClientOption* option);
  */
 extern int sntSendCertificate(const SNTConnection* __restrict__ bind,
 		SNTConnection* __restrict__ client);
+
+/**
+ *	@Return number of bytes sent.
+ */
+extern int sntSendDHpq(const SNTConnection* __restrict__ bind,
+		SNTConnection* __restrict__ client);
+
+/**
+ *	@Return number of bytes sent.
+ */
+extern int sntSendDHExch(SNTConnection* __restrict__ connection);
 
 /**
  *	@Return number of bytes sent.

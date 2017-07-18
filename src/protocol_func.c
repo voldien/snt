@@ -275,6 +275,86 @@ int sntProtFuncBenchmark(SNTConnection* connection, const SNTUniformPacket* pack
 	return 1;
 }
 
+int sntProtFuncDHReq(SNTConnection* __restrict__ connection,
+		const SNTUniformPacket* __restrict__ packet){
+	return sntSendDHpq(g_bindconnection, connection);
+}
+
+int sntProtFuncDHInit(SNTConnection* __restrict__ connection,
+		const SNTUniformPacket* __restrict__ packet){
+
+	SNTDHInit* init = (SNTDHInit*)packet;
+	const size_t packlen = sizeof(SNTDHExch);
+	int len;
+	void* p;
+	void* g;
+
+	/*	Extract p and g from packet.	*/
+	p = &((uint8_t*)sntDatagramGetBlock(packet))[init->offset];
+	g = &((uint8_t*)sntDatagramGetBlock(packet))[init->offset + init->plen];
+
+	/*	Create diffie hellman from p and g.	*/
+	if(!sntDHCreateByData(&connection->dh, p, g, init->plen, init->glen)){
+		sntSendError(connection, SNT_ERROR_SERVER, "sntDHCreate failed");
+		return 0;
+	}
+
+	/*	Compute.	*/
+	if(!sntDHCompute(connection->dh)){
+		sntSendError(connection, SNT_ERROR_SERVER, "sntDHCompute failed");
+		return 0;
+	}
+
+	len = sntSendDHExch(connection);
+
+	return len;
+}
+
+int sntProtFuncDHExch(SNTConnection* __restrict__ connection,
+		const SNTUniformPacket* __restrict__ packet){
+
+	SNTDHExch* exch = (SNTDHExch*)packet;
+	int plen;
+	void *pkey;
+	void* q;
+
+
+	/*	If server, exhange.	*/
+	if(g_bindconnection){
+		if(sntSendDHExch(connection) <= 0)
+			return 0;
+		/*	*/
+		sntSendReady(connection);
+		connection->flag |= SNT_CONNECTION_BENCH;
+	}
+
+	/*	Extract key.	*/
+	q = &((uint8_t*)sntDatagramGetBlock(exch))[exch->offset];
+	plen = sntDHSize(connection->dh);
+	pkey = malloc(plen);
+	if(!sntDHGetComputedKey(connection->dh, q, pkey)){
+		sntSendError(connection, SNT_ERROR_SERVER, "sntDHGetComputedKey failed");
+		return 0;
+	}
+
+	/*	Create symmetric key.	*/
+	if(!sntSymCreateFromKey(connection, exch->sym, pkey)){
+		sntSendError(connection, SNT_ERROR_SERVER, "");
+		return 0;
+	}
+
+
+	/*	Release.	*/
+	sntDHRelease(connection->dh);
+	connection->dh = NULL;
+
+	/*	Cleanup.	*/
+	sntMemZero(pkey, plen);
+	free(pkey);
+
+	return 1;
+}
+
 int sntValidateCapability(const SNTClientOption* option){
 
 	/*	Check if options are mutually exclusive.	*/
@@ -397,6 +477,102 @@ int sntSendCertificate(const SNTConnection* bind, SNTConnection* client){
 	return len;
 }
 
+int sntSendDHpq(const SNTConnection* __restrict__ bind,
+		SNTConnection* __restrict__ client){
+
+	SNTDHInit* init;
+	const size_t packlen = sizeof(SNTDHInit);
+	const int32_t bnum = sntDHSize(bind->dh);
+	int len;
+	/*	*/
+	uint8_t* p;
+	uint8_t* g;
+
+	assert(bind->dh);
+
+	/*	Allocate packet.	*/
+	init = malloc(packlen + bnum * 2);
+	assert(init);
+
+	/*	Initialize the packet.	*/
+	sntInitDefaultHeader(&init->header, SNT_PROTOCOL_STYPE_DH_INIT, packlen + bnum * 2);
+
+	/*	Get p and g address.	*/
+	p = ((uint8_t*)init) + packlen;
+	g = p + bnum;
+
+	/*	Copy p and q.	*/
+	if(!sntDHCopyCommon(bind->dh, p, g, &init->plen, &init->glen)){
+		sntSendError(client, SNT_ERROR_SERVER, "Failed copy common diffie helmman p and g");
+		return 0;
+	}
+
+	/*	Create copy of diffie hellman for the client connection.	*/
+	if(!sntDHCreateByData(&client->dh, p, g, init->plen, init->glen)){
+		sntSendError(client, SNT_ERROR_SERVER, "sntDHCreateByData failed");
+		return 0;
+	}
+
+	/*	Copy p and q.	*/
+	if(!sntDHCopyCommon(client->dh, p, g, &init->plen, &init->glen)){
+		sntSendError(client, SNT_ERROR_SERVER, "Failed copy common diffie helmman p and g");
+		return 0;
+	}
+
+	/*	Compute diffie hellman for public exchange q.	*/
+	if(!sntDHCompute(client->dh)){
+		sntSendError(client, SNT_ERROR_SERVER, "sntDHCompute failed");
+		return 0;
+	}
+
+	/*	Assigned meta data.	*/
+	init->offset = sizeof(SNTDHInit) - sizeof(SNTPacketHeader);
+	init->bitsize = bnum * 8;
+
+	/*	Send packet.	*/
+	len = sntWriteSocketPacket(client, init);
+
+	/*	Release packet from memory.	*/
+	sntMemZero(init, sntProtocolPacketSize(init));
+	free(init);
+
+	return len;
+}
+
+int sntSendDHExch(SNTConnection* __restrict__ connection){
+
+	SNTDHExch* exch;
+	const size_t packlen = sizeof(SNTDHExch);
+	int hdsize;
+	int len;
+	void* q;
+
+	/*	*/
+	hdsize = sntDHSize(connection->dh);
+	exch = malloc(packlen + hdsize);
+	q = ((uint8_t*)exch) + packlen;
+
+	/*	Get exchange.	*/
+	if(!sntDHGetExchange(connection->dh, q)){
+		sntSendError(connection, SNT_ERROR_SERVER, "sntDHGetExchange failed");
+		return 0;
+	}
+
+	/*	Compute.	*/
+	sntInitDefaultHeader(&exch->header, SNT_PROTOCOL_STYPE_DH_EXCH, packlen + hdsize);
+	exch->offset = sizeof(SNTDHExch) - sizeof(SNTPacketHeader);
+	exch->qlen = hdsize;
+	exch->sym = connection->option->symmetric;
+
+	/*	Send packet.	*/
+	len = sntWriteSocketPacket(connection, exch);
+
+	/*	Release.	*/
+	sntMemZero(exch, sntProtocolPacketSize(exch));
+	free(exch);
+
+	return len;
+}
 
 int sntSendReady(SNTConnection* __restrict__ connection){
 
