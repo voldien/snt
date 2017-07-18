@@ -653,6 +653,7 @@ int sntPacketInterpreter(SNTConnection* connection){
 		return sntProtFuncDHExch(connection, &unipackbuf);
 	default:
 		sntLogErrorPrintf("Undefined packet command type: %d.\n", unipackbuf.header.stype);
+		sntSendError(connection, SNT_ERROR_BAD_REQUEST, "Invalid protocol command.\n");
 		break;
 	}
 	return len;
