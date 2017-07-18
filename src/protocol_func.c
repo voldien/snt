@@ -159,7 +159,6 @@ int sntProtFuncSecure(SNTConnection* connection, const SNTUniformPacket* packet)
 
 	/*	*/
 	int len;
-	SNTReadyPacket ready;
 	SNTSecureEstablismentPacket* sec = (SNTSecureEstablismentPacket*)packet->totalbuf;
 	unsigned char* symkey;
 
@@ -176,8 +175,7 @@ int sntProtFuncSecure(SNTConnection* connection, const SNTUniformPacket* packet)
 	connection->symchiper = sec->symchiper;
 
 	/*	Send packet.	*/
-	sntInitDefaultHeader(&ready.header, SNT_PROTOCOL_STYPE_READY, sizeof(ready));
-	len = sntWriteSocketPacket(connection, (SNTUniformPacket*)&ready);
+	sntSendReady(connection);
 
 	/*	Clean up from memory.	*/
 	free(symkey);
@@ -395,6 +393,19 @@ int sntSendCertificate(const SNTConnection* bind, SNTConnection* client){
 	/*	Copy bind connection asymmetric.	*/
 	client->asymchiper = bind->asymchiper;
 	client->asynumbits = bind->asynumbits;
+
+	return len;
+}
+
+
+int sntSendReady(SNTConnection* __restrict__ connection){
+
+	SNTReadyPacket ready;
+	int len;
+
+	/*	Send packet.	*/
+	sntInitDefaultHeader(&ready.header, SNT_PROTOCOL_STYPE_READY, sizeof(ready));
+	len = sntWriteSocketPacket(connection, (SNTUniformPacket*)&ready);
 
 	return len;
 }
