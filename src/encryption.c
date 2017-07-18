@@ -661,7 +661,7 @@ unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 		break;
 	case SNT_ENCRYPTION_BLOWFISH:
 		for(i = 0; i < delen; i += connection->blocksize){
-			BF_ecb_encrypt((source + i), (dest + i), connection->blowfish, BF_ENCRYPT);
+			BF_ecb_encrypt((in + i), (dest + i), connection->blowfish, BF_ENCRYPT);
 		}
 		break;
 	default:
