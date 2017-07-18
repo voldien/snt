@@ -34,6 +34,7 @@ const char* gc_symchi_symbol[] = {
 		"aesfbc128",
 		"aesfbc192",
 		"aesfbc256",
+		"3descbc",
 		NULL,
 };
 
@@ -446,7 +447,7 @@ int sntSymCreateFromKey(SNTConnection* connection, unsigned int cipher, const vo
 		}
 		break;
 	case SNT_ENCRYPTION_3DES:
-		printf("DES3 not supported.\n");
+	case SNT_ENCRYPTION_3DESCBC:
 		connection->des3 = malloc(sizeof(DES_key_schedule) * 3);
 		symcipsize = sizeof(DES_key_schedule) * 3;
 		if(DES_set_key(&((const_DES_cblock*)pkey)[0], &((DES_key_schedule*)connection->des3)[0]) != 0){
@@ -528,6 +529,7 @@ int sntSymKeyBitSize(unsigned int cipher){
 	case SNT_ENCRYPTION_DES:
 		return 56;
 	case SNT_ENCRYPTION_3DES:
+	case SNT_ENCRYPTION_3DESCBC:
 		return sntSymKeyBitSize(SNT_ENCRYPTION_DES) * 3;
 	default:
 		return 0;
@@ -554,6 +556,7 @@ int sntSymBlockSize(unsigned int cipher){
 		return BF_BLOCK;
 	case SNT_ENCRYPTION_DES:
 	case SNT_ENCRYPTION_3DES:
+	case SNT_ENCRYPTION_3DESCBC:
 		return sizeof(DES_cblock);
 	default:
 		return 0;
@@ -568,6 +571,7 @@ unsigned int sntSymNeedIV(unsigned int cipher){
 	case SNT_ENCRYPTION_AES_CFB128:
 	case SNT_ENCRYPTION_AES_CFB192:
 	case SNT_ENCRYPTION_AES_CFB256:
+	case SNT_ENCRYPTION_3DESCBC:
 		return 1;
 	default:
 		break;
@@ -595,6 +599,7 @@ void sntSymFree(SNTConnection* connection){
 		break;
 	case SNT_ENCRYPTION_3DES:
 	case SNT_ENCRYPTION_DES:
+	case SNT_ENCRYPTION_3DESCBC:
 		free(connection->des3);
 		break;
 	case SNT_ENCRYPTION_NONE:
@@ -659,6 +664,15 @@ unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 					&((DES_key_schedule*)connection->des3)[2]);
 		}
 		break;
+	case SNT_ENCRYPTION_3DESCBC:{
+		unsigned char iiv[8];
+		sntGenRandom(iv, sntSymBlockSize(connection->symchiper));
+		memcpy(iiv, iv, 8);
+		DES_ede3_cbc_encrypt(in, dest, delen,
+				&((DES_key_schedule*)connection->des3)[0],
+				&((DES_key_schedule*)connection->des3)[1],
+				&((DES_key_schedule*)connection->des3)[2], iiv, DES_ENCRYPT);
+	}break;
 	case SNT_ENCRYPTION_BLOWFISH:
 		for(i = 0; i < delen; i += connection->blocksize){
 			BF_ecb_encrypt((in + i), (dest + i), connection->blowfish, BF_ENCRYPT);
@@ -715,6 +729,12 @@ unsigned int sntSymDecrypt(const SNTConnection* connection, const void* source,
 					&((DES_key_schedule*)connection->des3)[1],
 					&((DES_key_schedule*)connection->des3)[2]);
 		}
+		break;
+	case SNT_ENCRYPTION_3DESCBC:
+			DES_ede3_cbc_encrypt(in, dest, deslen,
+					&((DES_key_schedule*)connection->des3)[0],
+					&((DES_key_schedule*)connection->des3)[1],
+					&((DES_key_schedule*)connection->des3)[2], iv, DES_DECRYPT);
 		break;
 	case SNT_ENCRYPTION_BLOWFISH:
 		for(i = 0; i < deslen; i += connection->blocksize){
