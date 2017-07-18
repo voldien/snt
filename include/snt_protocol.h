@@ -27,6 +27,7 @@
 #include"snt_benchmark.h"
 #include"snt_utility.h"
 #include"snt_delta.h"
+#include"snt_dh.h"
 #include<sys/socket.h>
 
 /**
@@ -257,6 +258,7 @@ typedef struct snt_client_option_packet_t{
 	uint16_t payload;				/*	Payload.	*/
 	uint32_t extension;				/*	Not supported.	*/
 	uint64_t duration;				/*	Duration of the benchmark in nano seconds.	*/
+	uint32_t dh;					/*	*/
 }__attribute__ ((__packed__))SNTClientOption;
 
 /**
@@ -417,7 +419,8 @@ typedef struct snt_connection_t{
 		void* deblowfish;			/*	*/
 		void* dedes3;				/*	desDES3.	*/
 	};
-	SNTConnectionOption* option;	/*	*/
+	sntDH* dh;						/*	Diffie hellman.	*/
+	SNTConnectionOption* option;	/*	Connection option.	*/
 }SNTConnection;
 
 /**

@@ -66,6 +66,7 @@ typedef struct snt_connection_option_t{
 	uint64_t duration;			/*	Duration in nano seconds.	*/
 	uint32_t port;				/*	Port.	*/
 	uint32_t certificate;		/*	*/
+	uint32_t dh;				/*	Diffie hellman.	*/
 	uint32_t duplex;			/*	Duplex.	*/
 }SNTConnectionOption;
 
