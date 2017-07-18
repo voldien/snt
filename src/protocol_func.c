@@ -56,6 +56,7 @@ int sntProtFuncCliOpt(SNTConnection* connection, const SNTUniformPacket* packet)
 	connection->option->invfrequency = cliopt->invfrequency;
 	connection->option->transport_mode = cliopt->transprotocol;
 	connection->option->duration = cliopt->duration;
+	connection->option->duplex = cliopt->duplex;
 
 	/*	*/
 	connection->option->payload = cliopt->payload;
