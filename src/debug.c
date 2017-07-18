@@ -10,6 +10,8 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 		const SNTSecureEstablismentPacket* sec;
 		const SNTResultPacket* res;
 		const SNTErrorPacket* error;
+		const SNTDHInit* dhinit;
+		const SNTDHExch* dhexch;
 	}pack;
 
 	/*	Check the verbosity.	*/
@@ -155,6 +157,26 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 				"meslen     : %u\n",
 				pack.error->errorcode,
 				pack.error->meslen);
+		break;
+	case SNT_PROTOCOL_STYPE_DH_INIT:
+		fprintf(stdout,
+				"bitsize     : %d\n"
+				"plen        : %u\n"
+				"glen        : %u\n"
+				"offset      : %u\n",
+				pack.dhinit->bitsize,
+				pack.dhinit->plen,
+				pack.dhinit->glen,
+				pack.dhinit->offset);
+		break;
+	case SNT_PROTOCOL_STYPE_DH_EXCH:
+		fprintf(stdout,
+				"qlen       : %u\n"
+				"offset     : %u\n"
+				"symmetric  : %u\n",
+				pack.dhexch->qlen,
+				pack.dhexch->offset,
+				pack.dhexch->sym);
 		break;
 	case SNT_PROTOCOL_STYPE_READY:
 	case SNT_PROTOCOL_STYPE_STARTTEST:
