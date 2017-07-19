@@ -79,7 +79,7 @@ long int sntLoadFile(const char* cfilename, void** pbuf){
 }
 
 
-void sntMemZero(volatile void* __restrict__ pbuf, size_t size){
+void sntMemZero(void* __restrict__ pbuf, size_t size){
 	memset(pbuf, 0, size);
 	memset(pbuf, 0, size);
 	memset(pbuf, 0, size);
