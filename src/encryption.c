@@ -705,7 +705,13 @@ unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 			CAST_encrypt((unsigned int*)(dest + i), connection->symmetrickey);
 		}
 		break;
-	default:
+	case SNT_ENCRYPTION_CASTCBC:{
+		unsigned char iiv[CAST_BLOCK];
+		sntGenRandom(iv, sntSymBlockSize(connection->symchiper));
+		memcpy(iiv, iv, CAST_BLOCK);
+		CAST_cbc_encrypt(in, dest, delen, connection->symmetrickey, iiv, CAST_ENCRYPT);
+		break;
+	}default:
 		memcpy(dest, source, delen);
 		break;
 	}
@@ -773,6 +779,9 @@ unsigned int sntSymDecrypt(const SNTConnection* connection, const void* source,
 			memcpy((DES_LONG*)(dest + i), (DES_LONG*)(in + i), connection->blocksize);
 			CAST_decrypt((unsigned int*)(dest + i), connection->symmetrickey);
 		}
+		break;
+	case SNT_ENCRYPTION_CASTCBC:
+		CAST_cbc_encrypt(in, dest, deslen, connection->symmetrickey, iv, CAST_DECRYPT);
 		break;
 	default:
 		memcpy(dest, source, deslen);
