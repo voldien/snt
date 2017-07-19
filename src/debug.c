@@ -38,13 +38,13 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 					packet->header.flag);
 
 	/*	Presentation layer if present.	*/
-	if(packet->header.flag & SNT_PACKET_ENCRYPTION){
+	if(sntPacketHasEncrypted(packet->header)){
 		SNTPresentationUnion* press = (SNTPresentationUnion*)&packet->presentation;
 		fprintf(stdout, "--- presentation layer ---\n"
 						"noffset : %u.\n",
 						press->offset.noffset);
 		/*	Print Initialization vector.	*/
-		if(packet->header.flag & SNT_PACKET_IV_ENCRYPTION){
+		if(sntPacketHasIV(packet->header)){
 			uint32_t iv[16];
 			uint32_t i;
 			memcpy(iv, press->iv.iv, 16);
