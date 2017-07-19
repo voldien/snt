@@ -437,7 +437,9 @@ typedef struct snt_connection_t{
 #define sntIsTransportEnable(con) (con->flag & SNT_CONNECTION_TRANS)
 #define sntIsBenchEnable(con) (con->flag & SNT_CONNECTION_BENCH)
 
-
+/**
+ *	Check connection feature enabled.
+ */
 #define sntIsConnectionSecure(con) (con->symchiper != 0)
 #define sntIsConnectionCompressed(con) (con->usecompression != 0)
 
@@ -525,7 +527,7 @@ extern int sntSetTransportProcotcol(SNTConnection* connection,
 /**
  *	Create packet ready to be sent.
  *
- *	@#eturn number of bytes of the packet body.
+ *	@Return number of bytes of the packet body.
  */
 extern unsigned int sntCreateSendPacket(const SNTConnection* __restrict__ connection,
 		void* __restrict__ buffer, unsigned int buflen, SNTPresentationUnion* __restrict__ pres);
