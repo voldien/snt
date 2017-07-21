@@ -1,5 +1,6 @@
 #include"snt_utility.h"
 #include"snt_protocol.h"
+#include"snt_time.h"
 #include<assert.h>
 
 int sntGenerateDeltaTypeInc(unsigned int type, char* text, SNTDelta* delta,
