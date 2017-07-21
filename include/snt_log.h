@@ -21,11 +21,11 @@
 #include"snt.h"
 
 /**
- *	verbosity levels.
+ *	Verbosity levels.
  */
 #define SNT_LOG_QUITE		0x0		/*	Will oppress all print out on the sntLogPrintfInternal function.	*/
 #define SNT_LOG_VERBOSE		0x1		/*	Print only verbose print outs.	*/
-#define SNT_LOG_DEBUG		0x3		/*	Prints all everything.	*/
+#define SNT_LOG_DEBUG		0x3		/*	Prints everything.	*/
 
 /**
  *	Set verbosity level.
