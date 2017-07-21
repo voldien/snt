@@ -336,7 +336,7 @@ typedef struct snt_start_packet_t{
  */
 typedef struct snt_error_packet_t{
 	SNTPacketHeader header;			/*	Protocol header.	*/
-	int32_t errorcode;				/*	Error code.	*/
+	uint32_t errorcode;				/*	Error code.	*/
 	uint32_t meslen;				/*	Length of message.	*/
 	int8_t message[512];			/*	Message.	*/
 }__attribute__ ((__packed__))SNTErrorPacket;
