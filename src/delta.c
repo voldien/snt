@@ -37,22 +37,21 @@ int sntGenerateDeltaTypeInc(unsigned int type, char* text, SNTDelta* delta,
 }
 
 int sntGenerateAsciiFloat(char* text, float digit){
-	return sprintf(text, "%f;", digit);
+	return sprintf(text, "%f", digit);
 }
 float sntAsciiToFloat(const char* text){
 	return strtof(text, NULL);
 }
 
 int sntGenerateAsciiDouble(char* text, double digit){
-	return sprintf(text, "%f;", digit);
+	return sprintf(text, "%lf", digit);
 }
 double sntAsciiToDouble(const char* text){
 	return strtod(text, NULL);
 }
 
-
 int sntGenerateAsciiLongInt(char* text, long int digit){
-	return sprintf(text, "%ld;", digit);
+	return sprintf(text, "%ld", digit);
 }
 long int sntAsciiToLongInt(const char* text){
 	return strtol(text, NULL, 10);
