@@ -8,7 +8,7 @@ int sntGenerateDeltaTypeInc(unsigned int type, char* text, SNTDelta* delta,
 
 	int len = 0;
 
-	assert(type != 0);
+	assert(type);
 
 	switch(type){
 	case SNT_DELTA_TYPE_INT:
