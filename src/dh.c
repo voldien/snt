@@ -1,10 +1,8 @@
 #include"snt_dh.h"
 #include"snt_log.h"
+#include"snt_encryption.h"
 #include<openssl/ssl.h>
 #include<assert.h>
-
-
-extern void sntSSLPrintError(void);
 
 int sntDHCreate(sntDH** __restrict__ dh, int numbits){
 	int codes;

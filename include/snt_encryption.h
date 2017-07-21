@@ -239,4 +239,10 @@ extern unsigned int sntSymDecrypt(const SNTConnection* __restrict__ connection,
  */
 extern unsigned int sntSymTotalBlockSize(unsigned int len, unsigned int blocksize);
 
+/**
+ *	Print error from openssl from previously invoked function
+ *	from the openssl API.
+ */
+extern void sntSSLPrintError(void);
+
 #endif
