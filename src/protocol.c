@@ -725,15 +725,16 @@ int sntReadSocketPacket(const SNTConnection* connection, SNTUniformPacket* pack)
 	int len;
 	/*	Receive header.	*/
 	sntDebugPrintf("Receiving.\n");
-	len = sntRecvPacketHeader(connection, pack);
+	len = sntRecvPacketHeader(connection, &pack->header);
 	if(len <= 0){
 		return 0;
 	}
+	len = sntProtocolHeaderSize(&pack->header);
 
 	/*	Receiving body datagram.	*/
-	if (sntReadSocket(connection, sntDatagramGetBlock(pack),
-			sntProtocolHeaderDatagramSize(&pack->header), 0)
-			!= sntProtocolHeaderDatagramSize(&pack->header)) {
+	if (sntReadSocket(connection, pack,
+			sntProtocolPacketSize(&pack->header), 0)
+			!= sntProtocolPacketSize(&pack->header)) {
 		return 0;
 	}
 
@@ -752,21 +753,7 @@ int sntReadSocketPacket(const SNTConnection* connection, SNTUniformPacket* pack)
 
 int sntRecvPacketHeader(const SNTConnection* connection,
 		SNTUniformPacket* header) {
-	int n;
-
-	n = sntReadSocket(connection, header, sizeof(SNTPacketHeader), 0);
-
-	/*	Read presentation layer.	*/
-	if(sntPacketHasEncrypted(header->header)){
-		int preslen;
-		if ((preslen = sntReadSocket(connection, &header->presentation,
-				sntProtocolHeaderSize(&header->header) - n, 0)) <= 0) {
-			return 0;
-		}
-		n += preslen;
-	}
-
-	return n;
+	return sntReadSocket(connection, header, sizeof(SNTPacketHeader), MSG_PEEK);
 }
 
 void sntDropPacket(const SNTConnection* connection){
