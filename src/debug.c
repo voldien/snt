@@ -186,6 +186,5 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 		break;
 	}
 
-	fprintf(stdout, ".\n");
 }
 
