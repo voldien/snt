@@ -255,7 +255,6 @@ int sntProtFuncBenchmark(SNTConnection* connection, const SNTUniformPacket* pack
 		break;
 	case SNT_PROTOCOL_BM_MODE_FILE:
 		/*	TODO check how to pipe and redirect the data better.	*/
-		/*sntLogErrorPrintf("%d.\n", sntDatagramCommandSize(&packet->header));*/
 		fwrite(sntDatagramGetBlock(packet), 1, sntProtocolHeaderDatagramSize(&packet->header), stdout);
 		break;
 	case SNT_PROTOCOL_BM_MODE_INTEGRITY:
