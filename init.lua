@@ -37,14 +37,14 @@ dprint("Registered snt protocol.")
 -- snt header fields.
 local snt_hdr_fields = 
 {
-  -- protocol header.
+  -- Protocol header.
   version = ProtoField.uint16("snt.version", "Version", base.DEC),
   stype = ProtoField.uint8("snt.stype", "Stype", base.DEC),
   offset = ProtoField.uint8("snt.offset", "Offset", base.DEC),
   len = ProtoField.uint16("snt.len", "Length", base.DEC),
   flag = ProtoField.uint8("snt.flag", "PacketFlag", base.DEC),
 
-  -- Presentation layer for resolving encryption padding issue.
+  -- Presentation layer for resolving encryption padding issue and other.
   presentation = ProtoField.uint8("snt.presentation.noffet", "Negative offset", base.DEC),
   
   -- Initialization packet.
@@ -111,7 +111,7 @@ local SNT_MAX_STYPE = 9
 local SNT_MSG_FLAG_ENCR = 0x1
 local SNT_MSG_FLAG_COMP = 0x2
 
---
+-- Protocol command name.
 local stype_hdr_symbol=
 {
   [0] = "Undefined",
@@ -159,7 +159,7 @@ function snt.dissector(buf, pkt, root)
 	local pktlen = buf:len()
 	local bytes_consumed = 0
 
-  -- dissect protocol header of the packet.
+  -- Dissect protocol header of the packet.
 	local result = dissectSNT(buf(0, SNT_MSG_HDR_LEN), pkt, root, bytes_consumed)
 	bytes_consumed = sntProtocolHeaderSize(buf(0, SNT_MSG_HDR_LEN))
 
@@ -179,7 +179,8 @@ function snt.dissector(buf, pkt, root)
     local subtree = root:add(buf:range(bytes_consumed), "Compressed:" )    
   end
   
-  -- Check if command extract is in range.
+  -- Check if command extract is in range, main dissector of the
+  -- the protocol.
 	if result <= SNT_MAX_STYPE then
   
     -- Create subtree for packet command type.
@@ -227,11 +228,11 @@ function dissectSNT(tvbuf, pktinfo, root, offset)
 	local version_val  = tvbuf:range(offset, 2):le_uint()
 	tree:add(snt_hdr_fields.version, tvbuf(offset, 2), version_val, sntProtocolGetVersionStr(tvbuf(offset,2)))
 	
-	-- dissect the __ field
+	-- dissect the stype field
 	local stype_tvbr = tvbuf:range(offset + 2, 1)
 	local stype_val  = stype_tvbr:le_uint()
 	
-  -- dissect the __ field
+  -- dissect the field
 	tree:add(snt_hdr_fields.stype, tvbuf(offset + 2, 1):le_uint(), stype_val, stype_hdr_symbol[stype_val] )
 
   -- dissect the header offset field.
@@ -240,7 +241,7 @@ function dissectSNT(tvbuf, pktinfo, root, offset)
   -- dissect the total length of incoming packet field.
   tree:add_le(snt_hdr_fields.len, tvbuf(offset + 4, 2))
   
-  -- dissect the __ field
+  -- dissect the flag field
   tree:add(snt_hdr_fields.flag, tvbuf(offset + 6, 1))
   
 	--
