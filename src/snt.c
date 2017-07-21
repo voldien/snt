@@ -99,10 +99,10 @@ void sntReadArgument(int argc,  char *const * argv, char* ip, unsigned int* port
 		{"public-key", 		required_argument,	NULL, 'P'},	/*	Public cipher used for exchanging symmetric key.	*/
 		{"public-nbits",	required_argument,	NULL, 'B'},	/*	Number of bits used for public cipher.	*/
 		{"file",			required_argument,	NULL, 'f'},	/*	File to be transfered.	*/
-		{"affinity",		required_argument,	NULL, 'A'},	/*	-A, --affinity n/n,m 	*/
+		{"affinity",		required_argument,	NULL, 'A'},	/*	Affinity mapping, -A, --affinity n/n,m 	*/
 		{"certificate",		required_argument,	NULL, 'X'},	/*	Certificate.	*/
 		{"private-key",		required_argument,	NULL, 'x'},	/*	Private key.	*/
-		{"dh",				required_argument,	NULL, 'i'},	/*	Diffie hellman parameter.	*/
+		{"dh",				optional_argument,	NULL, 'i'},	/*	Diffie hellman parameter.	*/
 
 		{NULL, 0, NULL, 0}
 	};
