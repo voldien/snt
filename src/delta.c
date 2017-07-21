@@ -36,6 +36,43 @@ int sntGenerateDeltaTypeInc(unsigned int type, char* text, SNTDelta* delta,
 	return len;
 }
 
+void sntDeltaParse(unsigned int type, const char* __restrict__ buf, SNTDelta* __restrict__ delta){
+	switch(type){
+	case SNT_DELTA_TYPE_FLOAT:
+		delta->f = sntAsciiToFloat(buf);
+		break;
+	case SNT_DELTA_TYPE_DOUBLE:
+		delta->d = sntAsciiToFloat(buf);
+		break;
+	case SNT_DELTA_TYPE_HIGHTIMESTAMP:
+	case SNT_DELTA_TYPE_TIMESTAMP:
+	case SNT_DELTA_TYPE_INT:
+		delta->i = sntAsciiToLongInt(buf);
+		break;
+	default:
+		assert(0);
+	}
+}
+
+int sntDeltaCheckChange(unsigned int type, const SNTDelta* __restrict__ prev,
+		const SNTDelta* __restrict__ next, const SNTDelta* __restrict__ incre) {
+	switch(type){
+	case SNT_DELTA_TYPE_INT:
+		return ((next->i - prev->i) == incre->i);
+	case SNT_DELTA_TYPE_FLOAT:
+		return ((next->f - prev->f) == incre->f);
+	case SNT_DELTA_TYPE_DOUBLE:
+		return ((next->d - prev->d) == incre->d);
+	case SNT_DELTA_TYPE_HIGHTIMESTAMP:
+		return (next->i > prev->i);
+	case SNT_DELTA_TYPE_TIMESTAMP:
+		return (next->i > prev->i);
+	default:
+		assert(0);
+	}
+	return 0;
+}
+
 int sntGenerateAsciiFloat(char* text, float digit){
 	return sprintf(text, "%f", digit);
 }

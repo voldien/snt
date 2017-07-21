@@ -38,7 +38,21 @@ extern int sntGenerateDeltaTypeInc(unsigned int type, char* __restrict__ text,
 		SNTDelta* __restrict__ delta, const SNTDelta* __restrict__ incr);
 
 /**
- *	@Return
+ *	Parse delta binary.
+ */
+extern void sntDeltaParse(unsigned int type, const char* __restrict__ buf, SNTDelta* __restrict__ delta);
+
+/**
+ *	Check changed from previous delta and current delta.
+ *
+ *	@Return none zero if delta is correct from between prev and next.
+ */
+extern int sntDeltaCheckChange(unsigned int type, const SNTDelta* __restrict__ prev,
+		const SNTDelta* __restrict__ next, const SNTDelta* __restrict__ incre);
+
+/**
+ *
+ *	@Return number of bytes written.
  */
 extern int sntGenerateAsciiFloat(char* text, float digit);
 
