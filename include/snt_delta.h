@@ -43,26 +43,34 @@ extern int sntGenerateDeltaTypeInc(unsigned int type, char* __restrict__ text,
 extern int sntGenerateAsciiFloat(char* text, float digit);
 
 /**
+ *	Convert string to float.
+ *
  *	@Return
  */
 extern float sntAsciiToFloat(const char* text);
 
 /**
- *	@Return
+ *
+ *	@Return number of bytes written.
  */
 extern int sntGenerateAsciiDouble(char* text, double digit);
 
 /**
+ *	Convert string to double.
+ *
  *	@Return
  */
 extern double sntAsciiToDouble(const char* text);
 
 /**
- *	@Return
+ *
+ *	@Return number of bytes written.
  */
 extern int sntGenerateAsciiLongInt(char* text, long int digit);
 
 /**
+ *	Convert string to long.
+ *
  *	@Return
  */
 extern long int sntAsciiToLongInt(const char* text);
