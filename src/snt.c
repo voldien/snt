@@ -638,13 +638,11 @@ int sntPacketInterpreter(SNTConnection* connection){
 		sntProtFuncError(connection, &unipackbuf);
 		return g_client ? 0 : 1;	/*	Prevent client to terminate the server.	*/
 	case SNT_PROTOCOL_STYPE_BENCHMARK:
-		sntProtFuncBenchmark(connection, &unipackbuf);
-		break;
+		return sntProtFuncBenchmark(connection, &unipackbuf);
 	case SNT_PROTOCOL_STYPE_RESULT:
 		return sntProtFuncResult(connection, &unipackbuf);
-		break;
 	case SNT_PROTOCOL_STYPE_STARTTEST:
-		break;
+		return sntProtFuncStart(connection, &unipackbuf);
 	case SNT_PROTOCOL_STYPE_DH_REQ:
 		return sntProtFuncDHReq(connection, &unipackbuf);
 	case SNT_PROTOCOL_STYPE_DH_INIT:
