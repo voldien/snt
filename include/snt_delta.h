@@ -45,7 +45,7 @@ extern int sntGenerateAsciiFloat(char* text, float digit);
 /**
  *	@Return
  */
-extern float sntAsciiToFloat(char* text);
+extern float sntAsciiToFloat(const char* text);
 
 /**
  *	@Return
@@ -55,7 +55,7 @@ extern int sntGenerateAsciiDouble(char* text, double digit);
 /**
  *	@Return
  */
-extern double sntAsciiToDouble(char* text);
+extern double sntAsciiToDouble(const char* text);
 
 /**
  *	@Return
@@ -65,7 +65,7 @@ extern int sntGenerateAsciiLongInt(char* text, long int digit);
 /**
  *	@Return
  */
-extern long int sntAsciiToLongInt(char* text);
+extern long int sntAsciiToLongInt(const char* text);
 
 
 
