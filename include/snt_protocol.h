@@ -300,7 +300,7 @@ typedef struct snt_diffe_hellman_init_t{
 	uint32_t bitsize;			/*	Size of diffie hellman in bits.	*/
 	uint32_t plen;				/*	p length in bytes.	*/
 	uint32_t glen;				/*	g length in bytes.	*/
-	uint32_t offset;			/*	Offset to data block.	*/
+	uint8_t offset;				/*	Offset to data block.	*/
 }__attribute__ ((__packed__))SNTDHInit;
 
 /**
@@ -309,7 +309,7 @@ typedef struct snt_diffe_hellman_init_t{
 typedef struct snt_diffe_hellman_exch_t{
 	SNTPacketHeader header;			/*	Protocol header.	*/
 	uint32_t qlen;					/*	size of q in bytes.	*/
-	uint32_t offset;				/*	offset in bytes to q.	*/
+	uint8_t offset;					/*	offset in bytes to q.	*/
 	uint32_t sym;					/*	symmetric key to generate from diffie hellman.	*/
 }__attribute__ ((__packed__))SNTDHExch;
 
