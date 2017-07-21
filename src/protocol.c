@@ -632,7 +632,7 @@ int sntReadSocket(const SNTConnection* connection, void* buffer,
 			case SNT_TRANSPORT_UDP:
 				assert(connection->udpsock > 0);
 				len = connection->sclen;
-				return recvfrom(connection->udpsock, buffer, recvlen, 0,
+				return recvfrom(connection->udpsock, buffer, recvlen, flag,
 						connection->intaddr, &len);
 			default:
 				break;
@@ -655,7 +655,7 @@ int sntWriteSocket(const SNTConnection* connection, const void* buffer,
 			return send(connection->tcpsock, buffer, senlen, flag);
 		case SNT_TRANSPORT_UDP:
 			assert(connection->udpsock > 0);
-			return sendto(connection->udpsock, buffer, senlen, 0,
+			return sendto(connection->udpsock, buffer, senlen, flag,
 					connection->extaddr, connection->sclen);
 		default:
 			break;
