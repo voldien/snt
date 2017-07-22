@@ -124,7 +124,8 @@ int sntProtFuncCertificate(SNTConnection* connection, const SNTUniformPacket* pa
 	free(localhash);
 	sntMemZero(&cer->certype, cer->localhashedsize);
 
-	/*	TODO add support for condition for generate or use DH.	*/
+	/*	Check if to use diffie hellman instead for creating
+	 *	secret key.	*/
 	if(connection->option->dh > 0){
 		SNTPacketHeader pack;
 		sntInitDefaultHeader(&pack, SNT_PROTOCOL_STYPE_DH_REQ, sizeof(pack));
@@ -232,6 +233,7 @@ int sntProtFuncError(SNTConnection* connection, const SNTUniformPacket* packet) 
 		codedesc = gs_error_sym[error->errorcode];
 	}
 
+	/*	Print error message or predefine error message.	*/
 	if(error->meslen > 0){
 		sntLogErrorPrintf("Error code %d : %s | '%s'.\n", error->errorcode,
 				codedesc, error->message);
@@ -338,6 +340,8 @@ int sntProtFuncDHExch(SNTConnection* __restrict__ connection,
 	q = &((uint8_t*)sntDatagramGetBlock(exch))[exch->offset];
 	plen = sntDHSize(connection->dh);
 	pkey = malloc(plen);
+
+	/*	Compute secret key.	*/
 	if(!sntDHGetComputedKey(connection->dh, q, pkey)){
 		sntSendError(connection, SNT_ERROR_SERVER, "sntDHGetComputedKey failed");
 		return 0;
@@ -349,12 +353,11 @@ int sntProtFuncDHExch(SNTConnection* __restrict__ connection,
 		return 0;
 	}
 
-
-	/*	Release.	*/
+	/*	Release diffie hellman.	*/
 	sntDHRelease(connection->dh);
 	connection->dh = NULL;
 
-	/*	Cleanup.	*/
+	/*	Clear sensitive data.	*/
 	sntMemZero(pkey, plen);
 	free(pkey);
 
@@ -469,7 +472,7 @@ int sntSendCertificate(const SNTConnection* __restrict__ bind,
 	memset(tmphash, 0, sntHashGetTypeSize(cert.hashtype));
 	memcpy(tmphash, cert.hash, sntHashGetTypeSize(cert.hashtype));
 
-	/*	*/
+	/*	Create digital signature.	*/
 	if (!sntASymSignDigSign(bind, cert.hashtype, tmphash,
 			sntHashGetTypeSize(cert.hashtype), cert.hash,
 			(unsigned int*)&cert.encryedhashsize)) {
