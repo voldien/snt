@@ -18,7 +18,7 @@
 */
 #ifndef _SNT_BENCHMARK_H_
 #define _SNT_BENCHMARK_H_ 1
-#include <snt_protocol.h>
+#include"snt_protocol.h"
 #include"snt_time.h"
 
 /**
