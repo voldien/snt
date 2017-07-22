@@ -206,6 +206,11 @@ extern int sntSymBlockSize(unsigned int cipher);
 extern unsigned int sntSymNeedIV(unsigned int cipher);
 
 /**
+ *	@Return none zero if cipher enumerator uses feedback.
+ */
+extern unsigned int sntSymdNeedFB(unsigned int cipher);
+
+/**
  *	Free all associated symmetric cipher data that is
  *	associated with the connection.
  */
