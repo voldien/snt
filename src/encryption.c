@@ -628,6 +628,8 @@ unsigned int sntSymNeedIV(unsigned int cipher){
 	case SNT_ENCRYPTION_AES_OFB256:
 	case SNT_ENCRYPTION_3DESCBC:
 	case SNT_ENCRYPTION_CASTCBC:
+	case SNT_ENCRYPTION_BF_CBC:
+	case SNT_ENCRYPTION_BF_CFB:
 		return 1;
 	default:
 		return 0;
