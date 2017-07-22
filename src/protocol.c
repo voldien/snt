@@ -552,7 +552,7 @@ unsigned int sntCreateSendPacket(const SNTConnection* connection, void* buffer,
 
 	/*	*/
 	if(connection->symchiper && connection->usecompression){
-		size = sntSymEncrypt(connection, sou, des, size, pres->iv.iv);
+		size = sntSymEncrypt(connection, sou, des, size, pres->iv.iv, &pres->iv.iv[pres->iv.len]);
 		pres->offset.noffset = (uint8_t)(size - buflen);
 		sntSwapPointer((void**)&des, (void**)&sou);
 		size = sntDeflate(connection->usecompression, (const char*)sou, (char*)des,
@@ -566,7 +566,7 @@ unsigned int sntCreateSendPacket(const SNTConnection* connection, void* buffer,
 		}
 		/*	Encryption.	*/
 		if(connection->symchiper){
-			size = sntSymEncrypt(connection, sou, des, size, pres->iv.iv);
+			size = sntSymEncrypt(connection, sou, des, size, pres->iv.iv, &pres->iv.iv[pres->iv.len]);
 			pres->offset.noffset = size - buflen;
 		}
 
@@ -598,7 +598,7 @@ unsigned int sntCreateRecvPacket(const SNTConnection* connection, void* buffer,
 	if(connection->symchiper && connection->usecompression){
 		size = sntInflate(connection->usecompression, (const char*)sou, (char*)des, size);
 		sntSwapPointer((void**)&sou, (void**)&des);
-		size = sntSymDecrypt(connection, sou, des, size, pres->iv.iv);
+		size = sntSymDecrypt(connection, sou, des, size, pres->iv.iv, &pres->iv.iv[pres->iv.len]);
 		size -= pres->offset.noffset;
 		return size;
 	}
@@ -606,7 +606,7 @@ unsigned int sntCreateRecvPacket(const SNTConnection* connection, void* buffer,
 		/*	Decrypt.	*/
 		if(connection->symchiper){
 			sntDebugPrintf("Receiving encrypted data, %d.\n", size);
-			size = sntSymDecrypt(connection, sou, des, size, pres->iv.iv);
+			size = sntSymDecrypt(connection, sou, des, size, pres->iv.iv, &pres->iv.iv[pres->iv.len]);
 			size -= pres->offset.noffset ;
 		}
 		/*	Decompress.	*/
@@ -683,7 +683,8 @@ int sntWriteSocketPacket(const SNTConnection* connection,
 	tranpack->header.flag = (uint8_t)(
 			(sntIsConnectionSecure(connection) ? SNT_PACKET_ENCRYPTION : 0)
 			| (sntIsConnectionCompressed(connection) ? SNT_PACKET_COMPRESSION : 0)
-			| (sntSymNeedIV(connection->symchiper) ? SNT_PACKET_IV_ENCRYPTION : 0));
+			| (sntSymNeedIV(connection->symchiper) ? SNT_PACKET_IV_ENCRYPTION : 0)
+			| (sntSymdNeedFB(connection->symchiper) ? SNT_PACKET_FB_ENCRYPTION : 0));
 
 	/*	Update header if using encryption.	*/
 	if(sntPacketHasEncrypted(tranpack->header)){
@@ -697,6 +698,12 @@ int sntWriteSocketPacket(const SNTConnection* connection,
 		tranpack->header.len  += sntSymBlockSize(connection->symchiper) + 1;
 		pres = (SNTPresentationUnion*)&tranpack->presentation;
 		pres->iv.len = sntSymBlockSize(connection->symchiper);
+	}
+
+	/*	Check if feedback is used.	*/
+	if(sntPacketHasFB(tranpack->header)){
+		tranpack->header.offset += sizeof(SNTPresentationFeedbackPacket);
+		tranpack->header.len += sizeof(SNTPresentationFeedbackPacket);
 	}
 
 	/*	Copy packet payload.	*/
