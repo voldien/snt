@@ -659,7 +659,7 @@ void sntSymFree(SNTConnection* connection){
 int dummy = 6;
 
 unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
-		unsigned char* dest, unsigned int soulen, void* __restrict__ iv) {
+		unsigned char* dest, unsigned int soulen, void* __restrict__ iv, int* __restrict__ feedback) {
 
 	unsigned int i;
 	unsigned int delen = soulen;
@@ -732,16 +732,25 @@ unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 		memcpy(iiv, iv, CAST_BLOCK);
 		CAST_cbc_encrypt(in, dest, delen, connection->symmetrickey, iiv, CAST_ENCRYPT);
 		break;
+	case SNT_ENCRYPTION_CASTCFB:{
+		unsigned char iiv[CAST_BLOCK];
+		sntGenRandom(iv, sntSymBlockSize(connection->symchiper));
+		memcpy(iiv, iv, CAST_BLOCK);
+		*feedback = 0;
+		CAST_cfb64_encrypt(in, dest, delen, connection->symmetrickey, iv, feedback, CAST_ENCRYPT);
+	}break;
 	}default:
 		memcpy(dest, source, delen);
 		break;
 	}
 
+	/*	*/
 	return delen;
 }
 
 unsigned int sntSymDecrypt(const SNTConnection* connection, const void* source,
-		unsigned char* dest, unsigned int soulen, void* __restrict__ iv) {
+		unsigned char* dest, unsigned int soulen, void* __restrict__ iv,
+		int* __restrict__ feedback) {
 
 	unsigned int deslen;
 	const unsigned char* in = source;

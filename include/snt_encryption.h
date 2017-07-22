@@ -220,7 +220,7 @@ extern void sntSymFree(SNTConnection* connection);
  */
 extern unsigned int sntSymEncrypt(const SNTConnection* __restrict__ connection,
 		const void* __restrict__ data, unsigned char* __restrict__ output,
-		unsigned int len, void* __restrict__ iv);
+		unsigned int len, void* __restrict__ iv, int* __restrict__ feedback);
 
 /**
  *	Decrypt block.
@@ -234,7 +234,7 @@ extern unsigned int sntSymEncrypt(const SNTConnection* __restrict__ connection,
  */
 extern unsigned int sntSymDecrypt(const SNTConnection* __restrict__ connection,
 		const void* __restrict__ data, unsigned char* __restrict__ output,
-		unsigned int len, void* __restrict__ iv);
+		unsigned int len, void* __restrict__ iv, int* __restrict__ feedback);
 
 /**
  *	Compute the total size of encryption data chunk.
