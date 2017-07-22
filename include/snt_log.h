@@ -34,6 +34,8 @@ extern void sntVerbosityLevelSet(unsigned int verbosity);
 
 /**
  *	Log.
+ *
+ *	@Return number of bytes.
  */
 extern int sntLogPrintfInternal(unsigned int verbosity, const char* fmt,...);
 
@@ -52,6 +54,5 @@ extern int sntLogErrorPrintf(const char* fmt, ...);
 #define sntVerbosePrintf(fmt, args...)					\
 		sntLogPrintfInternal(SNT_LOG_VERBOSE, fmt, ##args)
 #define sntLogPrintf(verbosity, fmt, args...) sntLogPrintfInternal(verbosity, fmt, args)		\
-
 
 #endif
