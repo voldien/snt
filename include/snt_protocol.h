@@ -104,7 +104,7 @@ extern const char* gs_sym_cert[];
 /**
  *	Duplex mode.
  */
-#define SNT_DUPLEX_NONE		0x0		/*	.	*/
+#define SNT_DUPLEX_NONE		0x0		/*	None.	*/
 #define SNT_DUPLEX_SIMPLE	0x1		/*	Transmit from single point.	*/
 #define SNT_DUPLEX_HALF		0x2		/*	Transmit from between point, one at a time.	*/
 #define SNT_DUPLEX_FULL		0x4		/*	Transmit and receive between the point simultaneously.*/
@@ -113,7 +113,7 @@ extern const char* gs_sym_cert[];
 	| SNT_DUPLEX_ALL)						\
 
 /**
- *	Duplex symbol table
+ *	Duplex symbol table.
  */
 extern const char* gs_sym_duplex[];
 
@@ -126,6 +126,9 @@ extern const char* gs_sym_duplex[];
 #define SNT_TRANSPORT_ALL					\
 	(SNT_TRANSPORT_TCP | SNT_TRANSPORT_UDP)	\
 
+/**
+ *	Transport protocol mode symbol table.
+ */
 extern const char* gs_sym_transport[];
 
 /**
@@ -271,7 +274,7 @@ typedef struct snt_client_option_packet_t{
 	uint16_t payload;				/*	Payload.	*/
 	uint32_t extension;				/*	Not supported.	*/
 	uint64_t duration;				/*	Duration of the benchmark in nano seconds.	*/
-	uint32_t dh;					/*	*/
+	uint32_t dh;					/*	Use diffie hellman for key exchange.	*/
 }__attribute__ ((__packed__))SNTClientOption;
 
 /**
@@ -304,7 +307,7 @@ typedef struct snt_secure_establishment_packet_t{
 }__attribute__ ((__packed__))SNTSecureEstablismentPacket;
 
 /**
- *	Initialized number agreed between the parties.
+ *	Initialized number agreed between the parties, p and g.
  */
 typedef struct snt_diffe_hellman_init_t{
 	SNTPacketHeader header;		/*	Protocol header.	*/
@@ -363,7 +366,6 @@ typedef struct snt_result_packet_t{
 	uint64_t nbytes;				/*	Number of bytes.	*/
 	uint64_t elapse;				/*	Elapse time.	*/
 	uint64_t timeres;				/*	Time resolution.	*/
-
 }__attribute__ ((__packed__))SNTResultPacket;
 
 /**
@@ -449,7 +451,7 @@ typedef struct snt_connection_t{
 #define sntIsBenchEnable(con) (con->flag & SNT_CONNECTION_BENCH)
 
 /**
- *	Check connection feature enabled.
+ *	Check connection feature is enabled.
  */
 #define sntIsConnectionSecure(con) (con->symchiper != 0)
 #define sntIsConnectionCompressed(con) (con->usecompression != 0)
