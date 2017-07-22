@@ -13,8 +13,6 @@ const char* gs_symcompression[] = {
 		"lz4",
 		"gzip",
 		"bzip2",
-		"lzma",
-		"xz",
 		NULL
 };
 
