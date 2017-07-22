@@ -358,6 +358,7 @@ SNTConnection* sntConnectSocket(const char* host, uint16_t port,
 	}addrU;
 	struct hostent* hosten = NULL;		/*	*/
 	int domain;
+	struct timeval tv;					/*	*/
 
 	/*	*/
 	connection = sntPoolObtain(g_connectionpool);
@@ -429,6 +430,15 @@ SNTConnection* sntConnectSocket(const char* host, uint16_t port,
 	if(connection->udpsock > 0){
 		if( bind(connection->udpsock, connection->intaddr, addrlen) < 0){
 			sntLogErrorPrintf("Failed to connect UDP, %s.\n", strerror(errno));
+			sntDisconnectSocket(connection);
+			return NULL;
+		}
+
+		/*	Set timeout for client.	*/
+		tv.tv_sec = 10;
+		tv.tv_usec = 0;
+		if(setsockopt(connection->udpsock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) != 0){
+			sntLogErrorPrintf("setsockopt failed, %s.\n", strerror(errno));
 			sntDisconnectSocket(connection);
 			return NULL;
 		}
