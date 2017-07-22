@@ -635,6 +635,22 @@ unsigned int sntSymNeedIV(unsigned int cipher){
 
 }
 
+unsigned int sntSymdNeedFB(unsigned int cipher){
+	switch(cipher){
+	case SNT_ENCRYPTION_AES_CFB128:
+	case SNT_ENCRYPTION_AES_CFB192:
+	case SNT_ENCRYPTION_AES_CFB256:
+	case SNT_ENCRYPTION_AES_OFB128:
+	case SNT_ENCRYPTION_AES_OFB192:
+	case SNT_ENCRYPTION_AES_OFB256:
+	case SNT_ENCRYPTION_CASTCFB:
+	case SNT_ENCRYPTION_BF_CFB:
+		return 1;
+	default:
+		return 0;
+	}
+}
+
 void sntSymFree(SNTConnection* connection){
 
 	switch(connection->symchiper){
