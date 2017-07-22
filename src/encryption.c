@@ -737,8 +737,22 @@ unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 	}break;
 	case SNT_ENCRYPTION_AES_CFB128:
 	case SNT_ENCRYPTION_AES_CFB192:
-	case SNT_ENCRYPTION_AES_CFB256:
-		break;
+	case SNT_ENCRYPTION_AES_CFB256:{
+		unsigned char iiv[16];
+		sntGenRandom(iiv, sntSymBlockSize(connection->symchiper));
+		memcpy(iv, iiv, sntSymBlockSize(connection->symchiper));
+		*feedback = 0;
+		AES_cfb128_encrypt(in, dest, delen, connection->aes, iiv, feedback, AES_ENCRYPT);
+	}break;
+	case SNT_ENCRYPTION_AES_OFB128:
+	case SNT_ENCRYPTION_AES_OFB192:
+	case SNT_ENCRYPTION_AES_OFB256:{
+		unsigned char iiv[16];
+		sntGenRandom(iiv, sntSymBlockSize(connection->symchiper));
+		memcpy(iv, iiv, sntSymBlockSize(connection->symchiper));
+		*feedback = 0;
+		AES_ofb128_encrypt(in, dest, delen, connection->aes, iiv, feedback);
+	}break;
 	case SNT_ENCRYPTION_DES:
 		for(i = 0; i < delen; i += connection->blocksize){
 			memcpy((DES_LONG*)(dest + i), (DES_LONG*)(in + i), connection->blocksize);
@@ -834,13 +848,20 @@ unsigned int sntSymDecrypt(const SNTConnection* connection, const void* source,
 	case SNT_ENCRYPTION_AES_CBC128:
 	case SNT_ENCRYPTION_AES_CBC192:
 	case SNT_ENCRYPTION_AES_CBC256:
-		AES_cbc_encrypt(source, dest, deslen, connection->deaes, iv, AES_DECRYPT);
+		AES_cbc_encrypt(in, dest, deslen, connection->deaes, iv, AES_DECRYPT);
 		break;
 	case SNT_ENCRYPTION_AES_CFB128:
 	case SNT_ENCRYPTION_AES_CFB192:
 	case SNT_ENCRYPTION_AES_CFB256:
-		AES_cfb128_encrypt(in, dest, deslen, connection->deaes, iv, &dummy, AES_DECRYPT);
+//		*feedback = 0;
+		AES_cfb128_encrypt(in, dest, deslen, connection->aes, iv, feedback, AES_DECRYPT);
 		break;
+	case SNT_ENCRYPTION_AES_OFB128:
+	case SNT_ENCRYPTION_AES_OFB192:
+	case SNT_ENCRYPTION_AES_OFB256:{
+//		*feedback = 0;
+		AES_ofb128_encrypt(in, dest, deslen, connection->aes, iv, feedback);
+	}break;
 	case SNT_ENCRYPTION_DES:
 		for(i = 0; i < deslen; i += connection->blocksize){
 			memcpy((DES_LONG*)(dest + i),(DES_LONG*)(in + i), connection->blocksize);
