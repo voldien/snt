@@ -319,9 +319,9 @@ typedef struct snt_diffe_hellman_init_t{
  */
 typedef struct snt_diffe_hellman_exch_t{
 	SNTPacketHeader header;			/*	Protocol header.	*/
-	uint32_t qlen;					/*	size of q in bytes.	*/
-	uint8_t offset;					/*	offset in bytes to q.	*/
-	uint32_t sym;					/*	symmetric key to generate from diffie hellman.	*/
+	uint32_t qlen;					/*	Size of q in bytes.	*/
+	uint8_t offset;					/*	Offset in bytes to q.	*/
+	uint32_t sym;					/*	Symmetric key to generate from diffie hellman.	*/
 }__attribute__ ((__packed__))SNTDHExch;
 
 /**
