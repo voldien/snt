@@ -40,6 +40,8 @@ const char* gc_symchi_symbol[] = {
 		"aesofb192",
 		"aesofb256",
 		"3descbc",
+		"bfcbc",
+		"bfcfb",
 		"rc4",
 		"cast",
 		"castcbc",
@@ -444,6 +446,8 @@ int sntSymCreateFromKey(SNTConnection* connection, unsigned int cipher, const vo
 		symcipsize = sizeof(AES_KEY);
 		break;
 	case SNT_ENCRYPTION_BLOWFISH:
+	case SNT_ENCRYPTION_BF_CBC:
+	case SNT_ENCRYPTION_BF_CFB:
 		connection->blowfish = malloc(sizeof(BF_KEY));
 		BF_set_key(connection->blowfish, sntSymKeyByteSize(cipher), pkey);
 		symcipsize = sizeof(BF_KEY);
@@ -556,6 +560,8 @@ int sntSymKeyBitSize(unsigned int cipher){
 	case SNT_ENCRYPTION_AES_OFB256:
 		return 256;
 	case SNT_ENCRYPTION_BLOWFISH:
+	case SNT_ENCRYPTION_BF_CBC:
+	case SNT_ENCRYPTION_BF_CFB:
 		return 192;
 	case SNT_ENCRYPTION_DES:
 		return 56;
@@ -592,6 +598,8 @@ int sntSymBlockSize(unsigned int cipher){
 	case SNT_ENCRYPTION_AES_OFB256:
 		return AES_BLOCK_SIZE;
 	case SNT_ENCRYPTION_BLOWFISH:
+	case SNT_ENCRYPTION_BF_CBC:
+	case SNT_ENCRYPTION_BF_CFB:
 		return BF_BLOCK;
 	case SNT_ENCRYPTION_DES:
 	case SNT_ENCRYPTION_3DES:
@@ -646,6 +654,8 @@ void sntSymFree(SNTConnection* connection){
 		free(connection->deaes);
 		break;
 	case SNT_ENCRYPTION_BLOWFISH:
+	case SNT_ENCRYPTION_BF_CBC:
+	case SNT_ENCRYPTION_BF_CFB:
 		free(connection->blowfish);
 		break;
 	case SNT_ENCRYPTION_3DES:
@@ -735,6 +745,19 @@ unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 			BF_ecb_encrypt((in + i), (dest + i), connection->blowfish, BF_ENCRYPT);
 		}
 		break;
+	case SNT_ENCRYPTION_BF_CBC:{
+		unsigned char iiv[8];
+		sntGenRandom(iv, sntSymBlockSize(connection->symchiper));
+		memcpy(iiv, iv, sntSymBlockSize(connection->symchiper));
+		BF_cbc_encrypt(in, dest, delen, connection->blowfish, iiv, BF_ENCRYPT);
+	}break;
+	case SNT_ENCRYPTION_BF_CFB:{
+		unsigned char iiv[8];
+		sntGenRandom(iv, sntSymBlockSize(connection->symchiper));
+		memcpy(iiv, iv, 8);
+		*feedback = 0;
+		BF_cfb64_encrypt(in, dest, delen, connection->blowfish, iiv, feedback, BF_ENCRYPT);
+	}break;
 	case SNT_ENCRYPTION_RC4:
 		RC4(connection->symmetrickey, delen, in, dest);
 		break;
@@ -822,6 +845,12 @@ unsigned int sntSymDecrypt(const SNTConnection* connection, const void* source,
 			BF_ecb_encrypt((in + i), (dest + i), connection->blowfish, BF_DECRYPT);
 		}
 		break;
+	case SNT_ENCRYPTION_BF_CBC:
+		BF_cbc_encrypt(in, dest, deslen, connection->blowfish, iv, BF_DECRYPT);
+		break;
+	case SNT_ENCRYPTION_BF_CFB:{
+		BF_cfb64_encrypt(in, dest, deslen, connection->blowfish, iv, feedback, BF_DECRYPT);
+	}break;
 	case SNT_ENCRYPTION_RC4:
 		RC4(connection->symmetrickey, deslen, in, dest);
 		break;
