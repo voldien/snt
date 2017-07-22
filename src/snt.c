@@ -632,8 +632,6 @@ int sntPacketInterpreter(SNTConnection* connection){
 		return sntProtFuncSecure(connection, &unipackbuf);
 	case SNT_PROTOCOL_STYPE_READY:
 		return sntProtFuncReady(connection, &unipackbuf);
-	case SNT_PROTOCOL_STYPE_NONE:
-		return 1;
 	case SNT_PROTOCOL_STYPE_ERROR:
 		sntProtFuncError(connection, &unipackbuf);
 		return g_client ? 0 : 1;	/*	Prevent client to terminate the server.	*/
@@ -649,6 +647,7 @@ int sntPacketInterpreter(SNTConnection* connection){
 		return sntProtFuncDHInit(connection, &unipackbuf);
 	case SNT_PROTOCOL_STYPE_DH_EXCH:
 		return sntProtFuncDHExch(connection, &unipackbuf);
+	case SNT_PROTOCOL_STYPE_NONE:
 	default:
 		sntLogErrorPrintf("Undefined packet command type: %d.\n", unipackbuf.header.stype);
 		sntSendError(connection, SNT_ERROR_BAD_REQUEST, "Invalid protocol command.\n");
