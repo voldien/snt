@@ -174,11 +174,13 @@ extern const char* gs_error_sym[];
 #define SNT_PACKET_NONE				0x0		/*	None.	*/
 #define SNT_PACKET_ENCRYPTION		0x1		/*	Packet contains encryption.	*/
 #define SNT_PACKET_COMPRESSION		0x2		/*	Packet contains compression.	*/
-#define SNT_PACKET_IV_ENCRYPTION	0x4		/*	Packet contains initilize vector.	*/
+#define SNT_PACKET_IV_ENCRYPTION	0x4		/*	Packet contains initialization vector.	*/
+#define SNT_PACKET_FB_ENCRYPTION	0x8		/*	Packet contains feedback number.	*/
 
-#define sntPacketHasEncrypted(head) (head.flag & SNT_PACKET_ENCRYPTION)
-#define sntPacketHasIV(head)		(head.flag & SNT_PACKET_IV_ENCRYPTION)
-#define snTPacketHasCompress(head)	(head.flag & SNT_PACKET_COMPRESSION)
+#define sntPacketHasEncrypted(head) ( ( head ).flag & SNT_PACKET_ENCRYPTION)
+#define sntPacketHasIV(head)		( ( head ).flag & SNT_PACKET_IV_ENCRYPTION)
+#define sntPacketHasFB(head)		( ( head ).flag & SNT_PACKET_FB_ENCRYPTION)
+#define snTPacketHasCompress(head)	( ( head ).flag & SNT_PACKET_COMPRESSION)
 
 /**
  *	SNT protocol header. This header will be attached
@@ -214,11 +216,20 @@ typedef struct snt_presentation_iv_package_t{
 } __attribute__ ((__packed__)) SNTPresentationIVPacket;
 
 /**
- *
+ *	Presentation feedback.
+ */
+typedef struct snt_presentation_feedback_package_t{
+	int32_t num;	/*	*/
+} __attribute__ ((__packed__)) SNTPresentationFeedbackPacket;
+
+/**
+ *	Presentation layer union. The presentation layer will always
+ *	be presented in this order.
  */
 typedef struct snt_presentation_union_t{
-	SNTPresentationPacket offset;
-	SNTPresentationIVPacket iv;
+	SNTPresentationPacket offset;		/*	Negative Offset.	*/
+	SNTPresentationIVPacket iv;			/*	Initialize vector.	*/
+	SNTPresentationFeedbackPacket fb;	/*	feedback number.	*/
 } __attribute__ ((__packed__)) SNTPresentationUnion;
 
 /**
