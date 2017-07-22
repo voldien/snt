@@ -630,9 +630,9 @@ unsigned int sntSymNeedIV(unsigned int cipher){
 	case SNT_ENCRYPTION_CASTCBC:
 		return 1;
 	default:
-		break;
+		return 0;
 	}
-	return 0;
+
 }
 
 void sntSymFree(SNTConnection* connection){
