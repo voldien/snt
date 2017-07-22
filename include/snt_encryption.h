@@ -39,6 +39,9 @@ typedef struct snt_connection_t SNTConnection;
 #define SNT_ENCRYPTION_AES_CFB128		0x200	/*	Cipher Feedback.	*/
 #define SNT_ENCRYPTION_AES_CFB192		0x400	/*	Cipher Feedback.	*/
 #define SNT_ENCRYPTION_AES_CFB256		0x800	/*	Cipher Feedback.	*/
+#define SNT_ENCRYPTION_AES_OFB128		0x1000	/*	Cipher Ouput feedback.	*/
+#define SNT_ENCRYPTION_AES_OFB192		0x2000	/*	Cipher Ouput feedback.	*/
+#define SNT_ENCRYPTION_AES_OFB256		0x4000	/*	Cipher Ouput feedback.	*/
 #define SNT_ENCRYPTION_3DESCBC			0x8000	/*	3DES Cipher Block Chaining.	*/
 #define SNT_ENCRYPTION_CAST				0x40000	/*	CAST.	*/
 #define SNT_ENCRYPTION_CASTCBC			0x80000 /*	CAST Cipher block chaining.	*/

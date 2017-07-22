@@ -32,9 +32,12 @@ const char* gc_symchi_symbol[] = {
 		"aescbc128",
 		"aescbc192",
 		"aescbc256",
-		"aesfbc128",
-		"aesfbc192",
-		"aesfbc256",
+		"aescfb128",
+		"aescfb192",
+		"aescfb256",
+		"aesofb128",
+		"aesofb192",
+		"aesofb256",
 		"3descbc",
 		"cast",
 		"castcbc",
@@ -427,6 +430,9 @@ int sntSymCreateFromKey(SNTConnection* connection, unsigned int cipher, const vo
 	case SNT_ENCRYPTION_AES_CFB128:
 	case SNT_ENCRYPTION_AES_CFB192:
 	case SNT_ENCRYPTION_AES_CFB256:
+	case SNT_ENCRYPTION_AES_OFB128:
+	case SNT_ENCRYPTION_AES_OFB192:
+	case SNT_ENCRYPTION_AES_OFB256:
 		connection->aes = malloc(sizeof(AES_KEY));
 		connection->deaes = malloc(sizeof(AES_KEY));
 		AES_set_encrypt_key(pkey, sntSymKeyBitSize(cipher), connection->aes);
@@ -505,6 +511,9 @@ void sntSymCopyKey(SNTConnection* connection, void** key){
 	case SNT_ENCRYPTION_AES_CFB128:
 	case SNT_ENCRYPTION_AES_CFB192:
 	case SNT_ENCRYPTION_AES_CFB256:
+	case SNT_ENCRYPTION_AES_OFB128:
+	case SNT_ENCRYPTION_AES_OFB192:
+	case SNT_ENCRYPTION_AES_OFB256:
 		memcpy(*key, ((AES_KEY*)connection->aes)->rd_key, sntSymKeyByteSize(connection->symchiper));
 		break;
 	case SNT_ENCRYPTION_BLOWFISH:
@@ -526,14 +535,17 @@ int sntSymKeyBitSize(unsigned int cipher){
 	case SNT_ENCRYPTION_AES_ECB128:
 	case SNT_ENCRYPTION_AES_CBC128:
 	case SNT_ENCRYPTION_AES_CFB128:
+	case SNT_ENCRYPTION_AES_OFB128:
 		return 128;
 	case SNT_ENCRYPTION_AES_ECB192:
 	case SNT_ENCRYPTION_AES_CBC192:
 	case SNT_ENCRYPTION_AES_CFB192:
+	case SNT_ENCRYPTION_AES_OFB192:
 		return 192;
 	case SNT_ENCRYPTION_AES_ECB256:
 	case SNT_ENCRYPTION_AES_CBC256:
 	case SNT_ENCRYPTION_AES_CFB256:
+	case SNT_ENCRYPTION_AES_OFB256:
 		return 256;
 	case SNT_ENCRYPTION_BLOWFISH:
 		return 192;
@@ -565,6 +577,9 @@ int sntSymBlockSize(unsigned int cipher){
 	case SNT_ENCRYPTION_AES_CFB128:
 	case SNT_ENCRYPTION_AES_CFB192:
 	case SNT_ENCRYPTION_AES_CFB256:
+	case SNT_ENCRYPTION_AES_OFB128:
+	case SNT_ENCRYPTION_AES_OFB192:
+	case SNT_ENCRYPTION_AES_OFB256:
 		return AES_BLOCK_SIZE;
 	case SNT_ENCRYPTION_BLOWFISH:
 		return BF_BLOCK;
@@ -588,6 +603,9 @@ unsigned int sntSymNeedIV(unsigned int cipher){
 	case SNT_ENCRYPTION_AES_CFB128:
 	case SNT_ENCRYPTION_AES_CFB192:
 	case SNT_ENCRYPTION_AES_CFB256:
+	case SNT_ENCRYPTION_AES_OFB128:
+	case SNT_ENCRYPTION_AES_OFB192:
+	case SNT_ENCRYPTION_AES_OFB256:
 	case SNT_ENCRYPTION_3DESCBC:
 	case SNT_ENCRYPTION_CASTCBC:
 		return 1;
@@ -609,6 +627,9 @@ void sntSymFree(SNTConnection* connection){
 	case SNT_ENCRYPTION_AES_CFB128:
 	case SNT_ENCRYPTION_AES_CFB192:
 	case SNT_ENCRYPTION_AES_CFB256:
+	case SNT_ENCRYPTION_AES_OFB128:
+	case SNT_ENCRYPTION_AES_OFB192:
+	case SNT_ENCRYPTION_AES_OFB256:
 		free(connection->aes);
 		free(connection->deaes);
 		break;
