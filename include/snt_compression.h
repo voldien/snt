@@ -22,8 +22,8 @@
 #include<stdlib.h>
 
 /**
- *	Encryption constants.
- *	mutually exclusive
+ *	Compression enumerator constants.
+ *	mutually exclusive.
  */
 #define SNT_COMPRESSION_NONE		0x0			/*	No compression.	*/
 #define SNT_COMPRESSION_LZ4			0x1			/*	LZ4 compression. Fast but lower compression ratio.	*/
