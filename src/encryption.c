@@ -412,6 +412,8 @@ int sntSymGenerateKey(SNTConnection* connection, unsigned int cipher){
 
 	/*	Create symmetric key.	*/
 	status = sntSymCreateFromKey(connection, cipher, rand);
+
+	/*	Clear key.	*/
 	sntMemZero(rand, sntSymKeyByteSize(cipher));
 	free(rand);
 
