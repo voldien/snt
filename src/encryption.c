@@ -13,6 +13,7 @@
 #include <openssl/aes.h>
 #include <openssl/des.h>
 #include <openssl/blowfish.h>
+#include <openssl/rc4.h>
 #include <openssl/cast.h>
 #include <openssl/err.h>
 #include <openssl/rand.h>
@@ -39,6 +40,7 @@ const char* gc_symchi_symbol[] = {
 		"aesofb192",
 		"aesofb256",
 		"3descbc",
+		"rc4",
 		"cast",
 		"castcbc",
 		"castcfb",
@@ -473,6 +475,10 @@ int sntSymCreateFromKey(SNTConnection* connection, unsigned int cipher, const vo
 			return 0;
 		}
 		break;
+	case SNT_ENCRYPTION_RC4:
+		connection->symmetrickey = malloc(sizeof(RC4_KEY));
+		RC4_set_key(connection->symmetrickey, sntSymKeyBitSize(cipher), pkey);
+		break;
 	case SNT_ENCRYPTION_CAST:
 	case SNT_ENCRYPTION_CASTCBC:
 	case SNT_ENCRYPTION_CASTCFB:
@@ -554,6 +560,8 @@ int sntSymKeyBitSize(unsigned int cipher){
 	case SNT_ENCRYPTION_3DES:
 	case SNT_ENCRYPTION_3DESCBC:
 		return sntSymKeyBitSize(SNT_ENCRYPTION_DES) * 3;
+	case SNT_ENCRYPTION_RC4:
+		return 128;
 	case SNT_ENCRYPTION_CAST:
 	case SNT_ENCRYPTION_CASTCBC:
 		return CAST_KEY_LENGTH;
@@ -587,6 +595,8 @@ int sntSymBlockSize(unsigned int cipher){
 	case SNT_ENCRYPTION_3DES:
 	case SNT_ENCRYPTION_3DESCBC:
 		return sizeof(DES_cblock);
+	case SNT_ENCRYPTION_RC4:
+		return 1;
 	case SNT_ENCRYPTION_CAST:
 	case SNT_ENCRYPTION_CASTCBC:
 		return CAST_BLOCK;
@@ -640,6 +650,9 @@ void sntSymFree(SNTConnection* connection){
 	case SNT_ENCRYPTION_DES:
 	case SNT_ENCRYPTION_3DESCBC:
 		free(connection->des3);
+		break;
+	case SNT_ENCRYPTION_RC4:
+		free(connection->symmetrickey);
 		break;
 	case SNT_ENCRYPTION_CAST:
 	case SNT_ENCRYPTION_CASTCBC:
@@ -719,6 +732,9 @@ unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 		for(i = 0; i < delen; i += connection->blocksize){
 			BF_ecb_encrypt((in + i), (dest + i), connection->blowfish, BF_ENCRYPT);
 		}
+		break;
+	case SNT_ENCRYPTION_RC4:
+		RC4(connection->symmetrickey, delen, in, dest);
 		break;
 	case SNT_ENCRYPTION_CAST:
 		for(i = 0; i < delen; i += connection->blocksize){
@@ -803,6 +819,9 @@ unsigned int sntSymDecrypt(const SNTConnection* connection, const void* source,
 		for(i = 0; i < deslen; i += connection->blocksize){
 			BF_ecb_encrypt((in + i), (dest + i), connection->blowfish, BF_DECRYPT);
 		}
+		break;
+	case SNT_ENCRYPTION_RC4:
+		RC4(connection->symmetrickey, deslen, in, dest);
 		break;
 	case SNT_ENCRYPTION_CAST:
 		for(i = 0; i < deslen; i += connection->blocksize){
