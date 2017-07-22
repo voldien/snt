@@ -78,7 +78,8 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 				"inetbuffer  : %u.\n"
 				"transmode   : %u.\n"
 				"extension   : %u.\n"
-				"deltaTypes  : %u.\n",
+				"deltaTypes  : %u.\n"
+				"duplex      : %d.\n",
 				pack.init->ssl,
 				pack.init->asymchiper,
 				pack.init->symchiper,
@@ -87,7 +88,8 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 				pack.init->inetbuffer,
 				pack.init->transmode,
 				pack.init->extension,
-				pack.init->deltaTypes);
+				pack.init->deltaTypes,
+				pack.init->duplex);
 		break;
 	case SNT_PROTOCOL_STYPE_CLIENTOPT:
 		fprintf(stdout,
