@@ -254,6 +254,7 @@ typedef struct snt_init_package_t{
 	uint32_t extension;			/*	Not supported.	*/
 	uint32_t deltaTypes;		/*	Delta type supported.	*/
 	uint32_t duplex;			/*	Duplex mode supported.	*/
+	uint32_t dh;				/*	*/
 }__attribute__ ((__packed__)) SNTInitPackage;
 
 /**
