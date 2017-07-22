@@ -173,6 +173,7 @@ int sntProtFuncSecure(SNTConnection* connection, const SNTUniformPacket* packet)
 	symkey = malloc(sntASymGetBlockSize(g_bindconnection->asymchiper, g_bindconnection->asymkey));
 	if(!sntASymPriDecrypt(g_bindconnection->asymchiper, sec->key, sec->encrykeyblock,
 			symkey, g_bindconnection->asymkey)){
+		sntSendError(connection, SNT_ERROR_SERVER, "Couldn't decrypt asymmetric cipher block");
 		return 0;
 	}
 	if(!sntSymCreateFromKey(connection, sec->symchiper, symkey)){
