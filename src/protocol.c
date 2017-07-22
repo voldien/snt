@@ -84,6 +84,7 @@ const char* gs_error_sym[] = {
 		"Service unavailable",
 		"Cipher not supported",
 		"Benchmark mode not supported",
+		"Diffie hellman not supported",
 		NULL
 };
 
