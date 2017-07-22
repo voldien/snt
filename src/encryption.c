@@ -572,6 +572,7 @@ int sntSymKeyBitSize(unsigned int cipher){
 		return 128;
 	case SNT_ENCRYPTION_CAST:
 	case SNT_ENCRYPTION_CASTCBC:
+	case SNT_ENCRYPTION_CASTCFB:
 		return CAST_KEY_LENGTH;
 	default:
 		return 0;
@@ -609,6 +610,7 @@ int sntSymBlockSize(unsigned int cipher){
 		return 1;
 	case SNT_ENCRYPTION_CAST:
 	case SNT_ENCRYPTION_CASTCBC:
+	case SNT_ENCRYPTION_CASTCFB:
 		return CAST_BLOCK;
 	default:
 		return 0;
@@ -628,6 +630,7 @@ unsigned int sntSymNeedIV(unsigned int cipher){
 	case SNT_ENCRYPTION_AES_OFB256:
 	case SNT_ENCRYPTION_3DESCBC:
 	case SNT_ENCRYPTION_CASTCBC:
+	case SNT_ENCRYPTION_CASTCFB:
 	case SNT_ENCRYPTION_BF_CBC:
 	case SNT_ENCRYPTION_BF_CFB:
 		return 1;
@@ -686,6 +689,7 @@ void sntSymFree(SNTConnection* connection){
 		break;
 	case SNT_ENCRYPTION_CAST:
 	case SNT_ENCRYPTION_CASTCBC:
+	case SNT_ENCRYPTION_CASTCFB:
 		free(connection->symmetrickey);
 	case SNT_ENCRYPTION_NONE:
 	default:
@@ -880,6 +884,9 @@ unsigned int sntSymDecrypt(const SNTConnection* connection, const void* source,
 		break;
 	case SNT_ENCRYPTION_CASTCBC:
 		CAST_cbc_encrypt(in, dest, deslen, connection->symmetrickey, iv, CAST_DECRYPT);
+		break;
+	case SNT_ENCRYPTION_CASTCFB:
+		CAST_cfb64_encrypt(in, dest, deslen, connection->symmetrickey, iv, feedback, CAST_DECRYPT);
 		break;
 	default:
 		memcpy(dest, source, deslen);
