@@ -299,7 +299,7 @@ void sntReadArgument(int argc,  char *const * argv, char* ip, unsigned int* port
 			break;
 		case 'f':	/*	File.	*/
 			if(optarg){
-				sntVerbosePrintf("Opening %s.\n", optarg);
+				sntDebugPrintf("Verifying the file %s exists.\n", optarg);
 				g_filepath = optarg;
 				if(access(g_filepath, F_OK | R_OK) != 0){
 					sntLogErrorPrintf("File %s is not accessible, %s.\n", optarg, strerror(errno));
