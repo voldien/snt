@@ -47,12 +47,12 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 		if(sntPacketHasIV(packet->header)){
 			uint32_t iv[16];
 			uint32_t i;
-			memcpy(iv, press->iv.iv, 16);
+			memcpy(iv, press->iv.iv, press->iv.len);
 			fprintf(stdout, "len : %u.\n"
 							"IV  : ",
 							press->iv.len);
-			for(i = 0; i < press->iv.len / 4; i++){
-				fprintf(stdout, "%x",iv[i]);
+			for(i = 0; i < (press->iv.len / 4); i++){
+				fprintf(stdout, "%x", iv[i]);
 			}
 			/*	Print feedback.	*/
 			if(sntPacketHasFB(packet->header)){
