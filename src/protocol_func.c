@@ -312,9 +312,8 @@ int sntProtFuncDHInit(SNTConnection* __restrict__ connection,
 		return 0;
 	}
 
-	len = sntSendDHExch(connection);
-
-	return len;
+	/*	Send Diffie hellman exchange packet.	*/
+	return sntSendDHExch(connection);
 }
 
 int sntProtFuncDHExch(SNTConnection* __restrict__ connection,
