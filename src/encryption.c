@@ -703,8 +703,6 @@ void sntSymFree(SNTConnection* connection){
 	connection->blocksize = 0;
 }
 
-int dummy = 6;
-
 unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 		unsigned char* dest, unsigned int soulen, void* __restrict__ iv, int* __restrict__ feedback) {
 
