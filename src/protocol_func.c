@@ -431,9 +431,8 @@ int sntValidateCapability(const SNTClientOption* option){
 	return SNT_ERROR_NONE;
 }
 
-
-
-int sntSendCertificate(const SNTConnection* bind, SNTConnection* client){
+int sntSendCertificate(const SNTConnection* __restrict__ bind,
+		SNTConnection* __restrict__ client) {
 
 	int len;
 	SNTCertificate cert;
@@ -552,7 +551,7 @@ int sntSendDHpq(const SNTConnection* __restrict__ bind,
 	return len;
 }
 
-int sntSendDHExch(SNTConnection* __restrict__ connection){
+int sntSendDHExch(const SNTConnection* __restrict__ connection){
 
 	SNTDHExch* exch;
 	const size_t packlen = sizeof(SNTDHExch);
@@ -587,7 +586,7 @@ int sntSendDHExch(SNTConnection* __restrict__ connection){
 	return len;
 }
 
-int sntSendReady(SNTConnection* __restrict__ connection){
+int sntSendReady(const SNTConnection* __restrict__ connection){
 
 	SNTReadyPacket ready;
 	int len;

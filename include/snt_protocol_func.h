@@ -72,12 +72,12 @@ extern int sntSendDHpq(const SNTConnection* __restrict__ bind,
 /**
  *	@Return number of bytes sent.
  */
-extern int sntSendDHExch(SNTConnection* __restrict__ connection);
+extern int sntSendDHExch(const SNTConnection* __restrict__ connection);
 
 /**
  *	@Return number of bytes sent.
  */
-extern int sntSendReady(SNTConnection* __restrict__ connection);
+extern int sntSendReady(const SNTConnection* __restrict__ connection);
 
 /**
  *	Send error code.
