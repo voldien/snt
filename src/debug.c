@@ -54,7 +54,11 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 			for(i = 0; i < press->iv.len / 4; i++){
 				fprintf(stdout, "%x",iv[i]);
 			}
-			fprintf(stdout, ".\n");
+			/*	Print feedback.	*/
+			if(sntPacketHasFB(packet->header)){
+				fprintf(stdout, "\nfb  : %u", (unsigned int)press->iv.iv[press->iv.len]);
+			}
+			fprintf(stdout, "\n");
 		}
 
 		fprintf(stdout, "--------------\n");
