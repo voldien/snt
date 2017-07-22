@@ -64,17 +64,23 @@ extern int sntSendCertificate(const SNTConnection* __restrict__ bind,
 		SNTConnection* __restrict__ client);
 
 /**
+ *	Send Diffie hellman request.
+ *
  *	@Return number of bytes sent.
  */
 extern int sntSendDHpq(const SNTConnection* __restrict__ bind,
 		SNTConnection* __restrict__ client);
 
 /**
+ *	Send Diffie hellman exchange packet.
+ *
  *	@Return number of bytes sent.
  */
 extern int sntSendDHExch(const SNTConnection* __restrict__ connection);
 
 /**
+ *	Send ready packet to connection.
+ *
  *	@Return number of bytes sent.
  */
 extern int sntSendReady(const SNTConnection* __restrict__ connection);
