@@ -139,7 +139,7 @@ int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned 
 		RSA_set_method(connection->RSAkey, method);
 		BN_free(ebnum);
 
-		/*	*/
+		/*	Check RSA key.	*/
 		if(RSA_check_key(connection->RSAkey) <= 0){
 			sntSSLPrintError();
 			sntASymFree(connection);
