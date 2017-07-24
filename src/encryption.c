@@ -691,6 +691,7 @@ void sntSymFree(SNTConnection* connection){
 	case SNT_ENCRYPTION_CASTCBC:
 	case SNT_ENCRYPTION_CASTCFB:
 		free(connection->symmetrickey);
+		break;
 	case SNT_ENCRYPTION_NONE:
 	default:
 		break;
