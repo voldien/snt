@@ -1,5 +1,5 @@
 /**
-	Simple network benchmark tool.
+    Simple network benchmark tool.
     Copyright (C) 2017  Valdemar Lindberg
 
     This program is free software: you can redistribute it and/or modify
