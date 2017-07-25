@@ -41,6 +41,7 @@ static void snt_default_con_option(SNTConnectionOption* option, unsigned int isS
 	option->asymmetric = SNT_ENCRYPTION_ASYM_RSA;
 	option->asymmetric_bits = 1024;
 	option->hash = SNT_HASH_SHA256;
+	option->delta.i = 1;
 	option->invfrequency = 0;
 	option->payload = 1024;
 	option->listen = 128;
