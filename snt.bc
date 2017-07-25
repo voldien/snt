@@ -13,7 +13,7 @@ _snt()
 	#
 	case "${prev}" in
 		"--cipher")
-			local subopt="des 3des blowfish aesecb128 aesecb192 aesecb256 aescbc128 aescbc192 aescbc256 aesfbc128 aesfbc192 aesfbc256 3descbc cast"
+			local subopt="des 3des blowfish aesecb128 aesecb192 aesecb256 aescbc128 aescbc192 aescbc256 aesfbc128 aesfbc192 aesfbc256 3descbc cast castcbc castcfb rc4 bfcbc bfcfb"
 			if [[ ${prev} == =* ]] ; then
 				COMPREPLY=( $(compgen  -W "${subopt}" -- ${cur}) )
 				return 0
