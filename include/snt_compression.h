@@ -29,9 +29,9 @@
 #define SNT_COMPRESSION_LZ4         0x1     /*	LZ4 compression. Fast but lower compression ratio.	*/
 #define SNT_COMPRESSION_GZIP        0x2     /*	Gzip compression. Slow but high compression ratio.	*/
 #define SNT_COMPRESSION_BZIP2       0x4     /*	BZIP2 compression.	*/
-#define SNT_COMPRESSION_ALL								\
-		SNT_COMPRESSION_LZ4	| SNT_COMPRESSION_GZIP		\
-		| SNT_COMPRESSION_BZIP2							\
+#define SNT_COMPRESSION_ALL                             \
+        SNT_COMPRESSION_LZ4 | SNT_COMPRESSION_GZIP      \
+        | SNT_COMPRESSION_BZIP2                         \
 
 /**
  *	Compression symbol table.
