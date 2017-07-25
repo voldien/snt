@@ -103,13 +103,15 @@ local snt_hdr_fields =
 snt.fields = snt_hdr_fields
 
 -- SNT application protocol header size in bytes.
---
 local SNT_MSG_HDR_LEN = 7
-local SNT_MAX_STYPE = 9
+-- SNT application protocol max command number.
+local SNT_MAX_STYPE = 12
 
 -- SNT header flag constants.
-local SNT_MSG_FLAG_ENCR = 0x1
-local SNT_MSG_FLAG_COMP = 0x2
+local SNT_MSG_FLAG_ENCR = 0x1	-- Packet contains encrypted data.
+local SNT_MSG_FLAG_COMP = 0x2	-- Packet contains compressede data.
+local SNT_MSG_FLAG_IV	= 0x4   -- Packet contains initilization vector data.
+local SNT_MSG_FLAG_FB	= 0x8   -- Packet contains encryption feedback data.
 
 -- Protocol command name.
 local stype_hdr_symbol=
