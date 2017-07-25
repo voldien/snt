@@ -26,29 +26,29 @@ typedef struct snt_connection_t SNTConnection;
  *	Symmetric cipher.
  *	mutually exclusive enumerates.
  */
-#define SNT_ENCRYPTION_NONE				0x0		/*	No symmetric encryption cipher.	*/
-#define SNT_ENCRYPTION_AES_ECB128		0x1		/*	AES 128 bit key Electronic Codebook.	*/
-#define SNT_ENCRYPTION_AES_ECB192		0x2		/*	AES 192 bit key Electronic Codebook.	*/
-#define SNT_ENCRYPTION_AES_ECB256		0x4		/*	AES 256 bit key Electronic Codebook.	*/
-#define SNT_ENCRYPTION_BLOWFISH			0x8		/*	BlowFish.	*/
-#define SNT_ENCRYPTION_DES				0x10	/*	DES. (Data encryption standard), don't use unless you know what you're doing.*/
-#define SNT_ENCRYPTION_3DES				0x20	/*	3DES.	*/
-#define SNT_ENCRYPTION_AES_CBC128		0x40	/*	Cipher Block Chaining.	*/
-#define SNT_ENCRYPTION_AES_CBC192		0x80	/*	Cipher Block Chaining.	*/
-#define SNT_ENCRYPTION_AES_CBC256		0x100	/*	Cipher Block Chaining.	*/
-#define SNT_ENCRYPTION_AES_CFB128		0x200	/*	Cipher Feedback.	*/
-#define SNT_ENCRYPTION_AES_CFB192		0x400	/*	Cipher Feedback.	*/
-#define SNT_ENCRYPTION_AES_CFB256		0x800	/*	Cipher Feedback.	*/
-#define SNT_ENCRYPTION_AES_OFB128		0x1000	/*	Cipher Ouput feedback.	*/
-#define SNT_ENCRYPTION_AES_OFB192		0x2000	/*	Cipher Ouput feedback.	*/
-#define SNT_ENCRYPTION_AES_OFB256		0x4000	/*	Cipher Ouput feedback.	*/
-#define SNT_ENCRYPTION_3DESCBC			0x8000	/*	3DES Cipher Block Chaining.	*/
-#define SNT_ENCRYPTION_BF_CBC			0x10000	/*	Blowfish cipher block chaining.	*/
-#define SNT_ENCRYPTION_BF_CFB			0x20000	/*	Blowfish cipher feedback.	*/
-#define SNT_ENCRYPTION_RC4				0x40000	/*	RC4 encryption.	*/
-#define SNT_ENCRYPTION_CAST				0x80000	/*	CAST.	*/
-#define SNT_ENCRYPTION_CASTCBC			0x100000/*	CAST Cipher block chaining.	*/
-#define SNT_ENCRYPTION_CASTCFB			0x200000/*	CAST Cipher feedback.	*/
+#define SNT_ENCRYPTION_NONE             0x0     /*	No symmetric encryption cipher.	*/
+#define SNT_ENCRYPTION_AES_ECB128       0x1     /*	AES 128 bit key Electronic Codebook.	*/
+#define SNT_ENCRYPTION_AES_ECB192       0x2     /*	AES 192 bit key Electronic Codebook.	*/
+#define SNT_ENCRYPTION_AES_ECB256       0x4     /*	AES 256 bit key Electronic Codebook.	*/
+#define SNT_ENCRYPTION_BLOWFISH         0x8     /*	BlowFish.	*/
+#define SNT_ENCRYPTION_DES              0x10    /*	DES. (Data encryption standard), don't use unless you know what you're doing.*/
+#define SNT_ENCRYPTION_3DES             0x20    /*	3DES.	*/
+#define SNT_ENCRYPTION_AES_CBC128       0x40    /*	Cipher Block Chaining.	*/
+#define SNT_ENCRYPTION_AES_CBC192       0x80    /*	Cipher Block Chaining.	*/
+#define SNT_ENCRYPTION_AES_CBC256       0x100   /*	Cipher Block Chaining.	*/
+#define SNT_ENCRYPTION_AES_CFB128       0x200   /*	Cipher Feedback.	*/
+#define SNT_ENCRYPTION_AES_CFB192       0x400   /*	Cipher Feedback.	*/
+#define SNT_ENCRYPTION_AES_CFB256       0x800   /*	Cipher Feedback.	*/
+#define SNT_ENCRYPTION_AES_OFB128       0x1000  /*	Cipher Ouput feedback.	*/
+#define SNT_ENCRYPTION_AES_OFB192       0x2000  /*	Cipher Ouput feedback.	*/
+#define SNT_ENCRYPTION_AES_OFB256       0x4000  /*	Cipher Ouput feedback.	*/
+#define SNT_ENCRYPTION_3DESCBC          0x8000  /*	3DES Cipher Block Chaining.	*/
+#define SNT_ENCRYPTION_BF_CBC           0x10000 /*	Blowfish cipher block chaining.	*/
+#define SNT_ENCRYPTION_BF_CFB           0x20000 /*	Blowfish cipher feedback.	*/
+#define SNT_ENCRYPTION_RC4              0x40000 /*	RC4 encryption.	*/
+#define SNT_ENCRYPTION_CAST             0x80000 /*	CAST.	*/
+#define SNT_ENCRYPTION_CASTCBC          0x100000/*	CAST Cipher block chaining.	*/
+#define SNT_ENCRYPTION_CASTCFB          0x200000/*	CAST Cipher feedback.	*/
 #define SNT_ENCRYPTION_SYM_ALL									\
 		( SNT_ENCRYPTION_BLOWFISH 								\
 		| SNT_ENCRYPTION_DES | SNT_ENCRYPTION_3DES				\
