@@ -38,7 +38,6 @@ extern SNTPool* g_connectionpool;		/*	connection pool. (Used by the server only)
 extern SNTConnection* g_bindconnection;	/*	Connection used for binding socket to program. (Server only).	*/
 extern pthread_t* g_threadtable;		/*	Thread table for each connection.	(Server only)	*/
 extern SNTConnection** g_contable;		/*	Maps file descriptor to connection.	*/
-extern int g_nfailure;					/*	Number of sequence failure. TODO relocate to benchmark integrity.	*/
 extern int g_numcliconne;				/*	Number of client connection. (Client only).	*/
 extern char* g_filepath;				/*	File for file benchmark mode.	*/
 extern char* cerficatefilepath;			/*	Certificate file pathS.	*/

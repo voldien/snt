@@ -22,7 +22,6 @@ SNTConnection* g_bindconnection = NULL;
 pthread_t* g_threadtable = NULL;
 SNTConnection** g_contable = NULL;
 unsigned int g_curthread = 0;
-int g_nfailure = 0;
 int g_numcliconne = 1;
 char* g_filepath = NULL;
 char* cerficatefilepath = NULL;
