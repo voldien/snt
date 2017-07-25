@@ -48,25 +48,25 @@ extern char* cerficatefilepath;			/*	Certificate file pathS.	*/
  *	Connection option.
  */
 typedef struct snt_connection_option_t{
-	int32_t affamily;			/*	Address family.	*/
-	uint32_t ssl;				/*	Use secure connection via SSL.	*/
-	uint32_t compression;		/*	Compression.	*/
-	uint32_t bm_protocol_mode;	/*	Benchmark mode.	*/
-	uint32_t transport_mode;	/*	Transport layer protocol.	*/
-	uint32_t symmetric;			/*	Symmetric cipher.	*/
-	uint32_t asymmetric;		/*	Asymmetric cipher.	*/
-	uint32_t asymmetric_bits;	/*	Asymmetric cipher key bitsize.	*/
-	uint32_t hash;				/*	Hash algorithm.	*/
-	uint32_t deltatype;			/*	Delta type.	*/
-	SNTDelta delta;				/*	Incremental delta.	*/
-	uint64_t invfrequency;		/*	Frequency of number of packet sent per sec.	*/
-	uint16_t payload;			/*	Size of payload.	*/
-	int32_t listen;				/*	Number of listen. (Server only).	*/
-	uint64_t duration;			/*	Duration in nano seconds.	*/
-	uint32_t port;				/*	Port.	*/
-	uint32_t certificate;		/*	*/
-	uint32_t dh;				/*	Diffie hellman.	*/
-	uint32_t duplex;			/*	Duplex.	*/
+	int32_t affamily;           /*	Address family.	*/
+	uint32_t ssl;               /*	Use secure connection via SSL.	*/
+	uint32_t compression;       /*	Compression.	*/
+	uint32_t bm_protocol_mode;  /*	Benchmark mode.	*/
+	uint32_t transport_mode;    /*	Transport layer protocol.	*/
+	uint32_t symmetric;         /*	Symmetric cipher.	*/
+	uint32_t asymmetric;        /*	Asymmetric cipher.	*/
+	uint32_t asymmetric_bits;   /*	Asymmetric cipher key bitsize.	*/
+	uint32_t hash;              /*	Hash algorithm.	*/
+	uint32_t deltatype;         /*	Delta type.	*/
+	SNTDelta delta;             /*	Incremental delta.	*/
+	uint64_t invfrequency;      /*	Frequency of number of packet sent per sec.	*/
+	uint16_t payload;           /*	Size of payload.	*/
+	int32_t listen;             /*	Number of listen. (Server only).	*/
+	uint64_t duration;          /*	Duration in nano seconds.	*/
+	uint32_t port;              /*	Port.	*/
+	uint32_t certificate;       /*	Certficate.	*/
+	uint32_t dh;                /*	Diffie hellman.	*/
+	uint32_t duplex;            /*	Duplex.	*/
 }SNTConnectionOption;
 
 /**
