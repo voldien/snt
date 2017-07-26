@@ -517,7 +517,32 @@ function sntDissectResultPacket(tvbuf, pktinfo, tree, offset)
   return 0
 end
 
--- 
+--------------------------------------------------------------------------------
+-- Dissector dummy function.
+-- @Return 
+function sntDissectDHReq(tvbuf, pktinfo, tree, offset)
+  pktinfo.cols.info = "Diffie hellman request."
+  return 0
+end
+
+--------------------------------------------------------------------------------
+-- Dissect Diffie hellman initialization packet.
+-- @Return
+function sntDissectDHInit(tvbuf, pktinfo, tree, offset)
+
+  return 0
+end
+
+--------------------------------------------------------------------------------
+-- Dissect Diffie hellman exchange packet.
+-- @Return
+function sntDissectDHExch(tvbuf, pktinfo, tree, offset)
+
+  return 0
+end
+
+
+-- Dissector protocol command function map.
 disectcommand = {
   [1] = sntDissectInitPacket,
   [2] = sntDissectClientPacket,
@@ -528,6 +553,9 @@ disectcommand = {
   [7] = sntDissectErrorPacket,
   [8] = sntDissectBenchmarkPacket,
   [9] = sntDissectResultPacket,
+  [10] = sntDissectDHReq,
+  [11] = sntDissectDHInit,
+  [12] = sntDissectDHExch,
 }
 
 -----------------------------------------------
