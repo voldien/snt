@@ -108,9 +108,9 @@ extern const char* gs_sym_cert[];
 #define SNT_DUPLEX_SIMPLE   0x1     /*	Transmit from single point.	*/
 #define SNT_DUPLEX_HALF     0x2     /*	Transmit from between point, one at a time.	*/
 #define SNT_DUPLEX_FULL     0x4     /*	Transmit and receive between the point simultaneously.*/
-#define SNT_DUPLEX_ALL						\
-	(SNT_DUPLEX_SIMPLE | SNT_DUPLEX_HALF	\
-	| SNT_DUPLEX_ALL)						\
+#define SNT_DUPLEX_ALL                          \
+        (SNT_DUPLEX_SIMPLE | SNT_DUPLEX_HALF    \
+        | SNT_DUPLEX_ALL)                       \
 
 /**
  *	Duplex symbol table.
@@ -120,9 +120,9 @@ extern const char* gs_sym_duplex[];
 /**
  *	Transport layer.
  */
-#define SNT_TRANSPORT_NONE	0x0			/*	None transport.	*/
-#define SNT_TRANSPORT_TCP	0x1			/*	TCP - Transfer control protocol, Default.	*/
-#define SNT_TRANSPORT_UDP	0x2			/*	UDP - User datagram protocol.	*/
+#define SNT_TRANSPORT_NONE	0x0		/*	None transport.	*/
+#define SNT_TRANSPORT_TCP	0x1		/*	TCP - Transfer control protocol, Default.	*/
+#define SNT_TRANSPORT_UDP	0x2		/*	UDP - User datagram protocol.	*/
 #define SNT_TRANSPORT_ALL                       \
         (SNT_TRANSPORT_TCP | SNT_TRANSPORT_UDP) \
 
