@@ -70,7 +70,7 @@ typedef struct snt_connection_option_t{
 }SNTConnectionOption;
 
 /**
- *	@Return non null pointer.
+ *	@Return non-null pointer.
  */
 extern const char* sntGetVersion(void);
 
