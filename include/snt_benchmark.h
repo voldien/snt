@@ -38,6 +38,9 @@ typedef struct snt_result_packet_t SNTResultPacket;
         (SNT_PROTOCOL_BM_MODE_PERFORMANCE | SNT_PROTOCOL_BM_MODE_INTEGRITY  \
         | SNT_PROTOCOL_BM_MODE_FILE)                                        \
 
+/**
+ *	Benchmark mode symbol table.
+ */
 extern const char* gc_bench_symbol[];
 
 /**
