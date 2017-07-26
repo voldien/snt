@@ -465,6 +465,7 @@ void sntClientMain(const char* host, int port, int nconnector, const SNTConnecti
 	fd_set fd_read;						/*	*/
 	fd_set fd_active;					/*	*/
 	SNTConnection* con;
+	volatile int numalive = nconnector;
 
 	/*	*/
 	FD_ZERO(&fd_active);
@@ -486,7 +487,8 @@ void sntClientMain(const char* host, int port, int nconnector, const SNTConnecti
 		}
 	}
 
-	while(1){
+	/*	Main loop.	*/
+	while(numalive > 0){
 		fd_read = fd_active;
 
 		/*	*/
@@ -499,8 +501,15 @@ void sntClientMain(const char* host, int port, int nconnector, const SNTConnecti
 			if(FD_ISSET(i, &fd_read)){
 				con = g_contable[i];
 
-				if(sntPacketInterpreter(con) == 0){
-					return;
+				/*	interpret.	*/
+				if(sntPacketInterpreter(con) <= 0){
+					numalive--;
+					sntUnMapSocket(g_contable, &fd_active, con->tcpsock);
+					if(con->udpsock > 0){
+						sntUnMapSocket(g_contable, &fd_active, con->udpsock);
+					}
+					sntDisconnectSocket(con);
+					continue;
 				}
 			}
 		}/*	for*/
