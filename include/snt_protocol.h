@@ -67,19 +67,19 @@
 /**
  *	SNT application protocol.
  */
-#define SNT_PROTOCOL_STYPE_NONE			0x0		/*	No command.	*/
-#define SNT_PROTOCOL_STYPE_INIT 		0x1		/*	Initialization packet sent by server.	*/
-#define SNT_PROTOCOL_STYPE_CLIENTOPT	0x2		/*	Connection option selected by the client.	*/
-#define SNT_PROTOCOL_STYPE_CERTIFICATE	0x3		/*	Asymmetric cipher certificate with public key.	*/
-#define SNT_PROTOCOL_STYPE_SECURE 		0x4		/*	Packet for establishing a secure connection, sent by the client. Not mandatory.	*/
-#define SNT_PROTOCOL_STYPE_READY 		0x5		/*	Packet when ready for testing, sent by the server.	*/
-#define SNT_PROTOCOL_STYPE_STARTTEST	0x6		/*	Start testing. Sent to client by the server.*/
-#define SNT_PROTOCOL_STYPE_ERROR		0x7		/*	Error packet. Informing about the error.	*/
-#define SNT_PROTOCOL_STYPE_BENCHMARK	0x8		/*	Benchmark specific packet.	*/
-#define SNT_PROTOCOL_STYPE_RESULT		0x9		/*	Result from server.	*/
-#define SNT_PROTOCOL_STYPE_DH_REQ		0xA		/*	Request diffie hellman p and g.	*/
-#define SNT_PROTOCOL_STYPE_DH_INIT		0xB		/*	Initialize common number.	*/
-#define SNT_PROTOCOL_STYPE_DH_EXCH		0xC		/*	Exchange computed q.	*/
+#define SNT_PROTOCOL_STYPE_NONE         0x0 /*	No command.	*/
+#define SNT_PROTOCOL_STYPE_INIT         0x1 /*	Initialization packet sent by server.	*/
+#define SNT_PROTOCOL_STYPE_CLIENTOPT    0x2 /*	Connection option selected by the client.	*/
+#define SNT_PROTOCOL_STYPE_CERTIFICATE  0x3 /*	Asymmetric cipher certificate with public key.	*/
+#define SNT_PROTOCOL_STYPE_SECURE       0x4 /*	Packet for establishing a secure connection, sent by the client. Not mandatory.	*/
+#define SNT_PROTOCOL_STYPE_READY        0x5 /*	Packet when ready for testing, sent by the server.	*/
+#define SNT_PROTOCOL_STYPE_STARTTEST    0x6 /*	Start testing. Sent to client by the server.*/
+#define SNT_PROTOCOL_STYPE_ERROR        0x7 /*	Error packet. Informing about the error.	*/
+#define SNT_PROTOCOL_STYPE_BENCHMARK    0x8 /*	Benchmark specific packet.	*/
+#define SNT_PROTOCOL_STYPE_RESULT       0x9 /*	Result from server.	*/
+#define SNT_PROTOCOL_STYPE_DH_REQ       0xA /*	Request diffie hellman p and g.	*/
+#define SNT_PROTOCOL_STYPE_DH_INIT      0xB /*	Initialize common number.	*/
+#define SNT_PROTOCOL_STYPE_DH_EXCH      0xC /*	Exchange computed q.	*/
 
 
 /**
@@ -104,10 +104,10 @@ extern const char* gs_sym_cert[];
 /**
  *	Duplex mode.
  */
-#define SNT_DUPLEX_NONE		0x0		/*	None.	*/
-#define SNT_DUPLEX_SIMPLE	0x1		/*	Transmit from single point.	*/
-#define SNT_DUPLEX_HALF		0x2		/*	Transmit from between point, one at a time.	*/
-#define SNT_DUPLEX_FULL		0x4		/*	Transmit and receive between the point simultaneously.*/
+#define SNT_DUPLEX_NONE     0x0     /*	None.	*/
+#define SNT_DUPLEX_SIMPLE   0x1     /*	Transmit from single point.	*/
+#define SNT_DUPLEX_HALF     0x2     /*	Transmit from between point, one at a time.	*/
+#define SNT_DUPLEX_FULL     0x4     /*	Transmit and receive between the point simultaneously.*/
 #define SNT_DUPLEX_ALL						\
 	(SNT_DUPLEX_SIMPLE | SNT_DUPLEX_HALF	\
 	| SNT_DUPLEX_ALL)						\
@@ -135,11 +135,11 @@ extern const char* gs_sym_transport[];
  *	Delta type used for integrity
  *	benchmark mode.
  */
-#define SNT_DELTA_TYPE_FLOAT			0x1		/*	Delta presented as incremented float.	*/
-#define SNT_DELTA_TYPE_INT				0x2		/*	Delta presented as incremented whole number.	*/
-#define SNT_DELTA_TYPE_TIMESTAMP		0x4		/*	Delta presented in time stamp.	*/
-#define SNT_DELTA_TYPE_HIGHTIMESTAMP	0x8		/*	Delta presented in high resolution time stamp.	*/
-#define SNT_DELTA_TYPE_DOUBLE			0x10	/*	Delta presented as incremented double.	*/
+#define SNT_DELTA_TYPE_FLOAT            0x1     /*	Delta presented as incremented float.	*/
+#define SNT_DELTA_TYPE_INT              0x2     /*	Delta presented as incremented whole number.	*/
+#define SNT_DELTA_TYPE_TIMESTAMP        0x4     /*	Delta presented in time stamp.	*/
+#define SNT_DELTA_TYPE_HIGHTIMESTAMP    0x8     /*	Delta presented in high resolution time stamp.	*/
+#define SNT_DELTA_TYPE_DOUBLE           0x10    /*	Delta presented as incremented double.	*/
 #define SNT_DELTA_TYPE_ALL										\
 	(SNT_DELTA_TYPE_FLOAT | SNT_DELTA_TYPE_INT					\
 	| SNT_DELTA_TYPE_TIMESTAMP | SNT_DELTA_TYPE_HIGHTIMESTAMP	\
@@ -174,16 +174,19 @@ extern const char* gs_error_sym[];
 /**
  *	Packet flag option.
  */
-#define SNT_PACKET_NONE				0x0		/*	None.	*/
-#define SNT_PACKET_ENCRYPTION		0x1		/*	Packet contains encryption.	*/
-#define SNT_PACKET_COMPRESSION		0x2		/*	Packet contains compression.	*/
-#define SNT_PACKET_IV_ENCRYPTION	0x4		/*	Packet contains initialization vector.	*/
-#define SNT_PACKET_FB_ENCRYPTION	0x8		/*	Packet contains feedback number.	*/
+#define SNT_PACKET_NONE             0x0     /*	None.	*/
+#define SNT_PACKET_ENCRYPTION       0x1     /*	Packet contains encryption.	*/
+#define SNT_PACKET_COMPRESSION      0x2     /*	Packet contains compression.	*/
+#define SNT_PACKET_IV_ENCRYPTION    0x4     /*	Packet contains initialization vector.	*/
+#define SNT_PACKET_FB_ENCRYPTION    0x8     /*	Packet contains feedback number.	*/
 
+/**
+ *
+ */
 #define sntPacketHasEncrypted(head) ( ( head ).flag & SNT_PACKET_ENCRYPTION)
-#define sntPacketHasIV(head)		( ( head ).flag & SNT_PACKET_IV_ENCRYPTION)
-#define sntPacketHasFB(head)		( ( head ).flag & SNT_PACKET_FB_ENCRYPTION)
-#define snTPacketHasCompress(head)	( ( head ).flag & SNT_PACKET_COMPRESSION)
+#define sntPacketHasIV(head)        ( ( head ).flag & SNT_PACKET_IV_ENCRYPTION)
+#define sntPacketHasFB(head)        ( ( head ).flag & SNT_PACKET_FB_ENCRYPTION)
+#define snTPacketHasCompress(head)  ( ( head ).flag & SNT_PACKET_COMPRESSION)
 
 /**
  *	SNT protocol header. This header will be attached
@@ -206,7 +209,7 @@ typedef struct snt_packet_header_t{
  *	This will remove the padding added in order perform the encryption.
  */
 typedef struct snt_presentation_package_t{
-	uint8_t noffset;			/*	Negative offset.	*/
+	uint8_t noffset;        /*	Negative offset.	*/
 } __attribute__ ((__packed__)) SNTPresentationPacket;
 
 /**
@@ -214,8 +217,8 @@ typedef struct snt_presentation_package_t{
  *	that uses initial vector.
  */
 typedef struct snt_presentation_iv_package_t{
-	uint8_t len;	/*	size of IV in bytes.	*/
-	uint8_t iv[0];	/*	IV pointer only.	*/
+	uint8_t len;    /*	size of IV in bytes.	*/
+	uint8_t iv[0];  /*	IV pointer only.	*/
 } __attribute__ ((__packed__)) SNTPresentationIVPacket;
 
 /**
@@ -230,9 +233,9 @@ typedef struct snt_presentation_feedback_package_t{
  *	be presented in this order.
  */
 typedef struct snt_presentation_union_t{
-	SNTPresentationPacket offset;		/*	Negative Offset.	*/
-	SNTPresentationIVPacket iv;			/*	Initialize vector.	*/
-	SNTPresentationFeedbackPacket fb;	/*	feedback number.	*/
+	SNTPresentationPacket offset;       /*	Negative Offset.	*/
+	SNTPresentationIVPacket iv;         /*	Initialize vector.	*/
+	SNTPresentationFeedbackPacket fb;   /*	feedback number.	*/
 } __attribute__ ((__packed__)) SNTPresentationUnion;
 
 /**
@@ -243,18 +246,18 @@ typedef struct snt_presentation_union_t{
  *	capability in order for the client.
  */
 typedef struct snt_init_package_t{
-	SNTPacketHeader header;		/*	Protocol header.	*/
-	uint32_t ssl;				/*	Using secure connection.	*/
-	uint32_t asymchiper;		/*	What asymmetric cipher is supported.	*/
-	uint32_t symchiper;			/*	What asymmetric cipher is supported.	*/
-	uint32_t compression;		/*	What compression is supported.	*/
-	uint32_t mode;				/*	protocol mode supported.	*/
-	uint32_t inetbuffer;		/*	buffer of payload in bytes.*/
-	uint32_t transmode;			/*	Default transport mode.	*/
-	uint32_t extension;			/*	Not supported.	*/
-	uint32_t deltaTypes;		/*	Delta type supported.	*/
-	uint32_t duplex;			/*	Duplex mode supported.	*/
-	uint32_t dh;				/*	*/
+	SNTPacketHeader header;     /*	Protocol header.	*/
+	uint32_t ssl;               /*	Using secure connection.	*/
+	uint32_t asymchiper;        /*	What asymmetric cipher is supported.	*/
+	uint32_t symchiper;         /*	What asymmetric cipher is supported.	*/
+	uint32_t compression;       /*	What compression is supported.	*/
+	uint32_t mode;              /*	protocol mode supported.	*/
+	uint32_t inetbuffer;        /*	buffer of payload in bytes.*/
+	uint32_t transmode;         /*	Default transport mode.	*/
+	uint32_t extension;         /*	Not supported.	*/
+	uint32_t deltaTypes;        /*	Delta type supported.	*/
+	uint32_t duplex;            /*	Duplex mode supported.	*/
+	uint32_t dh;                /*	*/
 }__attribute__ ((__packed__)) SNTInitPackage;
 
 /**
@@ -262,36 +265,36 @@ typedef struct snt_init_package_t{
  *	Send to server by the client.
  */
 typedef struct snt_client_option_packet_t{
-	SNTPacketHeader header;			/*	Protocol header.	*/
-	uint32_t ssl;					/*	If to use a secure connection. */
-	uint32_t symchiper;				/*	Symmetric cipher use.	*/
-	uint32_t compression;			/*	Compression use.	*/
-	uint32_t benchmode;				/*	bench mode.	*/
-	uint32_t transprotocol;			/*	Transport protocol.	*/
-	uint32_t deltaTypes;			/*	Delta type.	*/
-	SNTDelta incdelta;				/*	Incremental delta.	*/
-	uint32_t duplex;				/*	Duplex of the communication.	*/
-	uint64_t invfrequency;			/*	Inverse frequency. Aka sleep between each transmission.	*/
-	uint16_t payload;				/*	Payload.	*/
-	uint32_t extension;				/*	Not supported.	*/
-	uint64_t duration;				/*	Duration of the benchmark in nano seconds.	*/
-	uint32_t dh;					/*	Use diffie hellman for key exchange.	*/
+	SNTPacketHeader header;         /*	Protocol header.	*/
+	uint32_t ssl;                   /*	If to use a secure connection. */
+	uint32_t symchiper;             /*	Symmetric cipher use.	*/
+	uint32_t compression;           /*	Compression use.	*/
+	uint32_t benchmode;             /*	bench mode.	*/
+	uint32_t transprotocol;         /*	Transport protocol.	*/
+	uint32_t deltaTypes;            /*	Delta type.	*/
+	SNTDelta incdelta;              /*	Incremental delta.	*/
+	uint32_t duplex;                /*	Duplex of the communication.	*/
+	uint64_t invfrequency;          /*	Inverse frequency. Aka sleep between each transmission.	*/
+	uint16_t payload;               /*	Payload.	*/
+	uint32_t extension;             /*	Not supported.	*/
+	uint64_t duration;              /*	Duration of the benchmark in nano seconds.	*/
+	uint32_t dh;                    /*	Use diffie hellman for key exchange.	*/
 }__attribute__ ((__packed__))SNTClientOption;
 
 /**
  *	Packet containing certificate.
  */
 typedef struct snt_certifcate_packet_t{
-	SNTPacketHeader header;		/*	Protocol header.	*/
-	uint8_t certype;			/*	Type of certificate.	*/
-	uint32_t hashtype;			/*	Hash type.	*/
-	int32_t localhashedsize;	/*	Size of */
-	int32_t encryedhashsize;	/*	Size of */
-	uint8_t offset;				/*	Offset of the certificate data in the packet diagram.	*/
-	uint32_t asymchiper;		/*	Asymmetric cipher.	*/
-	int32_t certlen;			/*	Certificate length in bytes.	*/
-	uint8_t cert[1024];			/*	Certificate data.	*/
-	uint8_t hash[256];			/*	Hash buffer.	*/
+	SNTPacketHeader header;     /*	Protocol header.	*/
+	uint8_t certype;            /*	Type of certificate.	*/
+	uint32_t hashtype;          /*	Hash type.	*/
+	int32_t localhashedsize;    /*	Size of */
+	int32_t encryedhashsize;    /*	Size of */
+	uint8_t offset;             /*	Offset of the certificate data in the packet diagram.	*/
+	uint32_t asymchiper;        /*	Asymmetric cipher.	*/
+	int32_t certlen;            /*	Certificate length in bytes.	*/
+	uint8_t cert[1024];         /*	Certificate data.	*/
+	uint8_t hash[256];          /*	Hash buffer.	*/
 }__attribute__ ((__packed__))SNTCertificate;
 
 /**
@@ -300,32 +303,32 @@ typedef struct snt_certifcate_packet_t{
  *	connection.
  */
 typedef struct snt_secure_establishment_packet_t{
-	SNTPacketHeader header;			/*	Protocol header.	*/
-	uint32_t symchiper;				/*	What symmetric cipher to use.	*/
-	uint32_t keybitlen;				/*	Size of symmetric key in bits.	*/
-	int32_t encrykeyblock;			/*	Size in bytes of encrypted data block.	*/
-	uint8_t key[512];				/*	Encrypted symmetric Key.	*/
+	SNTPacketHeader header;         /*	Protocol header.	*/
+	uint32_t symchiper;             /*	What symmetric cipher to use.	*/
+	uint32_t keybitlen;             /*	Size of symmetric key in bits.	*/
+	int32_t encrykeyblock;          /*	Size in bytes of encrypted data block.	*/
+	uint8_t key[512];               /*	Encrypted symmetric Key.	*/
 }__attribute__ ((__packed__))SNTSecureEstablismentPacket;
 
 /**
  *	Initialized number agreed between the parties, p and g.
  */
 typedef struct snt_diffe_hellman_init_t{
-	SNTPacketHeader header;		/*	Protocol header.	*/
-	uint32_t bitsize;			/*	Size of diffie hellman in bits.	*/
-	uint32_t plen;				/*	p length in bytes.	*/
-	uint32_t glen;				/*	g length in bytes.	*/
-	uint8_t offset;				/*	Offset to data block.	*/
+	SNTPacketHeader header;     /*	Protocol header.	*/
+	uint32_t bitsize;           /*	Size of diffie hellman in bits.	*/
+	uint32_t plen;              /*	p length in bytes.	*/
+	uint32_t glen;              /*	g length in bytes.	*/
+	uint8_t offset;             /*	Offset to data block.	*/
 }__attribute__ ((__packed__))SNTDHInit;
 
 /**
  *	Exchange computed modular number.
  */
 typedef struct snt_diffe_hellman_exch_t{
-	SNTPacketHeader header;			/*	Protocol header.	*/
-	uint32_t qlen;					/*	Size of q in bytes.	*/
-	uint8_t offset;					/*	Offset in bytes to q.	*/
-	uint32_t sym;					/*	Symmetric key to generate from diffie hellman.	*/
+	SNTPacketHeader header;     /*	Protocol header.	*/
+	uint32_t qlen;              /*	Size of q in bytes.	*/
+	uint8_t offset;             /*	Offset in bytes to q.	*/
+	uint32_t sym;               /*	Symmetric key to generate from diffie hellman.	*/
 }__attribute__ ((__packed__))SNTDHExch;
 
 /**
@@ -334,7 +337,7 @@ typedef struct snt_diffe_hellman_exch_t{
  *	thread and and is ready to start the benchmark.
  */
 typedef struct snt_ready_packet_t{
-	SNTPacketHeader header;			/*	Protocol header.	*/
+	SNTPacketHeader header;	    /*	Protocol header.	*/
 }__attribute__ ((__packed__))SNTReadyPacket;
 
 /**
@@ -343,17 +346,17 @@ typedef struct snt_ready_packet_t{
  *	thread and and is ready to start the benchmark.
  */
 typedef struct snt_start_packet_t{
-	SNTPacketHeader header;			/*	Protocol header.	*/
+	SNTPacketHeader header;     /*	Protocol header.	*/
 }__attribute__ ((__packed__))SNTstartPacket;
 
 /**
  *	Error message packet.
  */
 typedef struct snt_error_packet_t{
-	SNTPacketHeader header;			/*	Protocol header.	*/
-	uint32_t errorcode;				/*	Error code.	*/
-	uint32_t meslen;				/*	Length of message.	*/
-	int8_t message[512];			/*	Message.	*/
+	SNTPacketHeader header;     /*	Protocol header.	*/
+	uint32_t errorcode;         /*	Error code.	*/
+	uint32_t meslen;            /*	Length of message.	*/
+	int8_t message[512];        /*	Message.	*/
 }__attribute__ ((__packed__))SNTErrorPacket;
 
 /**
@@ -361,12 +364,12 @@ typedef struct snt_error_packet_t{
  *	benchmark.
  */
 typedef struct snt_result_packet_t{
-	SNTPacketHeader header;			/*	Protocol header.	*/
-	uint32_t type;					/*	Type of result.	*/
-	uint64_t npackets;				/*	Number of packets.	*/
-	uint64_t nbytes;				/*	Number of bytes.	*/
-	uint64_t elapse;				/*	Elapse time.	*/
-	uint64_t timeres;				/*	Time resolution.	*/
+	SNTPacketHeader header;     /*	Protocol header.	*/
+	uint32_t type;              /*	Type of result.	*/
+	uint64_t npackets;          /*	Number of packets.	*/
+	uint64_t nbytes;            /*	Number of bytes.	*/
+	uint64_t elapse;            /*	Elapse time.	*/
+	uint64_t timeres;           /*	Time resolution.	*/
 }__attribute__ ((__packed__))SNTResultPacket;
 
 /**
@@ -379,10 +382,10 @@ typedef struct snt_result_packet_t{
  */
 typedef union snt_unionform_packet_t{
 	union{
-		uint8_t totalbuf[1500];								/*	Total buffer.	*/
+		uint8_t totalbuf[1500];                             /*	Total buffer.	*/
 		struct{
-			SNTPacketHeader header;							/*	*/
-			uint8_t buf[1500 - sizeof(SNTPacketHeader)];	/*	*/
+			SNTPacketHeader header;                         /*	*/
+			uint8_t buf[1500 - sizeof(SNTPacketHeader)];    /*	*/
 		};
 		struct{
 			SNTPacketHeader enc_header;						/*	*/
@@ -397,50 +400,50 @@ typedef union snt_unionform_packet_t{
  *	Connection container object.
  */
 typedef struct snt_connection_t{
-	int tcpsock;					/*	socket file descriptor, TCP.	*/
-	int udpsock;					/*	socket file descriptor, UDP.	*/
-	struct sockaddr* intaddr;		/*	Internal socket address. aka* source address.	*/
-	struct sockaddr* extaddr;		/*	External socket address. aka* destination address.	*/
-	socklen_t sclen;				/*	Socket address length in bytes.	*/
-	int externalport;				/*	External port. aka* destination port.	*/
-	int port;						/*	Source port.	*/
-	char ip[16];					/*	Source IP address.	*/
-	char extipv[16];				/*	External/Destination IP address.	*/
-	unsigned int flag;				/*	connection flag.	*/
-	unsigned int asynumbits;		/*	Asymmetric cipher bit size.	*/
-	unsigned int inverfreq;			/*	Inverse frequency.	*/
-	unsigned int payload;			/*	packet payload in bytes.*/
-	int mtu;						/*	Max transfer unite.	*/
-	char* mtubuf;					/*	MTU buffer.	*/
-	char* tranbuf;					/*	Transmit buffer.	*/
-	char* recvbuf;					/*	Receive buffer.	*/
+	int tcpsock;                    /*	socket file descriptor, TCP.	*/
+	int udpsock;                    /*	socket file descriptor, UDP.	*/
+	struct sockaddr* intaddr;       /*	Internal socket address. aka* source address.	*/
+	struct sockaddr* extaddr;       /*	External socket address. aka* destination address.	*/
+	socklen_t sclen;                /*	Socket address length in bytes.	*/
+	int externalport;               /*	External port. aka* destination port.	*/
+	int port;                       /*	Source port.	*/
+	char ip[16];                    /*	Source IP address.	*/
+	char extipv[16];                /*	External/Destination IP address.	*/
+	unsigned int flag;              /*	connection flag.	*/
+	unsigned int asynumbits;        /*	Asymmetric cipher bit size.	*/
+	unsigned int inverfreq;         /*	Inverse frequency.	*/
+	unsigned int payload;           /*	packet payload in bytes.*/
+	int mtu;                        /*	Max transfer unite.	*/
+	char* mtubuf;                   /*	MTU buffer.	*/
+	char* tranbuf;                  /*	Transmit buffer.	*/
+	char* recvbuf;                  /*	Receive buffer.	*/
 	union{
-		void* asymkey;				/*	Asymmetric.	*/
-		void* RSAkey;				/*	RSA.	*/
-		void* ECkey;				/*	Elliptic curves.	*/
+		void* asymkey;              /*	Asymmetric.	*/
+		void* RSAkey;               /*	RSA.	*/
+		void* ECkey;                /*	Elliptic curves.	*/
 	};
-	unsigned int symchiper;			/*	Symmetric cipher used for the connection.	*/
-	unsigned int blocksize;			/*	Block size in bytes for the symmetric cipher. */
+	unsigned int symchiper;         /*	Symmetric cipher used for the connection.	*/
+	unsigned int blocksize;         /*	Block size in bytes for the symmetric cipher. */
 	unsigned int asymchiper;		/*	Asymmetric cipher used for the connection.	*/
-	unsigned int usecompression;	/*	Compression used for the connection.	*/
+	unsigned int usecompression;    /*	Compression used for the connection.	*/
 	union{
-		void* symmetrickey;			/*	Symmetric key.	*/
-		void* aes;					/*	AES. ( Advanced encryption standard.)	*/
-		void* blowfish;				/*	BlowFish.	*/
-		void* des3;					/*	DES3.	*/
+		void* symmetrickey;         /*	Symmetric key.	*/
+		void* aes;                  /*	AES. ( Advanced encryption standard.)	*/
+		void* blowfish;             /*	BlowFish.	*/
+		void* des3;                 /*	DES3.	*/
 	};
 	union{
-		void* desymmetrickey;		/*	Desymmetric.	*/
-		void* deaes;				/*	*/
-		void* deblowfish;			/*	*/
-		void* dedes3;				/*	desDES3.	*/
+		void* desymmetrickey;       /*	Desymmetric.	*/
+		void* deaes;                /*	*/
+		void* deblowfish;           /*	*/
+		void* dedes3;               /*	desDES3.	*/
 	};
 	sntDH* dh;						/*	Diffie hellman.	*/
 	SNTConnectionOption* option;	/*	Connection option.	*/
 }SNTConnection;
 
 /**
- *	Connection flag.	TODO Add some kind of encpsulation.
+ *	Connection flag.
  */
 #define SNT_CONNECTION_TRANS	0x1	/*	Transport mode enabled.	*/
 #define SNT_CONNECTION_BENCH	0x2	/*	Benchmark mode.	*/
@@ -448,14 +451,14 @@ typedef struct snt_connection_t{
 /**
  *	Check connection flag status.
  */
-#define sntIsTransportEnable(con) (con->flag & SNT_CONNECTION_TRANS)
-#define sntIsBenchEnable(con) (con->flag & SNT_CONNECTION_BENCH)
+#define sntIsTransportEnable(con)   (con->flag & SNT_CONNECTION_TRANS)
+#define sntIsBenchEnable(con)       (con->flag & SNT_CONNECTION_BENCH)
 
 /**
  *	Check connection feature is enabled.
  */
-#define sntIsConnectionSecure(con) (con->symchiper != 0)
-#define sntIsConnectionCompressed(con) (con->usecompression != 0)
+#define sntIsConnectionSecure(con)      (con->symchiper != 0)
+#define sntIsConnectionCompressed(con)  (con->usecompression != 0)
 
 /**
  *	Get attribute about the current socket
