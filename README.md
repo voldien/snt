@@ -62,6 +62,10 @@ In order to compile the program, the following Debian packages has to be install
 ```
 apt-get install libzip-dev liblz4-dev libssl-dev libbz2-dev
 ```
+In order to use the service, the following Debian package has to be installed.
+```
+apt-get install daemon
+```
 
 ## License ##
 
