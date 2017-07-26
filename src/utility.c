@@ -28,7 +28,6 @@ int sntLog2MutExlusive32(unsigned int a){
 
 int sntIsPower2(unsigned int a){
 	return (a && ((a - 1) & a)) == 0;
-
 }
 
 int sntMax(int a, int b){
@@ -69,7 +68,7 @@ long int sntLoadFile(const char* cfilename, void** pbuf){
 	*pbuf = malloc(size);
 	assert(*pbuf);
 
-	/*	Read whole file and copy to allocate buffer.	*/
+	/*	Read whole file and copy to allocated buffer.	*/
 	nbytes = fread(*pbuf, 1, size, f);
 
 	/*	Close file.	*/
