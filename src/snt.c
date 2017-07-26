@@ -456,7 +456,7 @@ void sntServerMain(void){
 	}
 }
 
-void sntClientMain(const char* host, int port, int nconnector, const SNTConnectionOption* option){
+void sntClientMain(const char* host, unsigned int port, int nconnector, const SNTConnectionOption* option){
 
 	/*	*/
 	int i;
@@ -517,7 +517,7 @@ void sntClientMain(const char* host, int port, int nconnector, const SNTConnecti
 }
 
 
-int sntInitServer(int port, SNTConnectionOption* option){
+int sntInitServer(unsigned int port, SNTConnectionOption* option){
 
 	int poolsize;
 

@@ -86,7 +86,7 @@ extern void sntReadArgument(int argc,  char *const * __restrict__ argv,
  *
  *	@Return non zero if successfully.
  */
-extern int sntInitServer(int port, SNTConnectionOption* option);
+extern int sntInitServer(unsigned int port, SNTConnectionOption* option);
 
 /**
  *	Initialize the program for running as a client.
@@ -103,7 +103,7 @@ extern void sntServerMain(void);
 /**
  *	Client main loop.
  */
-extern void sntClientMain(const char* __restrict__ host, int port,
+extern void sntClientMain(const char* __restrict__ host, unsigned int port,
 		int nconnector, const SNTConnectionOption* __restrict__ option);
 
 /**
