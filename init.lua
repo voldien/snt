@@ -46,6 +46,8 @@ local snt_hdr_fields =
 
   -- Presentation layer for resolving encryption padding issue and other.
   presentation = ProtoField.uint8("snt.presentation.noffet", "Negative offset", base.DEC),
+  presentationiv = ProtoField.bytes("snt.presentation.IV", "Initilization Vector"),
+  presentationfb = ProtoField.bytes("snt.presentation.fb", base.DEC),
   
   -- Initialization packet.
   secure = ProtoField.uint32("snt.init.ssl", "Secure", base.DEC),
@@ -172,9 +174,11 @@ function snt.dissector(buf, pkt, root)
   end
 
   -- Check if presentation layer is pressented.
-  if bytes_consumed > SNT_MSG_HDR_LEN and sntProtocolIsEncrypted(buf(0, SNT_MSG_HDR_LEN)) then
-    local subtree = root:add(buf:range(bytes_consumed), "Presentation layer: " )
-    sntDissectPresentationLayer(buf, pkt, subtree, bytes_consumed)
+  if bytes_consumed > SNT_MSG_HDR_LEN and sntProtocolIsEncrypted(head) then
+    local preselay = buf(SNT_MSG_HDR_LEN, bytes_consumed - SNT_MSG_HDR_LEN)
+    local subtree = tree:add(preselay, "Presentation layer: " )
+    sntDissectPresentationLayer(preselay,
+                                    pkt, subtree, sntProtocolHeaderFlag(head))
   end
   
   -- Check if packet is compressed.
@@ -308,20 +312,46 @@ function sntProtocolGetVersionStr(tvbuf)
   return tostring(major) .. "." .. tostring(minor)  
 end
 
+
 ------------------------------------------------------------
 -- Subdissector part for SNT command.
 ------------------------------------------------------------
 
 ------------------------------------------------------------
---
-function sntDissectPresentationLayer(tvbuf, pktinfo, tree, offset)
+-- Dissect the presentation layer, containing cryptographic
+-- information for decryping the packet payload.
+-- 
+function sntDissectPresentationLayer(tvbuf, pktinfo, tree, flag)
+
+  --
+  local offset = 0
+  local len = tvbuf:len()
   tree:add(snt_hdr_fields.presentation, tvbuf(offset, 1), tvbuf(offset, 1):le_uint())
+  offset = 1
+
+  -- Check if packet contains IV data.
+  if bit.band(flag, SNT_MSG_FLAG_IV) and offset < len then
+    -- Extract length of IV.
+    local ivsize = tvbuf(offset, 1):le_uint()
+    offset = offset + 1
+    
+    --
+    tree:add(snt_hdr_fields.presentationiv, tvbuf(offset, ivsize), tostring(tvbuf(offset, ivsize)))
+    offset = offset + ivsize
+    
+    --
+    if bit.band(flag, SNT_MSG_FLAG_FB) and offset < len then
+      tree:add(snt_hdr_fields.presentationfb, tvbuf(offset, 4), tvbuf(offset, 4):le_uint())
+      offset = offset + 4
+    end
+  end
+  
+  
 end
 
 ------------------------------------------------------------
 -- Initialization packet dissector function.
 -- @Return
---
 function sntDissectInitPacket(tvbuf, pktinfo, tree, offset)
   
   --
