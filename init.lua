@@ -281,6 +281,20 @@ function sntProtocolIsCompressed(tvbuf)
 end
 
 ----------------------------------------
+-- Check if IV data contains in packet.
+-- @Return true if flag in packet is set.
+function sntProtocolUseIV(tvbuf)
+  return bit.band(sntProtocolHeaderFlag(tvbuf), SNT_MSG_FLAG_IV) == SNT_MSG_FLAG_IV 
+end
+
+----------------------------------------
+-- Check if feedback data contains in packet.
+-- @Return true if flag in packet is set.
+function sntProtocolUseFB(tvbuf)
+  return bit.band(sntProtocolHeaderFlag(tvbuf), SNT_MSG_FLAG_FB) == SNT_MSG_FLAG_FB
+end
+
+----------------------------------------
 -- Get version in string format.
 -- @Return version in string format.
 function sntProtocolGetVersionStr(tvbuf)
