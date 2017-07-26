@@ -468,7 +468,11 @@ extern void sntGetInterfaceAttr(SNTConnection* connection);
 /**
  *	Bind server to socket.
  *
- *	TODO add listen IP address.
+ *	\ip Address the socket will be binded to.
+ *
+ *	\port port for listening for incomming packets.
+ *
+ *	\option supported options on the connection.
  *
  *	@Return None null pointer if successful.
  */
@@ -484,13 +488,23 @@ extern SNTConnection* sntAcceptSocket(SNTConnection* bindconnection);
 /**
  *	Connect to server.
  *
+ *	\host servers IP or FQDN.
+ *
+ *	\port port server is listing on.
+ *
+ *	\option option used for the connection.
+ *
  *	@Return None null pointer if successful.
  */
 extern SNTConnection* sntConnectSocket(const char* __restrict__ host,
 		uint16_t port, const SNTConnectionOption* __restrict__ option);
 
 /**
- *	Disconnect and release all resource associated.
+ *	Disconnect and release all resource associated
+ *	with the connection.
+ *
+ *	Remark: The connction object will be returned to the global
+ *	connector pool allocator.
  */
 extern void sntDisconnectSocket(SNTConnection* connection);
 
@@ -501,7 +515,8 @@ extern void sntConnectionCopyOption(SNTConnection* __restrict__ connection,
 		const SNTConnectionOption* __restrict__ option);
 
 /**
- *
+ *	Create socket used for the connection for the correct
+ *	address family and protocol.
  */
 extern int sntInitSocket(SNTConnection* connection, int affamily,
 		unsigned int protocol);
@@ -515,7 +530,8 @@ extern int sntSetTransportProcotcol(SNTConnection* connection,
 /**
  *	Each packet sent will consist of a header
  *	and body. The header will never be compressed
- *	nor encrypted. However this might change in future version.
+ *	nor encrypted. However this might change in future release
+ *	version.
  *
  *	The presentation layer is an extension of the header.
  *	It will only added when using secure connection.
@@ -667,6 +683,8 @@ extern unsigned int sntProtocolHeaderDatagramSize(const SNTPacketHeader* header)
 /**
  *	Get size of application protocol layer in bytes. This is done by
  *	reading the offset. Since the offset repesentate the offset to the datablock.
+ *
+ *	@Return number of bytes.
  */
 extern unsigned int sntProtocolHeaderSize(const SNTPacketHeader* header);
 
