@@ -62,7 +62,7 @@
 /**
  *	Constants.
  */
-#define SNT_DEFAULT_PORT 54321					/*	Default port.	*/
+#define SNT_DEFAULT_PORT 54321      /*	Default port.	*/
 
 /**
  *	SNT application protocol.
