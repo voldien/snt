@@ -96,7 +96,7 @@ extern int sntInitServer(unsigned int port, SNTConnectionOption* option);
 extern int sntInitClient(int nparallcon);
 
 /**
- *	Server main loop.
+ *	Server main loop. Will run indefinitely.
  */
 extern void sntServerMain(void);
 
