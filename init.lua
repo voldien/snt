@@ -194,7 +194,7 @@ function snt.dissector(buf, pkt, root)
 	if result <= SNT_MAX_STYPE then
   
     -- Create subtree for packet command type.
-    local subtree = root:add(buf:range(bytes_consumed), "Message type: " .. stype_hdr_symbol[result])
+    local subtree = tree:add(buf:range(bytes_consumed), "Message type: " .. stype_hdr_symbol[result])
     
     -- Set default coloums information.
     pkt.cols.info:set(stype_col_info[result])
