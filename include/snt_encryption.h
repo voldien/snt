@@ -91,7 +91,7 @@ extern int sntASymGenerateKey(SNTConnection* connection,
  *	@Return none zero if successfully.
  */
 extern int sntASymCreateKeyFromData(SNTConnection* __restrict__ connection,
-		unsigned int cipher, const void* __restrict__ data, int len);
+		unsigned int cipher, const void* __restrict__ data, int len, unsigned int private);
 
 /**
  *	Copy public key from asymmetric cipher to

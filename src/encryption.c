@@ -167,8 +167,8 @@ int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned 
 	return 1;
 }
 
-int sntASymCreateKeyFromData(SNTConnection* connection,
-		unsigned int cipher, const void* key, int len) {
+int sntASymCreateKeyFromData(SNTConnection* __restrict__ connection,
+		unsigned int cipher, const void* __restrict__ key, int len, unsigned int private) {
 
 	size_t asymksize = 0;		/*	*/
 	int bitsize = 0;			/*	*/
@@ -176,6 +176,7 @@ int sntASymCreateKeyFromData(SNTConnection* connection,
 
 	switch(cipher){
 	case SNT_ENCRYPTION_ASYM_RSA:
+
 		/*	Create buffer to write to.	*/
 		keybio = BIO_new(BIO_s_mem());
 		if(keybio == NULL){
@@ -191,7 +192,12 @@ int sntASymCreateKeyFromData(SNTConnection* connection,
 		}
 
 		/*	Create RSA public key.	*/
-		connection->RSAkey = PEM_read_bio_RSAPublicKey(keybio, (RSA**)&connection->RSAkey, NULL, NULL);
+		if(private){
+			connection->RSAkey = PEM_read_bio_RSAPrivateKey(keybio, (RSA**)&connection->RSAkey, NULL, NULL);
+		}
+		else{
+			connection->RSAkey = PEM_read_bio_RSAPublicKey(keybio, (RSA**)&connection->RSAkey, NULL, NULL);
+		}
 		if(connection->RSAkey == NULL){
 			sntSSLPrintError();
 			sntASymFree(connection);
