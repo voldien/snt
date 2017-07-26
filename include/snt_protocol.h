@@ -123,8 +123,8 @@ extern const char* gs_sym_duplex[];
 #define SNT_TRANSPORT_NONE	0x0			/*	None transport.	*/
 #define SNT_TRANSPORT_TCP	0x1			/*	TCP - Transfer control protocol, Default.	*/
 #define SNT_TRANSPORT_UDP	0x2			/*	UDP - User datagram protocol.	*/
-#define SNT_TRANSPORT_ALL					\
-	(SNT_TRANSPORT_TCP | SNT_TRANSPORT_UDP)	\
+#define SNT_TRANSPORT_ALL                       \
+        (SNT_TRANSPORT_TCP | SNT_TRANSPORT_UDP) \
 
 /**
  *	Transport protocol mode symbol table.
@@ -140,10 +140,10 @@ extern const char* gs_sym_transport[];
 #define SNT_DELTA_TYPE_TIMESTAMP        0x4     /*	Delta presented in time stamp.	*/
 #define SNT_DELTA_TYPE_HIGHTIMESTAMP    0x8     /*	Delta presented in high resolution time stamp.	*/
 #define SNT_DELTA_TYPE_DOUBLE           0x10    /*	Delta presented as incremented double.	*/
-#define SNT_DELTA_TYPE_ALL										\
-	(SNT_DELTA_TYPE_FLOAT | SNT_DELTA_TYPE_INT					\
-	| SNT_DELTA_TYPE_TIMESTAMP | SNT_DELTA_TYPE_HIGHTIMESTAMP	\
-	| SNT_DELTA_TYPE_DOUBLE)									\
+#define SNT_DELTA_TYPE_ALL                                          \
+        (SNT_DELTA_TYPE_FLOAT | SNT_DELTA_TYPE_INT                  \
+        | SNT_DELTA_TYPE_TIMESTAMP | SNT_DELTA_TYPE_HIGHTIMESTAMP   \
+        | SNT_DELTA_TYPE_DOUBLE)                                    \
 
 /**
  *	Delta type symbols.
@@ -153,18 +153,18 @@ extern const char* gs_delta_sym[];
 /**
  *	Error codes.
  */
-#define SNT_ERROR_NONE						0x0	/*	No error.	*/
-#define SNT_ERROR_INVALID_ARGUMENT			0x1	/*	Invalid argument.	*/
-#define SNT_ERROR_SIGNATURE_FAILED			0x2	/*	Signature failed.	*/
-#define SNT_ERROR_SERVER					0x3	/*	Error on the server side.	*/
-#define SNT_ERROR_INCOMPATIBLE_VERSION		0x4	/*	Version not compatible.	*/
-#define SNT_ERROR_SSL_NOT_SUPPORTED			0x5	/*	Secure connection is not supported.	*/
-#define SNT_ERROR_COMPRESSION_NOT_SUPPORTED	0x6	/*	Specified compression algorithm not supported.	*/
-#define SNT_ERROR_BAD_REQUEST				0x7	/*	Invalid application protocol command.	*/
-#define SNT_ERROR_SERVICE_UNAVAILABLE		0x8	/*	Server can't provide the service.	*/
-#define SNT_ERROR_CIPHER_NOT_SUPPORTED		0x9	/*	Cipher not supported.	*/
-#define SNT_ERROR_BENCHMARK_NOT_SUPPORTED	0x10/*	Benchmark not supported.	*/
-#define SNT_ERROR_DH_NOT_SUPPORTED			0x11/*	Diffie hellman not supported.	*/
+#define SNT_ERROR_NONE                      0x0 /*	No error.	*/
+#define SNT_ERROR_INVALID_ARGUMENT          0x1 /*	Invalid argument.	*/
+#define SNT_ERROR_SIGNATURE_FAILED          0x2 /*	Signature failed.	*/
+#define SNT_ERROR_SERVER                    0x3 /*	Error on the server side.	*/
+#define SNT_ERROR_INCOMPATIBLE_VERSION      0x4 /*	Version not compatible.	*/
+#define SNT_ERROR_SSL_NOT_SUPPORTED         0x5 /*	Secure connection is not supported.	*/
+#define SNT_ERROR_COMPRESSION_NOT_SUPPORTED 0x6 /*	Specified compression algorithm not supported.	*/
+#define SNT_ERROR_BAD_REQUEST               0x7 /*	Invalid application protocol command.	*/
+#define SNT_ERROR_SERVICE_UNAVAILABLE       0x8 /*	Server can't provide the service.	*/
+#define SNT_ERROR_CIPHER_NOT_SUPPORTED      0x9 /*	Cipher not supported.	*/
+#define SNT_ERROR_BENCHMARK_NOT_SUPPORTED   0x10/*	Benchmark not supported.	*/
+#define SNT_ERROR_DH_NOT_SUPPORTED          0x11/*	Diffie hellman not supported.	*/
 
 /**
  *	Error code symbols.
