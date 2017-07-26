@@ -143,13 +143,16 @@ local stype_col_info=
   [7] = "Error",
   [8] = "Benchmark",
   [9] = "Result",
+  [10] = "DHReq",
+  [11] = "DHInit",
+  [12] = "DHExch"
 }
 
 
 ----------------------------------------
 -- main root dissector function.
 -- 
--- @Return number of bytes.
+-- @Return number of bytes dissected.
 -- 
 function snt.dissector(buf, pkt, root)
 
@@ -204,7 +207,7 @@ function snt.dissector(buf, pkt, root)
       dprint("Packet content not decodable.")
     end
   else
-    --
+    -- Display invalid or unknown packet.
     dprint("Invalid stype command.")
   end
 
@@ -224,28 +227,28 @@ function dissectSNT(tvbuf, pktinfo, root, offset)
 		return length_val
 	end
 
-  --
+  -- Set packet information.
 	pktinfo.cols.protocol:set("snt")
 	pktinfo.cols.info:set("snt protocol.")
 
 	-- We start by adding our protocol to the dissection display tree.
 	local tree = root:add(snt, tvbuf:range(offset, length_val))
 
-	-- dissect the version field.
+	-- Dissect the version field.
 	local version_val  = tvbuf:range(offset, 2):le_uint()
 	tree:add(snt_hdr_fields.version, tvbuf(offset, 2), version_val, sntProtocolGetVersionStr(tvbuf(offset,2)))
 	
-	-- dissect the stype field
+	-- Dissect the stype field
 	local stype_tvbr = tvbuf:range(offset + 2, 1)
 	local stype_val  = stype_tvbr:le_uint()
 	
-  -- dissect the field
+  -- Dissect the field
 	tree:add(snt_hdr_fields.stype, tvbuf(offset + 2, 1):le_uint(), stype_val, stype_hdr_symbol[stype_val] )
 
-  -- dissect the header offset field.
+  -- Dissect the header offset field.
   tree:add(snt_hdr_fields.offset, tvbuf(offset + 3, 1))
   
-  -- dissect the total length of incoming packet field.
+  -- Dissect the total length of incoming packet field.
   tree:add_le(snt_hdr_fields.len, tvbuf(offset + 4, 2))
   
   -- dissect the flag field
@@ -376,7 +379,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Client-Option packet dissector function.
---
+-- @Return
 function sntDissectClientPacket(tvbuf, pktinfo, tree, offset)
 
   --
@@ -403,7 +406,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Certificate packet dissector function.
---
+-- @Return
 function sntDissectCertPacket(tvbuf, pktinfo, tree, offset)
   
   --
@@ -421,7 +424,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Secure symmetric key exchange dissector function.
---
+-- @Return
 function sntDissectSecPacket(tvbuf, pktinfo, tree, offset)
 
   --
@@ -438,7 +441,7 @@ end
 
 --------------------------------------------------------------------------------
 --
---
+-- @Return
 function sntDissectReadyPacket(tvbuf, pktinfo, tree, offset)
 
   pktinfo.cols.info = "Ready packet."
@@ -449,7 +452,7 @@ end
 
 --------------------------------------------------------------------------------
 --
---
+-- @Return
 function sntDissectStartPacket(tvbuf, pktinfo, tree, offset)
 
   pktinfo.cols.info = "Start packet."
@@ -460,7 +463,7 @@ end
 
 --------------------------------------------------------------------------------
 -- 
---
+-- @Return
 function sntDissectErrorPacket(tvbuf, pktinfo, tree, offset)
   
   --
@@ -478,7 +481,7 @@ end
 
 --------------------------------------------------------------------------------
 --
---
+-- @Return
 function sntDissectBenchmarkPacket(tvbuf, pktinfo, tree, offset)
 
   --
@@ -551,7 +554,7 @@ end
 --
 function disableDissector()
 
-  --
+  -- get dissector 
   local udp_encap_table = DissectorTable.get("udp.port")
   local tcp_encap_table = DissectorTable.get("tcp.port")
 
