@@ -209,6 +209,7 @@ function snt.dissector(buf, pkt, root)
   else
     -- Display invalid or unknown packet.
     dprint("Invalid stype command.")
+    pkt.cols.info:set("Unknown packet.")
   end
 
   -- return length of packet.
@@ -326,9 +327,11 @@ end
 -- 
 function sntDissectPresentationLayer(tvbuf, pktinfo, tree, flag)
 
-  --
+  -- 
   local offset = 0
   local len = tvbuf:len()
+  
+  -- Display negative offset.
   tree:add(snt_hdr_fields.presentation, tvbuf(offset, 1), tvbuf(offset, 1):le_uint())
   offset = 1
 
@@ -338,18 +341,16 @@ function sntDissectPresentationLayer(tvbuf, pktinfo, tree, flag)
     local ivsize = tvbuf(offset, 1):le_uint()
     offset = offset + 1
     
-    --
+    -- Add IV as a string.
     tree:add(snt_hdr_fields.presentationiv, tvbuf(offset, ivsize), tostring(tvbuf(offset, ivsize)))
     offset = offset + ivsize
     
-    --
+    -- Check if feedback contains in the packet.
     if bit.band(flag, SNT_MSG_FLAG_FB) and offset < len then
       tree:add(snt_hdr_fields.presentationfb, tvbuf(offset, 4), tvbuf(offset, 4):le_uint())
       offset = offset + 4
     end
   end
-  
-  
 end
 
 ------------------------------------------------------------
