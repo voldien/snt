@@ -162,8 +162,9 @@ function snt.dissector(buf, pkt, root)
 	local bytes_consumed = 0
 
   -- Dissect protocol header of the packet.
-	local result = dissectSNT(buf(0, SNT_MSG_HDR_LEN), pkt, root, bytes_consumed)
-	bytes_consumed = sntProtocolHeaderSize(buf(0, SNT_MSG_HDR_LEN))
+  local head = buf(0, SNT_MSG_HDR_LEN)
+	local result, tree = dissectSNT(head, pkt, root, bytes_consumed)
+	bytes_consumed = sntProtocolHeaderSize(head)
 
   -- Check if to continue the dissection.
   if not default_settings.subdissect then
@@ -177,8 +178,8 @@ function snt.dissector(buf, pkt, root)
   end
   
   -- Check if packet is compressed.
-  if sntProtocolIsCompressed(buf(0, SNT_MSG_HDR_LEN)) then
-    local subtree = root:add(buf:range(bytes_consumed), "Compressed:" )    
+  if sntProtocolIsCompressed(head) then
+    local subtree = tree:add(buf:range(bytes_consumed), "Compressed:" )
   end
   
   -- Check if command extract is in range, main dissector of the
@@ -192,8 +193,8 @@ function snt.dissector(buf, pkt, root)
     pkt.cols.info:set(stype_col_info[result])
     
     -- Display information only if compression or encryption not used.
-    if not sntProtocolIsCompressed(buf(0, SNT_MSG_HDR_LEN)) and not
-      sntProtocolIsEncrypted(buf(0, SNT_MSG_HDR_LEN)) then
+    if not sntProtocolIsCompressed(head) and not
+      sntProtocolIsEncrypted(head) then
       local consumed = disectcommand[result](buf, pkt, subtree, bytes_consumed)
     else
       dprint("Packet content not decodable.")
@@ -248,7 +249,7 @@ function dissectSNT(tvbuf, pktinfo, root, offset)
   
 	--
 	-- Return stype of the packet datagram.
-	return stype_val
+	return stype_val, tree
 end
 
 ----------------------------------------
