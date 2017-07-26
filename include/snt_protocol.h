@@ -388,10 +388,8 @@ typedef union snt_unionform_packet_t{
 			uint8_t buf[1500 - sizeof(SNTPacketHeader)];    /*	*/
 		};
 		struct{
-			SNTPacketHeader enc_header;						/*	*/
-			SNTPresentationPacket presentation;				/*	*/
-			/*	*/
-			uint8_t enc_buf[1500 - ((sizeof(SNTPacketHeader) + sizeof(SNTPresentationPacket)))];
+			SNTPacketHeader enc_header;                     /*	Header*/
+			SNTPresentationPacket presentation;             /*	Presentation layer begin.	*/
 		};
 	};
 }__attribute__ ((__packed__))SNTUniformPacket;
