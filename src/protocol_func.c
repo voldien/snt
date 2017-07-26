@@ -96,8 +96,8 @@ int sntProtFuncCertificate(SNTConnection* connection, const SNTUniformPacket* pa
 
 	/*	Create asymmetric.	*/
 	sntDebugPrintf("%s", cer->cert);
-	if(!sntASymCreateKeyFromData(connection, cer->asymchiper, cer->cert, cer->certlen)){
-		fprintf(stderr, "sntASymmetricCreateKeyFromData failed.\n");
+	if(!sntASymCreateKeyFromData(connection, cer->asymchiper, cer->cert, cer->certlen, 0)){
+		sntLogErrorPrintf("sntASymmetricCreateKeyFromData failed.\n");
 		return 0;
 	}
 
