@@ -59,7 +59,7 @@ extern pthread_t sntBenchmarkCreateThread(unsigned int mode,
 extern int sntBenchmarkWait(SNTConnection* connection);
 
 /**
- *	Sleep thread.
+ *	Sleep thread (1/freq) second.
  */
 extern void sntWaitFrequency(const SNTConnectionOption* connection);
 
@@ -82,12 +82,16 @@ extern void sntBenchmarkPrintResult(const SNTResultPacket* result);
 
 /**
  *	Send packet diagram with ID string.
+ *
+ *	@Return null.
  */
 extern void* sntClientIntegrityBenchmark(void* patt);
 
 /**
  *	Sends full MTU data diagram
  *	data it can handle between client and server.
+ *
+ *	@Return null.
  */
 extern void* sntClientPerformanceBenchmark(void* patt);
 
@@ -95,6 +99,8 @@ extern void* sntClientPerformanceBenchmark(void* patt);
  *	Sending file as benchmark.
  *	Used as a way to create a
  *	reproductive result.
+ *
+ *	@Return null.
  */
 extern void* sntClientFileBenchmark(void* patt);
 
