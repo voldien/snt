@@ -418,7 +418,6 @@ typedef struct snt_connection_t{
 	union{
 		void* asymkey;              /*	Asymmetric.	*/
 		void* RSAkey;               /*	RSA.	*/
-		void* ECkey;                /*	Elliptic curves.	*/
 	};
 	unsigned int symchiper;         /*	Symmetric cipher used for the connection.	*/
 	unsigned int blocksize;         /*	Block size in bytes for the symmetric cipher. */
