@@ -357,7 +357,7 @@ int sntASymVerifyDigSign(const SNTConnection* connection, unsigned int hashtype,
 	switch(connection->asymchiper){
 	case SNT_ENCRYPTION_ASYM_RSA:
 		/*	Verify.	*/
-		res = RSA_verify(sntGetSignHashEnum(hashtype), hash, len, digital, diglen, connection->RSAkey);
+		res = RSA_verify(sntGetSignHashEnum(hashtype), hash, len, digital, diglen, connection->asymkey);
 		if(res != 1){
 			sntSSLPrintError();
 			return 0;
