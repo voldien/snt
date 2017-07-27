@@ -27,7 +27,7 @@ pthread_t sntBenchmarkCreateThread(unsigned int mode, SNTConnection* patt){
 	size_t  guardsize;					/*	*/
 	struct sched_param schparam;		/*	*/
 	int err;							/*	*/
-	int cpu,cores,size;					/*	*/
+	unsigned int cpu,cores,size;		/*	*/
 
 	switch(mode){
 	case SNT_PROTOCOL_BM_MODE_PERFORMANCE:
