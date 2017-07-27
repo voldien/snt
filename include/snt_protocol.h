@@ -415,28 +415,15 @@ typedef struct snt_connection_t{
 	char* mtubuf;                   /*	MTU buffer, used for recv and send.	*/
 	char* tranbuf;                  /*	Transmit buffer, used in sntCreateRecvPacket.	*/
 	char* recvbuf;                  /*	Receive buffer, used in sntCreateSendPacket.	*/
-	union{
-		void* asymkey;              /*	Asymmetric.	*/
-		void* RSAkey;               /*	RSA.	*/
-	};
+    void* asymkey;                  /*	Asymmetric.	*/
 	unsigned int symchiper;         /*	Symmetric cipher used for the connection.	*/
 	unsigned int blocksize;         /*	Block size in bytes for the symmetric cipher. */
-	unsigned int asymchiper;		/*	Asymmetric cipher used for the connection.	*/
+	unsigned int asymchiper;        /*	Asymmetric cipher used for the connection.	*/
 	unsigned int usecompression;    /*	Compression used for the connection.	*/
-	union{
-		void* symmetrickey;         /*	Symmetric key.	*/
-		void* aes;                  /*	AES. ( Advanced encryption standard.)	*/
-		void* blowfish;             /*	BlowFish.	*/
-		void* des3;                 /*	DES3.	*/
-	};
-	union{
-		void* desymmetrickey;       /*	Desymmetric.	*/
-		void* deaes;                /*	*/
-		void* deblowfish;           /*	*/
-		void* dedes3;               /*	desDES3.	*/
-	};
-	sntDH* dh;						/*	Diffie hellman.	*/
-	SNTConnectionOption* option;	/*	Connection option.	*/
+    void* symenc;                   /*	Symmetric key.	*/
+    void* symdec;                   /*	Symmetric Decryption key, Only used for AES.	*/
+	sntDH* dh;                      /*	Diffie hellman.	*/
+	SNTConnectionOption* option;    /*	Connection option.	*/
 }SNTConnection;
 
 /**
