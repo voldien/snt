@@ -7,7 +7,6 @@
 #include <signal.h>
 #include <errno.h>
 
-
 static void snt_release(void){
 
 	unsigned int i;
@@ -77,6 +76,7 @@ int main(int argc,  char *const * argv){
 		/*	Lock memory.	*/
 		sntMemoryLockAll();
 
+		/*  Create server.  */
 		sntVerbosePrintf("Creating server socket.\n");
 		if(sntInitServer(port, &conopt) == 0){
 			return EXIT_FAILURE;
