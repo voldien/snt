@@ -66,12 +66,14 @@ extern const char* gc_symchi_symbol[];
 /**
  *	Asymmetric cipher, aka public key cipher.
  */
-#define SNT_ENCRYPTION_ASYM_NONE	0x0			/*	No Asymmetric cipher.	*/
-#define SNT_ENCRYPTION_ASYM_RSA		0x1			/*	RSA */
-#define SNT_ENCRYPTION_ASYM_ECD 	0x2			/*	Elliptic curves .	*/
-#define SNT_ENCRYPTION_ASYM_ALL										\
-		( SNT_ENCRYPTION_ASYM_RSA | SNT_ENCRYPTION_ASYM_ECD)		\
+#define SNT_ENCRYPTION_ASYM_NONE    0x0     /*	No Asymmetric cipher.	*/
+#define SNT_ENCRYPTION_ASYM_RSA     0x1     /*	RSA.	*/
+#define SNT_ENCRYPTION_ASYM_ALL         \
+        ( SNT_ENCRYPTION_ASYM_RSA )     \
 
+/**
+ *  Asymmetric cipher symbol table.
+ */
 extern const char* gc_asymchi_symbol[];
 
 /**
