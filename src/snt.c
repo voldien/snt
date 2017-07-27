@@ -621,44 +621,44 @@ int sntInitClient(int poolsize){
 int sntPacketInterpreter(SNTConnection* connection){
 
 	int len;						/*	*/
-	SNTUniformPacket unipackbuf;	/*	*/
+	SNTUniformPacket* packbuf = (SNTUniformPacket*)connection->mtubuf;
 
-	/*	Fetch header.	*/
-	len = sntReadSocketPacket(connection, &unipackbuf);
+	/*	Fetch Packet.	*/
+	len = sntReadSocketPacket(connection, packbuf);
 	if(len <= 0){
 		return 0;
 	}
 
 	/*	Protocol command.	*/
-	switch(unipackbuf.header.stype){
+	switch(packbuf->header.stype){
 	case SNT_PROTOCOL_STYPE_INIT:
-		return sntProtFuncInit(connection, &unipackbuf);
+		return sntProtFuncInit(connection, packbuf);
 	case SNT_PROTOCOL_STYPE_CLIENTOPT:
-		return sntProtFuncCliOpt(connection, &unipackbuf);
+		return sntProtFuncCliOpt(connection, packbuf);
 	case SNT_PROTOCOL_STYPE_CERTIFICATE:
-		return sntProtFuncCertificate(connection, &unipackbuf);
+		return sntProtFuncCertificate(connection, packbuf);
 	case SNT_PROTOCOL_STYPE_SECURE:
-		return sntProtFuncSecure(connection, &unipackbuf);
+		return sntProtFuncSecure(connection, packbuf);
 	case SNT_PROTOCOL_STYPE_READY:
-		return sntProtFuncReady(connection, &unipackbuf);
+		return sntProtFuncReady(connection, packbuf);
 	case SNT_PROTOCOL_STYPE_ERROR:
-		sntProtFuncError(connection, &unipackbuf);
+		sntProtFuncError(connection, packbuf);
 		return g_client ? 0 : 1;	/*	Prevent client to terminate the server.	*/
 	case SNT_PROTOCOL_STYPE_BENCHMARK:
-		return sntProtFuncBenchmark(connection, &unipackbuf);
+		return sntProtFuncBenchmark(connection, packbuf);
 	case SNT_PROTOCOL_STYPE_RESULT:
-		return sntProtFuncResult(connection, &unipackbuf);
+		return sntProtFuncResult(connection, packbuf);
 	case SNT_PROTOCOL_STYPE_STARTTEST:
-		return sntProtFuncStart(connection, &unipackbuf);
+		return sntProtFuncStart(connection, packbuf);
 	case SNT_PROTOCOL_STYPE_DH_REQ:
-		return sntProtFuncDHReq(connection, &unipackbuf);
+		return sntProtFuncDHReq(connection, packbuf);
 	case SNT_PROTOCOL_STYPE_DH_INIT:
-		return sntProtFuncDHInit(connection, &unipackbuf);
+		return sntProtFuncDHInit(connection, packbuf);
 	case SNT_PROTOCOL_STYPE_DH_EXCH:
-		return sntProtFuncDHExch(connection, &unipackbuf);
+		return sntProtFuncDHExch(connection, packbuf);
 	case SNT_PROTOCOL_STYPE_NONE:
 	default:
-		sntLogErrorPrintf("Undefined packet command type: %d.\n", unipackbuf.header.stype);
+		sntLogErrorPrintf("Undefined packet command type: %d.\n", packbuf->header.stype);
 		sntSendError(connection, SNT_ERROR_BAD_REQUEST, "Invalid protocol command.\n");
 		break;
 	}
