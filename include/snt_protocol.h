@@ -412,9 +412,9 @@ typedef struct snt_connection_t{
 	unsigned int inverfreq;         /*	Inverse frequency.	*/
 	unsigned int payload;           /*	packet payload in bytes.*/
 	int mtu;                        /*	Max transfer unite.	*/
-	char* mtubuf;                   /*	MTU buffer.	*/
-	char* tranbuf;                  /*	Transmit buffer.	*/
-	char* recvbuf;                  /*	Receive buffer.	*/
+	char* mtubuf;                   /*	MTU buffer, used for recv and send.	*/
+	char* tranbuf;                  /*	Transmit buffer, used in sntCreateRecvPacket.	*/
+	char* recvbuf;                  /*	Receive buffer, used in sntCreateSendPacket.	*/
 	union{
 		void* asymkey;              /*	Asymmetric.	*/
 		void* RSAkey;               /*	RSA.	*/
