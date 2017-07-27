@@ -45,6 +45,18 @@ typedef struct snt_result_packet_t SNTResultPacket;
 extern const char* gc_bench_symbol[];
 
 /**
+ *	Contains session information.
+ */
+typedef struct snt_benchmark_session_t{
+	uint32_t type;					/*	Type of result.	*/
+	uint64_t npackets;				/*	Number of packets.	*/
+	uint64_t nbytes;				/*	Number of bytes.	*/
+	uint64_t elapse;				/*	Elapse time.	*/
+	SNTDelta delta;					/*	Delta change.	*/
+	uint64_t ofo;					/*	Out of order.	*/
+}SNTBenchmarkSession;
+
+/**
  *	Create benchmark thread.
  *
  *	@Return none 0 if successfully.
