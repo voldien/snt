@@ -213,7 +213,7 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 
 }
 
-SNTConnection* sntBindSocket(uint16_t port,
+SNTConnection* sntBindSocket(const char* ip, uint16_t port,
 		const SNTConnectionOption* option) {
 
 	SNTConnection* connection = NULL;	/*	*/
@@ -240,7 +240,10 @@ SNTConnection* sntBindSocket(uint16_t port,
 		bzero(&addrU.addr4, sizeof(addrU.addr4));
 		addrU.addr4.sin_port = htons(port);
 		addrU.addr4.sin_family = (sa_family_t)domain;
-		addrU.addr4.sin_addr.s_addr = INADDR_ANY;
+		if( inet_pton(domain, ip, &addrU.addr4.sin_addr) < 0){
+			sntDisconnectSocket(connection);
+			return NULL;
+		}
 		addrlen = sizeof(addrU.addr4);
 		addr = (struct sockaddr*)&addrU.addr4;
 	}
@@ -248,7 +251,10 @@ SNTConnection* sntBindSocket(uint16_t port,
 		bzero(&addrU.addr6, sizeof(addrU.addr6));
 		addrU.addr6.sin6_port = htons(port);
 		addrU.addr6.sin6_family = (sa_family_t)domain;
-		/*addr6.sin6_addr.__in6_u = IN6ADDR_ANY_INIT;*/
+		if( inet_pton(domain, ip, &addrU.addr6.sin6_addr) < 0){
+			sntDisconnectSocket(connection);
+			return NULL;
+		}
 		addrlen = sizeof(addrU.addr6);
 		addr = (struct sockaddr*)&addrU.addr6;
 	}else{

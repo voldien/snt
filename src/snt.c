@@ -556,7 +556,7 @@ int sntInitServer(unsigned int port, SNTConnectionOption* option){
 	memset(g_threadtable, 0, poolsize * sizeof(pthread_t));
 
 	/*	Bind socket to process.	*/
-	g_bindconnection = sntBindSocket((uint16_t)port, option);
+	g_bindconnection = sntBindSocket("0.0.0.0",(uint16_t)port, option);
 	if(g_bindconnection == NULL){
 		return 0;
 	}
