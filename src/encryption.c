@@ -8,7 +8,6 @@
 #include <openssl/ssl.h>
 #include <openssl/rsa.h>
 #include <openssl/obj_mac.h>
-#include <openssl/ec.h>
 #include <openssl/crypto.h>
 #include <openssl/aes.h>
 #include <openssl/des.h>
@@ -65,42 +64,17 @@ void sntSSLPrintError(void){
 
 int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned int numbits){
 
-	int ret;				/*	*/
-	size_t asymksize = 0;	/*	*/
+	int ret;					/*	*/
+	size_t asymksize = 0;		/*	*/
 	/*	RSA	*/
 	const RSA_METHOD* method;	/*	*/
 	BIGNUM* ebnum;				/*	*/
 
-	/*	EC - Elliptic Curve.	*/
-	EC_KEY* key = NULL;
-	BIGNUM *prv = NULL;
-	EC_POINT *pub = NULL;
+	/*	*/
+	int codes;
+	BN_GENCB* bn;
 
 	switch(cipher){
-	case SNT_ENCRYPTION_ASYM_ECD:
-		sntLogErrorPrintf("Not supported.\n");
-		return 0;
-		key = EC_KEY_new_by_curve_name(NID_secp224r1);
-		if(key == NULL){
-			return 0;
-		}
-
-		if( EC_KEY_generate_key(key) != 1){
-			EC_KEY_free(key);
-			return 0;
-		}
-
-		if( EC_KEY_set_private_key(key, prv) != 1){
-			EC_KEY_free(key);
-			return 0;
-		}
-
-		if(EC_KEY_set_public_key(key, pub) != 1){
-			EC_KEY_free(key);
-			return 0;
-		}
-
-		break;
 	case SNT_ENCRYPTION_ASYM_RSA:
 
 		/*	Create big number for RSA.	*/
@@ -209,9 +183,6 @@ int sntASymCreateKeyFromData(SNTConnection* __restrict__ connection,
 		bitsize = RSA_size(connection->RSAkey) * 8;
 
 		break;
-	case SNT_ENCRYPTION_ASYM_ECD:
-		sntLogErrorPrintf("Not supported.\n");
-		return 0;
 	default:
 		return 0;
 	}
@@ -253,8 +224,6 @@ int sntASymCopyPublicKey(const SNTConnection* connection, void* cpkey){
 			return 0;
 		}
 		break;
-	case SNT_ENCRYPTION_ASYM_ECD:
-		break;
 	default:
 		return 0;
 	}
@@ -281,8 +250,6 @@ int sntASymPubEncrypt(unsigned int type, const void* source, unsigned int len,
 			return 0;
 		}
 		break;
-	case SNT_ENCRYPTION_ASYM_ECD:
-		break;
 	case SNT_ENCRYPTION_ASYM_NONE:
 	default:
 		break;
@@ -304,8 +271,6 @@ int sntASymPriDecrypt(unsigned int cipher, const void* source, unsigned int len,
 			sntSSLPrintError();
 			return 0;
 		}
-		break;
-	case SNT_ENCRYPTION_ASYM_ECD:
 		break;
 	case SNT_ENCRYPTION_ASYM_NONE:
 	default:
@@ -332,9 +297,6 @@ void sntASymFree(SNTConnection* connection){
 	switch (connection->asymchiper) {
 	case SNT_ENCRYPTION_ASYM_RSA:
 		RSA_free(connection->RSAkey);
-		break;
-	case SNT_ENCRYPTION_ASYM_ECD:
-		ECDSA_SIG_free(NULL);
 		break;
 	default:
 		break;
