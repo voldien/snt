@@ -598,8 +598,7 @@ extern int sntReadSocketPacket(const SNTConnection* __restrict__ connection,
  *
  *	@Return none zero if sucesfully fetch. zero otherwise.
  */
-extern int sntRecvPacketHeader(
-		const SNTConnection* __restrict__ connection,
+extern int sntPeekPacketHeader(const SNTConnection* __restrict__ connection,
 		SNTUniformPacket* __restrict__ header);
 
 /**

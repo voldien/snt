@@ -749,7 +749,7 @@ int sntReadSocketPacket(const SNTConnection* connection, SNTUniformPacket* pack)
 	int len;
 	/*	Receive header.	*/
 	sntDebugPrintf("Receiving.\n");
-	len = sntRecvPacketHeader(connection, &pack->header);
+	len = sntPeekPacketHeader(connection, &pack->header);
 	if(len <= 0){
 		return 0;
 	}
@@ -775,7 +775,7 @@ int sntReadSocketPacket(const SNTConnection* connection, SNTUniformPacket* pack)
 	return len;
 }
 
-int sntRecvPacketHeader(const SNTConnection* connection,
+int sntPeekPacketHeader(const SNTConnection* connection,
 		SNTUniformPacket* header) {
 	return sntReadSocket(connection, header, sizeof(SNTPacketHeader), MSG_PEEK);
 }
