@@ -584,8 +584,6 @@ extern int sntWriteSocket(const SNTConnection* __restrict__ connection,
  */
 extern int sntWriteSocketPacket(const SNTConnection* __restrict__ connection,
 			const SNTUniformPacket* __restrict__ pack);
-/*extern int sntWriteSocketPacketFast(const SNTConnection* __restrict__ connection,
-			const SNTUniformPacket* __restrict__ pack);*/
 
 /**
  *	Receiving packet.
@@ -594,8 +592,6 @@ extern int sntWriteSocketPacket(const SNTConnection* __restrict__ connection,
  */
 extern int sntReadSocketPacket(const SNTConnection* __restrict__ connection,
 		SNTUniformPacket* __restrict__ pack);
-/*extern int sntReadSocketPacketFast(const SNTConnection* __restrict__ connection,
-		SNTUniformPacket* __restrict__ pack);*/
 
 /**
  *	Recv application protocol header.
