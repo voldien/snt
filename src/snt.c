@@ -132,7 +132,7 @@ void sntReadArgument(int argc,  char *const * argv, char* ip, unsigned int* port
 		}
 	}
 
-	/*	Default option.	*/
+	/*	Default connection options.	*/
 	snt_default_con_option(option, g_server);
 
 	/*	Reset getopt.	*/
@@ -207,7 +207,7 @@ void sntReadArgument(int argc,  char *const * argv, char* ip, unsigned int* port
 				timefraction = strtod(optarg, NULL);
 				if( modf(timefraction, &dummyfraction) == 0.0){
 					/*	*/
-					option->invfrequency = strtol(optarg, NULL, 10);
+					option->invfrequency = (uint64_t)strtol(optarg, NULL, 10);
 					option->invfrequency = (uint64_t)sntGetTimeResolution() / option->invfrequency;
 					sntVerbosePrintf("frequency set to :%ld hz\n", sntGetTimeResolution() / option->invfrequency);
 				}else{
@@ -239,6 +239,7 @@ void sntReadArgument(int argc,  char *const * argv, char* ip, unsigned int* port
 			if(optarg){
 				option->duplex = sntParserBitWiseMultiParam(optarg, gs_sym_duplex);
 				sntVerbosePrintf("Using %s duplex.\n", optarg);
+				sntLogErrorPrintf("Duplex mode not supported, option will be ignored.\n");
 			}
 			break;
 		case 'U':	/*	Use UDP transport protocol.	*/
@@ -327,7 +328,7 @@ void sntReadArgument(int argc,  char *const * argv, char* ip, unsigned int* port
 			break;
 		case 'i':
 			if(optarg){
-				option->dh = strtol(optarg, NULL, 10);
+				option->dh = (uint32_t)strtol(optarg, NULL, 10);
 				sntVerbosePrintf("Diffie hellman set to %d bit.\n", option->dh);
 			}else{
 				option->dh = 1;
@@ -388,6 +389,7 @@ void sntServerMain(void){
 	FD_SET(g_bindconnection->tcpsock, &fd_active);
 	fd_size = g_bindconnection->tcpsock + 1;
 
+	/*	*/
 	while(1){
 		fd_read = fd_active;
 
@@ -398,6 +400,7 @@ void sntServerMain(void){
 			exit(EXIT_FAILURE);
 		}
 		else{
+			/*	Iterate through each file descriptor.	*/
 			for (i = 2; i < fd_size; i++){
 				if (FD_ISSET (i, &fd_read)){
 
@@ -478,8 +481,11 @@ void sntClientMain(const char* host, unsigned int port, int nconnector, const SN
 			return;
 		}
 
+		/*	Add connection to hash table with file descriptor as key.	*/
 		sntMapSocket(g_contable, con, &fd_active, con->tcpsock);
 		fd_size = sntMax(fd_size, con->tcpsock + 1);
+
+		/*	Add UDP socket to hash table if created.	*/
 		if(con->udpsock > 0){
 			sntMapSocket(g_contable, con, &fd_active, con->udpsock);
 			fd_size = sntMax(fd_size, con->udpsock + 1);
@@ -496,6 +502,7 @@ void sntClientMain(const char* host, unsigned int port, int nconnector, const SN
 			perror("Failed select.\n");
 			exit(EXIT_FAILURE);
 		}
+		/*	Iterate throug each client file descriptor.	*/
 		for(i = 2; i < fd_size; i++){
 			if(FD_ISSET(i, &fd_read)){
 				con = g_contable[i];
@@ -612,10 +619,6 @@ int sntInitClient(int poolsize){
 
 	return 1;
 }
-
-
-
-
 
 int sntPacketInterpreter(SNTConnection* connection){
 
