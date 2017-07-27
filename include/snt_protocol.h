@@ -448,14 +448,14 @@ typedef struct snt_connection_t{
 /**
  *	Check connection flag status.
  */
-#define sntIsTransportEnable(con)   (con->flag & SNT_CONNECTION_TRANS)
-#define sntIsBenchEnable(con)       (con->flag & SNT_CONNECTION_BENCH)
+#define sntIsTransportEnable(con)   (con->flag & SNT_CONNECTION_TRANS)  /*  Check if transport protocol is enabled. */
+#define sntIsBenchEnable(con)       (con->flag & SNT_CONNECTION_BENCH)  /*  Check if benchmark is enabled.  */
 
 /**
  *	Check connection feature is enabled.
  */
-#define sntIsConnectionSecure(con)      (con->symchiper != 0)
-#define sntIsConnectionCompressed(con)  (con->usecompression != 0)
+#define sntIsConnectionSecure(con)      (con->symchiper != 0)       /*  Check if secure connection is used. */
+#define sntIsConnectionCompressed(con)  (con->usecompression != 0)  /*  Check if compression is used.   */
 
 /**
  *	Get attribute about the current socket
