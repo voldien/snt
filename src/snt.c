@@ -42,7 +42,7 @@ static void snt_default_con_option(SNTConnectionOption* option, unsigned int isS
 	option->hash = SNT_HASH_SHA256;
 	option->delta.i = 1;
 	option->invfrequency = 0;
-	option->payload = 1024;
+	option->payload = 1500;
 	option->listen = 128;
 	option->duration = (uint64_t)(10 * sntGetTimeResolution());
 	option->port = SNT_DEFAULT_PORT;
