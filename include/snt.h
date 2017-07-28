@@ -24,7 +24,7 @@
 #include <pthread.h>	/*	TODO resolve.	*/
 
 /**
- *	Forward.
+ *	Forward data type declaration.
  */
 typedef struct snt_connection_t SNTConnection;
 
