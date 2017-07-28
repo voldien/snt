@@ -60,9 +60,9 @@ int sntProtFuncCliOpt(SNTConnection* connection, const SNTUniformPacket* packet)
 	connection->option->symmetric = cliopt->symchiper;
 	connection->option->duplex = cliopt->duplex;
 
-	/*	*/
+	/*	Reallocate payload buffer size. */
 	connection->option->payload = cliopt->payload;
-	connection->mtubuf = malloc(connection->option->payload);
+	connection->mtubuf = realloc(connection->mtubuf, connection->option->payload);
 	assert(connection->mtubuf);
 
 	/*	*/
