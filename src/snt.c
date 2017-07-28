@@ -594,16 +594,17 @@ int sntInitServer(unsigned int port, SNTConnectionOption* option){
 			}
 		}
 	}
+
 	return 1;
 }
 
-int sntInitClient(int poolsize){
+int sntInitClient(int nparallcon){
 
-	poolsize += 1;
+	nparallcon += 1;
 
 	sntVerbosePrintf("Creating connection pool %d connections, size %d.\n",
-			poolsize, sizeof(SNTConnection) * poolsize);
-	g_connectionpool = (SNTPool*)sntPoolCreate(poolsize, sizeof(SNTConnection));
+			nparallcon, sizeof(SNTConnection) * nparallcon);
+	g_connectionpool = (SNTPool*)sntPoolCreate(nparallcon, sizeof(SNTConnection));
 	if(g_connectionpool == NULL){
 		sntLogErrorPrintf("Failed to allocate connection pool.\n");
 		return 0;
@@ -665,5 +666,3 @@ int sntPacketInterpreter(SNTConnection* connection){
 	}
 	return len;
 }
-
-
