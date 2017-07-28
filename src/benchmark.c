@@ -25,9 +25,9 @@ pthread_t sntBenchmarkCreateThread(unsigned int mode, SNTConnection* patt){
 	pthread_attr_t attr;				/*	*/
 	snt_client_thread func;				/*	*/
 	size_t  guardsize;					/*	*/
-	struct sched_param schparam;		/*	*/
-	int err;							/*	*/
-	unsigned int cpu,cores,size;		/*	*/
+	struct sched_param schparam;        /*	*/
+	int err;                            /*	*/
+	unsigned int cpu,cores,size;        /*	*/
 
 	switch(mode){
 	case SNT_PROTOCOL_BM_MODE_PERFORMANCE:
@@ -76,7 +76,6 @@ pthread_t sntBenchmarkCreateThread(unsigned int mode, SNTConnection* patt){
 		return 0;
 	}
 
-
 	/*	Set affinity.	*/
 	sntSchdGetAffinity(&cpu, &cores, &size);
 	if(!sntSchdSetThreadAttrAffinity(&attr, cpu, cores, size)){
@@ -98,6 +97,7 @@ pthread_t sntBenchmarkCreateThread(unsigned int mode, SNTConnection* patt){
 		return 0;
 	}
 
+	/*	Release attribute resources.	*/
 	err = pthread_attr_destroy(&attr);
 	if(err != 0){
 		sntLogErrorPrintf("pthread_attr_destroy failed, %s.\n", strerror(errno));
@@ -126,6 +126,8 @@ int sntBenchmarkWait(SNTConnection* connection){
 		sntSendError(connection, SNT_ERROR_SERVER, "Transport mode failed");
 		return 0;
 	}
+
+	/*  Enable transport mode.  */
 	connection->flag |= SNT_CONNECTION_TRANS;
 
 	return 1;
@@ -161,17 +163,15 @@ void sntBenchmarkEnd(SNTConnection* connection, SNTResultPacket* result){
 	/*	Get time resolution.	*/
 	result->timeres = (uint64_t)sntGetTimeResolution();
 
-	/*	*/
+	/*	Send benchmark result.	*/
 	sntSendBenchMarkResult(connection, result);
 
-	/*	*/
+	/*	Display print result on server.	*/
 	sntBenchmarkPrintResult(result);
 
-	/*	*/
+	/*	Close the session.	*/
 	sntDisconnectSocket(connection);
 }
-
-
 
 void* sntClientIntegrityBenchmark(void* patt){
 
