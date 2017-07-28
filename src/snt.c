@@ -59,7 +59,7 @@ static void snt_default_con_option(SNTConnectionOption* option, unsigned int isS
 		option->bm_protocol_mode = SNT_PROTOCOL_BM_MODE_PERFORMANCE;
 		option->transport_mode = SNT_TRANSPORT_TCP;
 		option->deltatype = SNT_DELTA_TYPE_INT;
-		option->dh = 0;
+		option->dh = 1;
 	}
 }
 
