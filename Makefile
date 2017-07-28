@@ -56,7 +56,7 @@ install_service:
 distribution:
 	$(RM) -r $(TARGET)-$(VERSION)
 	$(MKDIR) $(TARGET)-$(VERSION)
-	$(CP) -r src include Makefile README.md LICENSE *.1 snt.bc $(TARGET)-$(VERSION)
+	$(CP) -r src include Makefile README.md LICENSE *.1 snt.bc init.lua sntd $(TARGET)-$(VERSION)
 	tar cf - $(TARGET)-$(VERSION) | gzip -c > $(TARGET)-$(VERSION).tar.gz
 	$(RM) -r $(TARGET)-$(VERSION)
 
