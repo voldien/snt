@@ -416,13 +416,13 @@ typedef struct snt_connection_t{
 	char* mtubuf;                   /*	MTU buffer, used for recv and send.	*/
 	char* tranbuf;                  /*	Transmit buffer, used in sntCreateRecvPacket.	*/
 	char* recvbuf;                  /*	Receive buffer, used in sntCreateSendPacket.	*/
-    void* asymkey;                  /*	Asymmetric.	*/
+	void* asymkey;                  /*	Asymmetric.	*/
 	unsigned int symchiper;         /*	Symmetric cipher used for the connection.	*/
 	unsigned int blocksize;         /*	Block size in bytes for the symmetric cipher. */
 	unsigned int asymchiper;        /*	Asymmetric cipher used for the connection.	*/
 	unsigned int usecompression;    /*	Compression used for the connection.	*/
-    void* symenc;                   /*	Symmetric key.	*/
-    void* symdec;                   /*	Symmetric Decryption key, Only used for AES.	*/
+	void* symenc;                   /*	Symmetric key.	*/
+	void* symdec;                   /*	Symmetric Decryption key, Only used for AES.	*/
 	sntDH* dh;                      /*	Diffie hellman.	*/
 	SNTConnectionOption* option;    /*	Connection option.	*/
 }SNTConnection;
