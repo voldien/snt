@@ -6,7 +6,7 @@ MINOR := 11
 PATCH := 1
 STATE := a
 VERSION := $(MAJOR).$(MINOR)$(STATE)$(PATCH)
-# Utilitys
+# Utilities
 RM := rm -f
 CP := cp
 MKDIR := mkdir -p
