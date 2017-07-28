@@ -269,9 +269,8 @@ void sntReadArgument(int argc,  char *const * argv, char* ip, unsigned int* port
 			break;
 		case 's':
 			if(optarg){
-				/*	Bind address.	*/
-				memcpy(ip, optarg, strlen(optarg) + 1);
-				sntVerbosePrintf("%s.\n", optarg);
+				/*	Bind addresses.	*/
+				strcpy(ip, optarg);
 			}
 			g_client = 0;
 			g_server = 1;
