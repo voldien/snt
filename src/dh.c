@@ -79,6 +79,32 @@ int sntDHCreateByData(sntDH** __restrict__ dh, const void* __restrict__ p,
 	return 1;
 }
 
+int sntDHCreateFromPEMFile(sntDH** __restrict__ dh, const char* path){
+
+	BIO* bio;
+	unsigned int asym = 0;
+
+	/*  Load file.  */
+	bio = BIO_new(BIO_s_file());
+	if (BIO_read_filename(bio, path) <= 0) {
+		sntSSLPrintError();
+		return 0;
+	}
+
+	/*  Load diffie hellman.    */
+	*dh = PEM_read_bio_DHparams(bio, NULL, NULL, NULL);
+	if (*dh == NULL) {
+		BIO_free(bio);
+		sntSSLPrintError();
+		return 0;
+	}
+
+	/*  Release.    */
+	BIO_free(bio);
+
+	return 1;
+}
+
 int sntDHSize(const sntDH* dh){
 	return DH_size(dh);
 }

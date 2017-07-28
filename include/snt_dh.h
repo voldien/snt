@@ -53,6 +53,17 @@ extern int sntDHCreateByData(sntDH** __restrict__ dh, const void* __restrict__ p
 		const void* __restrict__ g, uint32_t plen, uint32_t glen);
 
 /**
+ *	Create Diffie hellman from PEM file.
+ *
+ *	\dh diffie hellman pointer.
+ *
+ *	\path filepath to pem file.
+ *
+ *	@Return none zero if successful.
+ */
+extern int sntDHCreateFromPEMFile(sntDH** __restrict__ dh, const char* path);
+
+/**
  *	@Return size of diffie hellman in bytes.
  */
 extern int sntDHSize(const sntDH* dh);
