@@ -440,44 +440,46 @@ int sntSendCertificate(const SNTConnection* __restrict__ bind,
 		SNTConnection* __restrict__ client) {
 
 	int len;
-	SNTCertificate cert;
+	SNTCertificate* cert;
 	void* tmphash;
+
+	cert = malloc(sizeof(SNTCertificate));
 
 	/*	Can't execute here if asymchiper is not set.	*/
 	assert(bind->asymchiper != SNT_ENCRYPTION_ASYM_NONE);
 
 	/*	Copy public key to init packet.	*/
-	sntInitDefaultHeader(&cert.header, SNT_PROTOCOL_STYPE_CERTIFICATE, sizeof(cert));
-	memset(cert.cert, 0, sizeof(cert.cert));
-	cert.certlen = sntASymCopyPublicKey(bind, &cert.cert[0]);
-	if(cert.certlen <= 0){
-		sntSendError(client, SNT_ERROR_SERVER, "");
+	sntInitDefaultHeader(&cert->header, SNT_PROTOCOL_STYPE_CERTIFICATE, sizeof(SNTCertificate));
+	memset(cert->cert, 0, sizeof(cert->cert));
+	cert->certlen = sntASymCopyPublicKey(bind, &cert->cert[0]);
+	if(cert->certlen <= 0){
+		sntSendError(client, SNT_ERROR_SERVER, "Can't provide certificate data.");
 		sntLogErrorPrintf("sntAsymmetricCopyPublicKey failed.\n");
 		return 0;
 	}
-	sntDebugPrintf("%s.\n", cert.cert);
-	cert.certype = bind->option->certificate;
-	cert.asymchiper = bind->asymchiper;
+	sntDebugPrintf("%s.\n", cert->cert);
+	cert->certype = bind->option->certificate;
+	cert->asymchiper = bind->asymchiper;
 
 	/*	Hash the certificate and meta data.	*/
-	cert.hashtype = bind->option->hash;
-	cert.localhashedsize = sizeof(cert.cert);
-	if(!sntHash(cert.hashtype, cert.cert, cert.localhashedsize, cert.hash)){
+	cert->hashtype = bind->option->hash;
+	cert->localhashedsize = sizeof(cert->cert);
+	if(!sntHash(cert->hashtype, cert->cert, cert->localhashedsize, cert->hash)){
 		sntSendError(client, SNT_ERROR_SERVER, "");
 		sntLogErrorPrintf("sntHash failed.\n");
 		return 0;
 	}
 
 	/*	Encrypt the hash in order to prevent integrity compromising.	*/
-	tmphash = malloc(sntHashGetTypeSize(cert.hashtype));
+	tmphash = malloc(sntHashGetTypeSize(cert->hashtype));
 	assert(tmphash);
-	memset(tmphash, 0, sntHashGetTypeSize(cert.hashtype));
-	memcpy(tmphash, cert.hash, sntHashGetTypeSize(cert.hashtype));
+	memset(tmphash, 0, sntHashGetTypeSize(cert->hashtype));
+	memcpy(tmphash, cert->hash, sntHashGetTypeSize(cert->hashtype));
 
 	/*	Create digital signature.	*/
-	if (!sntASymSignDigSign(bind, cert.hashtype, tmphash,
-			sntHashGetTypeSize(cert.hashtype), cert.hash,
-			(unsigned int*)&cert.encryedhashsize)) {
+	if (!sntASymSignDigSign(bind, cert->hashtype, tmphash,
+			sntHashGetTypeSize(cert->hashtype), cert->hash,
+			(unsigned int*)&cert->encryedhashsize)) {
 		sntSendError(client, SNT_ERROR_SERVER, "Couldn't create a digital signature");
 		free(tmphash);
 		return 0;
@@ -485,11 +487,15 @@ int sntSendCertificate(const SNTConnection* __restrict__ bind,
 	free(tmphash);
 
 	/*	Send certificate.	*/
-	len = sntWriteSocketPacket(client, (SNTUniformPacket*)&cert);
+	len = sntWriteSocketPacket(client, (SNTUniformPacket*)cert);
 
 	/*	Copy bind connection asymmetric.	*/
 	client->asymchiper = bind->asymchiper;
 	client->asynumbits = bind->asynumbits;
+
+	/*	Release memory.	*/
+	sntMemZero(cert, sntProtocolPacketSize(cert));
+	free(cert);
 
 	return len;
 }
