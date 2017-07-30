@@ -7,7 +7,6 @@
 #include <assert.h>
 #include <openssl/ssl.h>
 #include <openssl/rsa.h>
-#include <openssl/obj_mac.h>
 #include <openssl/crypto.h>
 #include <openssl/aes.h>
 #include <openssl/des.h>
@@ -15,7 +14,6 @@
 #include <openssl/rc4.h>
 #include <openssl/cast.h>
 #include <openssl/err.h>
-#include <openssl/rand.h>
 #include <openssl/x509v3.h>
 #include <openssl/x509.h>
 #include <openssl/evp.h>
@@ -423,7 +421,7 @@ int sntASymSignDigSign(const SNTConnection* connection, unsigned int hashtype,
 		}
 		break;
 	default:
-		fprintf(stderr, "not supported.\n");
+		sntLogErrorPrintf("not supported.\n");
 		break;
 	}
 	return res;
@@ -443,12 +441,11 @@ int sntASymVerifyDigSign(const SNTConnection* connection, unsigned int hashtype,
 		}
 		break;
 	default:
-		fprintf(stderr, "not supported.\n");
+		sntLogErrorPrintf("not supported.\n");
 		break;
 	}
 	return res;
 }
-
 
 int sntSymGenerateKey(SNTConnection* connection, unsigned int cipher){
 
