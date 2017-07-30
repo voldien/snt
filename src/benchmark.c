@@ -207,7 +207,7 @@ void* sntClientIntegrityBenchmark(void* patt){
 	starttime = sntGetNanoTime();
 	while(sntIsBenchEnable(con) && !sntDurationExpired(sntGetNanoTime() - starttime, conopt)){
 
-		len = sntGenerateDeltaTypeInc(con->option->deltatype, (char*)pack->buf, &delta, &inc);
+		len = sntGenerateDeltaTypeInc(con->option->deltatype, (char*)pack->buf, &delta, &con->option->delta);
 		len++;
 		pack->header.len = len + sizeof(SNTPacketHeader);
 
