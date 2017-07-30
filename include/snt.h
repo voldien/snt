@@ -21,7 +21,6 @@
 #include "snt_def.h"
 #include "snt_pool.h"
 #include "snt_delta.h"
-#include <pthread.h>	/*	TODO resolve.	*/
 
 /**
  *	Forward data type declaration.
@@ -31,18 +30,18 @@ typedef struct snt_connection_t SNTConnection;
 /**
  *	Global data.
  */
-extern unsigned int g_verbosity;		/*	Verbosity level.	*/
-extern unsigned int g_server;			/*	Server mode.	*/	/*	TODO perhaps encapsulate it. */
-extern unsigned int g_client;			/*	Client mode.	*/
-extern SNTPool* g_connectionpool;		/*	connection pool. (Used by the server only)	*/
-extern SNTConnection* g_bindconnection;	/*	Connection used for binding socket to program. (Server only).	*/
-extern pthread_t* g_threadtable;		/*	Thread table for each connection.	(Server only)	*/
-extern SNTConnection** g_contable;		/*	Maps file descriptor to connection.	*/
-extern int g_numcliconne;				/*	Number of client connection. (Client only).	*/
-extern char* g_filepath;				/*	File for file benchmark mode.	*/
-extern char* cerficatefilepath;			/*	Certificate file pathS.	*/
-/*extern SNTPool* g_symkeys;*/			/*	TODO add data pool for symmetric key data block for server.	*/
-
+extern unsigned int g_verbosity;        /*	Verbosity level.	*/
+extern unsigned int g_server;           /*	Server mode.	*/
+extern unsigned int g_client;           /*	Client mode.	*/
+extern SNTPool* g_connectionpool;       /*	connection pool. (Used by the server only)	*/
+extern SNTConnection* g_bindconnection; /*	Connection used for binding socket to program. (Server only).	*/
+extern void* g_threadtable;             /*	Thread table for each connection.	(Server only)	*/
+extern SNTConnection** g_contable;      /*	Maps file descriptor to connection.	*/
+extern int g_numcliconne;               /*	Number of client connection. (Client only).	*/
+extern char* g_filepath;                /*	File for file benchmark mode.	*/
+extern char* g_cerficatefilepath;       /*	Certificate file path.	*/
+extern char* g_prikeyfilepath;          /*	Private key file.	*/
+extern char* g_dhfilepath;              /*	Diffie hellman certificate file.    */
 
 /**
  *	Connection option.
@@ -112,6 +111,5 @@ extern void sntClientMain(const char* __restrict__ host, unsigned int port,
  *	@Return number of bytes total received data.
  */
 extern int sntPacketInterpreter(SNTConnection* connection);
-
 
 #endif

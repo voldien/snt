@@ -19,7 +19,7 @@ unsigned int g_server = 0;
 unsigned int g_client = 1;
 SNTPool* g_connectionpool = NULL;
 SNTConnection* g_bindconnection = NULL;
-pthread_t* g_threadtable = NULL;
+void* g_threadtable = NULL;
 SNTConnection** g_contable = NULL;
 unsigned int g_curthread = 0;
 int g_numcliconne = 1;
@@ -462,7 +462,8 @@ void sntServerMain(void){
 							}else{
 								sntUnMapSocket(g_contable, &fd_active, con->tcpsock);
 							}
-							g_threadtable[sntPoolGetIndex(g_connectionpool, con)] =
+							/*	*/
+							((pthread_t*)g_threadtable)[sntPoolGetIndex(g_connectionpool, con)] =
 									sntBenchmarkCreateThread(con->option->bm_protocol_mode,
 											con);
 						}
