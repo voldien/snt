@@ -62,7 +62,9 @@ int sntProtFuncCliOpt(SNTConnection* connection, const SNTUniformPacket* packet)
 
 	/*	Reallocate payload buffer size. */
 	connection->option->payload = cliopt->payload;
-	connection->mtubuf = realloc(connection->mtubuf, connection->option->payload);
+	connection->mtubuf = realloc(connection->mtubuf,
+	        connection->option->payload + sizeof(SNTPresentationUnion)
+	                + sizeof(SNTPacketHeader));
 	assert(connection->mtubuf);
 
 	/*	*/
