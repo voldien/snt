@@ -10,10 +10,14 @@ VERSION := $(MAJOR).$(MINOR)$(STATE)$(PATCH)
 RM := rm -f
 CP := cp
 MKDIR := mkdir -p
+CHMOD := chmod
+# Crypto utility
+OPENSSL := openssl
 # Directories
 DESTDIR ?=
 PREFIX ?= /usr
 INSTALL_LOCATION=$(DESTDIR)$(PREFIX)
+SSL_DIR := $(DESTDIR)/etc/ssl
 # Compiler
 CC ?= gcc
 CFLAGS = -I"include" -DSNT_STR_VERSION=\"$(VERSION)\" -DSNT_MAJOR=$(MAJOR) -DSNT_MINOR=$(MINOR)
@@ -23,7 +27,14 @@ VPATH = ./src
 SRC = $(wildcard src/*.c)
 OBJS = $(notdir $(subst .c,.o,$(SRC)))
 SERVICE := sntd
+# Main Targets
 TARGET ?= snt
+# Certificates files
+DHPEM := sntdh.pem
+DHPARAM ?= 2048
+RSAPRIV := snt.pem
+RSACERT := snt.cert
+RSAPARAM ?= 4096
 
 all : $(TARGET)
 	@echo -n "Finished making $(TARGET). \n"
@@ -53,6 +64,31 @@ install_service:
 	$(CP) $(SERVICE) /etc/init.d
 	@echo -n "Installed service daemon.\n"
 
+$(DHPEM) :
+	@echo -n "Generating Diffie hellman $(DHPARAM) bit key.\n"
+	$(OPENSSL) dhparam $(DHPARAM) -out $@
+	$(CHMOD) 444 $@
+
+$(RSACERT) :
+	@echo -n "Generating RSA $(RSAPARAM) certificate file.\n"
+	$(OPENSSL) req -nodes -new -x509 -newkey rsa:$(RSAPARAM) -keyout $(RSAPRIV) -out $@
+
+
+cert: $(DHPEM) $(RSAPRIV) $(RSACERT)
+	@echo -n "Generated certificates and keys.\n"
+
+install_cert: cert
+	@echo -n "Install diffie hellman pem file.\n"
+	$(CP) $(DHPEM) $(SSL_DIR)/certs
+	$(CHMOD) 444 $(SSL_DIR)/certs/$(DHPEM)
+	@echo -n "Install RSA private key pem file.\n"
+	$(MKDIR) ~/.snt
+	$(CP) $(RSAPRIV) ~/.snt
+	$(CHMOD) 400 ~/.snt/$(RSAPRIV)
+	@echo -n "Install RSA X509 certificate file.\n"
+	$(CP) $(RSACERT) $(SSL_DIR)/certs
+	$(CHMOD) 444 $(SSL_DIR)/certs/$(RSACERT)
+
 distribution:
 	$(RM) -r $(TARGET)-$(VERSION)
 	$(MKDIR) $(TARGET)-$(VERSION)
@@ -63,6 +99,5 @@ distribution:
 clean :
 	$(RM) *.o
 
-
-.PHONY: all install distribution clean debug install_wireshark_dissector install_service
+.PHONY: all install distribution clean debug install_wireshark_dissector install_service install_cert cert
 
