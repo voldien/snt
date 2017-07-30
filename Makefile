@@ -57,6 +57,7 @@ install : $(TARGET)
 	$(CP) snt.bc /etc/bash_completion.d/snt
 
 install_wireshark_dissector:
+	@echo -n "Installing wireshark dissector.\n"
 	$(MKDIR) $(HOME)/.wireshark/plugins
 	$(CP) init.lua $(HOME)/.wireshark/plugins/snt.lua
 
