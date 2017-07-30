@@ -34,7 +34,7 @@ DHPEM := sntdh.pem
 DHPARAM ?= 2048
 RSAPRIV := snt.pem
 RSACERT := snt.cert
-RSAPARAM ?= 4096
+RSAPARAM ?= 2048
 
 all : $(TARGET)
 	@echo -n "Finished making $(TARGET). \n"
@@ -68,11 +68,14 @@ install_service:
 $(DHPEM) :
 	@echo -n "Generating Diffie hellman $(DHPARAM) bit key.\n"
 	$(OPENSSL) dhparam $(DHPARAM) -out $@
-	$(CHMOD) 444 $@
 
-$(RSACERT) :
+$(RSAPRIV) :
+	@echo -n "Generate RSA $(RSAPARAM) private key.\n"
+	$(OPENSSL) genrsa -out $@ -F4 $(RSAPARAM)
+
+$(RSACERT) : $(RSAPRIV)
 	@echo -n "Generating RSA $(RSAPARAM) certificate file.\n"
-	$(OPENSSL) req -nodes -new -x509 -newkey rsa:$(RSAPARAM) -keyout $(RSAPRIV) -out $@
+	$(OPENSSL) req -nodes -new -x509 -key $^ -out $@
 
 
 cert: $(DHPEM) $(RSAPRIV) $(RSACERT)
