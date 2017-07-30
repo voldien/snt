@@ -105,10 +105,20 @@ extern int sntASymCopyPublicKey(
 		const SNTConnection* __restrict__ connection, void* __restrict__ cpkey);
 
 /**
- *	Load asymmetric key from file.
- *	Not supported.
+ *	Create asymmetric key from file.
+ *
+ *	@Return non zero if successful.
  */
-extern int sntASymCreateKeyFromFile(SNTConnection* __restrict__ connection,
+extern int sntASymCreateKeyFromFile(
+		const SNTConnection* __restrict__ connection, unsigned int cipher,
+		void* __restrict__ filepath, unsigned int private);
+
+/**
+ *	Create asymmetric key from x509 certificate.
+ *
+ *	@Return non zero if successful.
+ */
+extern int sntASymCreateFromX509File(SNTConnection* __restrict__ connection,
 		const char* __restrict__ cfilepath);
 
 /**

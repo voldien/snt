@@ -236,6 +236,85 @@ int sntASymCopyPublicKey(const SNTConnection* connection, void* cpkey){
 	return pub_len;
 }
 
+int sntASymCreateKeyFromFile(const SNTConnection* __restrict__ connection,
+		unsigned int cipher, void* __restrict__ filepath, unsigned int private) {
+
+	int res;
+	long int len;
+	void* pkey;
+
+	/*	Load content of the file.	*/
+	len = sntLoadFile(filepath, &pkey);
+	if(len <= 0){
+		return 0;
+	}
+
+	/*	Create key from data.	*/
+	res = sntASymCreateKeyFromData(connection, cipher, pkey, len, private);
+
+	/*	Release key.	*/
+	sntMemZero(pkey, len);
+	free(pkey);
+
+	return res;
+}
+
+int sntASymCreateFromX509File(SNTConnection* __restrict__ connection,
+		const char* __restrict__ cfilepath){
+
+	STACK_OF(X509_INFO) *certstack;
+	BIO* bio;
+	int i;
+	EVP_PKEY *pkey;
+	X509_INFO *stack_item = NULL;
+	X509_NAME *certsubject = NULL;
+	X509* cert;
+	unsigned int asym = 0;
+
+	/*	Load file.	*/
+	bio = BIO_new(BIO_s_file());
+	if (BIO_read_filename(bio, cfilepath) <= 0) {
+		sntSSLPrintError();
+		return 0;
+	}
+
+	/*	Read x509 from PEM file.	*/
+	if (!(cert = PEM_read_bio_X509(bio, NULL, 0, NULL))) {
+		sntSSLPrintError();
+		return 0;
+	}
+
+	/*	Extract public key from x509.	*/
+	if ((pkey = X509_get_pubkey(cert)) == NULL) {
+		sntSSLPrintError();
+		return 0;
+	}
+
+	/*	Check public key type.	*/
+	switch (pkey->type) {
+	case EVP_PKEY_RSA:
+		asym = SNT_ENCRYPTION_ASYM_RSA;
+		connection->asymkey = EVP_PKEY_get1_RSA(pkey);
+		break;
+    case EVP_PKEY_DSA:
+    case EVP_PKEY_EC:
+	default:
+		sntLogErrorPrintf("Not Supported.\n");
+		return 0;
+	}
+
+	/*	Assign asymmetric meta. */
+	connection->asymchiper = asym;
+    connection->asynumbits = (unsigned int)EVP_PKEY_size(pkey) * 8;
+
+	/*	Release.    */
+	EVP_PKEY_free(pkey);
+	X509_free(cert);
+	BIO_free_all(bio);
+
+	return 1;
+}
+
 int sntASymPubEncrypt(unsigned int type, const void* source, unsigned int len,
 		void* dest, const void* key) {
 
