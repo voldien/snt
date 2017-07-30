@@ -1,5 +1,6 @@
 #include"snt_utility.h"
 #include<assert.h>
+#include<errno.h>
 
 
 void sntSwapPointer(void** a, void** b){
@@ -57,7 +58,10 @@ long int sntLoadFile(const char* cfilename, void** pbuf){
 
 	/*	Open file.	*/
 	f = fopen(cfilename, "rb");
-	assert(f);
+	if(!f){
+		fprintf(stderr, "Failed opening %s, %s.\n", cfilename, strerror(errno));
+		return -1;
+	}
 
 	/*	Get size of the file.	*/
 	fseek(f, 0, SEEK_END);
