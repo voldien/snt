@@ -227,6 +227,7 @@ void* sntClientIntegrityBenchmark(void* patt){
 	result.elapse = sntGetNanoTime() - starttime;
 	result.type = 0;
 
+    /*  End benchmark.  */
 	sntBenchmarkEnd(con, &result);
 	return NULL;
 }
@@ -264,7 +265,7 @@ void* sntClientPerformanceBenchmark(void* patt){
 		if( len <= 0){
 			break;
 		}
-		result.nbytes += len;
+		result.nbytes += (uint64_t)len;
 		result.npackets++;
 
 		/*	Wait.	*/
@@ -273,10 +274,10 @@ void* sntClientPerformanceBenchmark(void* patt){
 
 	/*	*/
 	sntInitDefaultHeader(&result.header, SNT_PROTOCOL_STYPE_RESULT, sizeof(result));
-	result.elapse = sntGetNanoTime() - starttime;
+	result.elapse = (sntGetNanoTime() - starttime);
 	result.type = 0;
 
-	/*	*/
+    /*  End benchmark.  */
 	sntBenchmarkEnd(con, &result);
 	return NULL;
 }
@@ -343,9 +344,8 @@ void* sntClientFileBenchmark(void* patt){
 	result.elapse = (uint64_t)(sntGetNanoTime() - starttime);
 	result.type = 0;
 
-	/*	*/
+	/*	End benchmark.  */
 	fclose(f);
 	sntBenchmarkEnd(con, &result);
 	return NULL;
 }
-
