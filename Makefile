@@ -11,6 +11,7 @@ RM := rm -f
 CP := cp
 MKDIR := mkdir -p
 CHMOD := chmod
+CHOWN := chown
 # Crypto utility
 OPENSSL := openssl
 # Directories
@@ -84,14 +85,16 @@ cert: $(DHPEM) $(RSAPRIV) $(RSACERT)
 install_cert: cert
 	@echo -n "Install diffie hellman pem file.\n"
 	$(CP) $(DHPEM) $(SSL_DIR)/certs
-	$(CHMOD) 444 $(SSL_DIR)/certs/$(DHPEM)
+	$(CHMOD) 644 $(SSL_DIR)/certs/$(DHPEM)
+	$(CHOWN) root:ssl-cert $(SSL_DIR)/certs/$(DHPEM)
 	@echo -n "Install RSA private key pem file.\n"
 	$(MKDIR) ~/.snt
 	$(CP) $(RSAPRIV) ~/.snt
 	$(CHMOD) 400 ~/.snt/$(RSAPRIV)
 	@echo -n "Install RSA X509 certificate file.\n"
 	$(CP) $(RSACERT) $(SSL_DIR)/certs
-	$(CHMOD) 444 $(SSL_DIR)/certs/$(RSACERT)
+	$(CHMOD) 644 $(SSL_DIR)/certs/$(RSACERT)
+	$(CHOWN) root:ssl-cert $(SSL_DIR)/certs/$(RSACERT)
 
 distribution:
 	$(RM) -r $(TARGET)-$(VERSION)
