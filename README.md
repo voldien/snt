@@ -23,14 +23,14 @@ The program is installed with the following commands.
 make
 make install
 ```
-#wireshark#
+## Wireshark ##
 The wireshark dissector for decoding snt packets with wireshark program can be installed with the following command:
 ```
 make install_wireshark
 ```
 This will install a lua script in the $(USER)/.wireshark.
 
-#service#
+## Service ##
 service script can be installed to run the snt program as a service. This can be done with the following command:
 ```bash
 make insall_service 
@@ -38,6 +38,14 @@ make insall_service
 The the service can be started as followed:
 ```bash
 service sntd start
+```
+
+## Certificates ##
+The snt program support loading certificate and PEM files. The snt default settings is to load certifcates and PEM files from the filesystem.
+The following command will generate the certificate, private key and diffie hellman parameter. This may take a long time because diffie hellman is set to 2048 bit.
+```bash
+make cert
+make install_cert
 ```
 
 # Examples #
