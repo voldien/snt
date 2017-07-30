@@ -24,8 +24,9 @@ SNTConnection** g_contable = NULL;
 unsigned int g_curthread = 0;
 int g_numcliconne = 1;
 char* g_filepath = NULL;
-char* cerficatefilepath = NULL;
-
+char* g_cerficatefilepath = "/etc/ssl/certs/snt.cert";
+char* g_prikeyfilepath = "~/.snt/snt.pem";
+char* g_dhfilepath = "/etc/ssl/certs/sntdh.pem";
 
 const char* sntGetVersion(void){
 	return SNT_STR_VERSION " (" SNT_ARCH ") -- " SNT_COMPILER_NAME;
@@ -318,17 +319,34 @@ void sntReadArgument(int argc,  char *const * argv, char* ip, unsigned int* port
 		case 'X':
 			if(optarg){
 				/*	Use certificate file.	*/
-				cerficatefilepath = optarg;
-				if(access(cerficatefilepath, F_OK | R_OK) != 0){
-					fprintf(stderr, "File %s is not accessible, %s.\n", optarg, strerror(errno));
+				sntDebugPrintf("Verifying the file %s exists.\n", optarg);
+				g_cerficatefilepath = optarg;
+				if(access(g_cerficatefilepath, F_OK | R_OK) != 0){
+					sntLogErrorPrintf("File %s is not accessible, %s.\n", optarg, strerror(errno));
+					exit(EXIT_FAILURE);
+				}
+				option->certificate = SNT_CERTIFICATE_X509;
+			}
+			break;
+		case 'x':
+			if(optarg){
+				sntDebugPrintf("Verifying the file %s existing.\n", optarg);
+				g_prikeyfilepath = optarg;
+				if(access(g_prikeyfilepath, F_OK | R_OK) != 0){
+					sntLogErrorPrintf("File %s is not accessible, %s.\n", optarg, strerror(errno));
 					exit(EXIT_FAILURE);
 				}
 			}
 			break;
 		case 'i':
 			if(optarg){
-				option->dh = (uint32_t)strtol(optarg, NULL, 10);
-				sntVerbosePrintf("Diffie hellman set to %d bit.\n", option->dh);
+                if(access(optarg, F_OK | R_OK) != 0){
+                	g_dhfilepath = optarg;
+                }else{
+                    option->dh = (uint32_t)strtol(optarg, NULL, 10);
+                    g_dhfilepath = NULL;
+                    sntVerbosePrintf("Diffie hellman set to %d bit.\n", option->dh);
+                }
 			}else{
 				option->dh = 1;
 			}
@@ -569,15 +587,26 @@ int sntInitServer(unsigned int port, SNTConnectionOption* option){
 	/*	Check if encryption is enabled.	*/
 	if(option->ssl){
 
-
-		sntVerbosePrintf("Started generating asymmetric key, %s : %d.\n",
-				gc_asymchi_symbol[sntLog2MutExlusive32(option->asymmetric)], option->asymmetric_bits);
-
 		/*	TODO add support for X509 here.	*/
-		if(cerficatefilepath){
-			fprintf(stderr, "Failed, X509 not supported.\n");
-			return 0;
+		if(g_cerficatefilepath){
+
+			/*	Create public key from x509 certificate.	*/
+			sntVerbosePrintf("Started loading x509 certificate : %s \n",
+			        g_cerficatefilepath);
+			if(!sntASymCreateFromX509File(g_bindconnection, g_cerficatefilepath)){
+				sntLogErrorPrintf("Failed, X509 not supported.\n");
+				return 0;
+			}
+
+			/*	*/
+			sntVerbosePrintf("Started loading private key : %s \n", g_prikeyfilepath);
+			if(!sntASymCreateKeyFromFile(g_bindconnection, g_bindconnection->asymchiper, g_prikeyfilepath, 1)){
+				sntLogErrorPrintf("sntASymCreateKeyFromFile Failed.\n");
+				return 0;
+			}
 		}else{
+			sntVerbosePrintf("Started generating asymmetric key, %s : %d.\n",
+					gc_asymchi_symbol[sntLog2MutExlusive32(option->asymmetric)], option->asymmetric_bits);
 			/*	Create asymmetric key and check if successfully.	*/
 			if(sntASymGenerateKey(g_bindconnection, option->asymmetric, option->asymmetric_bits) == 0){
 				sntLogErrorPrintf("Failed to create asymmetric cipher key.\n");
@@ -586,12 +615,26 @@ int sntInitServer(unsigned int port, SNTConnectionOption* option){
 			}
 		}
 
+		/*  Check if diffie hellman option selected.    */
 		if(option->dh > 0){
-			if(!sntDHCreate(&g_bindconnection->dh, option->dh)){
-				sntLogErrorPrintf("Failed to create diffie hellman.\n");
-				sntDisconnectSocket(g_bindconnection);
-				return 0;
-			}
+		    /*  Check if to load from file. */
+		    if(g_dhfilepath){
+		    	/*	Create Diffie hellman from file.	*/
+		        sntVerbosePrintf("Loading Diffie hellman from file %s.\n", g_dhfilepath);
+		        if(!sntDHCreateFromPEMFile(&g_bindconnection->dh, g_dhfilepath)){
+                    sntLogErrorPrintf("Failed to load diffie hellman, %s.\n", g_dhfilepath);
+                    sntDisconnectSocket(g_bindconnection);
+                    return 0;
+		        }
+		    }else{
+		    	/*	Generate Diffie hellman.	*/
+                sntVerbosePrintf("Creating Diffie hellman %d bit.\n", option->dh);
+                if(!sntDHCreate(&g_bindconnection->dh, option->dh)){
+                    sntLogErrorPrintf("Failed to create diffie hellman.\n");
+                    sntDisconnectSocket(g_bindconnection);
+                    return 0;
+                }
+		    }
 		}
 	}
 
