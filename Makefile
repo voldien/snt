@@ -19,7 +19,7 @@ PREFIX ?= /usr
 INSTALL_LOCATION=$(DESTDIR)$(PREFIX)
 SSL_DIR := $(DESTDIR)/etc/ssl
 # Compiler
-CC ?= gcc
+CC ?= cc
 CFLAGS = -I"include" -DSNT_STR_VERSION=\"$(VERSION)\" -DSNT_MAJOR=$(MAJOR) -DSNT_MINOR=$(MINOR)
 CLIBS = -lssl -lcrypto -lz -llz4 -lpthread -lbz2
 # Sources
