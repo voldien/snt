@@ -131,7 +131,7 @@ int sntProtFuncCertificate(SNTConnection* connection, const SNTUniformPacket* pa
 	if(connection->option->dh > 0){
 		SNTPacketHeader pack;
 		sntInitDefaultHeader(&pack, SNT_PROTOCOL_STYPE_DH_REQ, sizeof(pack));
-		return sntWriteSocketPacket(connection, &pack);
+		return sntWriteSocketPacket(connection, (const SNTUniformPacket*)&pack);
 	}
 
 	/*	Generate symmetric key to use.	*/
@@ -297,12 +297,12 @@ int sntProtFuncDHInit(SNTConnection* __restrict__ connection,
 	SNTDHInit* init = (SNTDHInit*)packet;
 	const size_t packlen = sizeof(SNTDHExch);
 	int len;
-	void* p;
-	void* g;
+	const uint8_t* p;
+	const uint8_t* g;
 
 	/*	Extract p and g from packet.	*/
-	p = &((uint8_t*)sntDatagramGetBlock(packet))[init->offset];
-	g = &((uint8_t*)sntDatagramGetBlock(packet))[init->offset + init->plen];
+	p = &((const uint8_t*)sntDatagramGetBlock(packet))[init->offset];
+	g = &((const uint8_t*)sntDatagramGetBlock(packet))[init->offset + init->plen];
 
 	/*	Create diffie hellman from p and g.	*/
 	if(!sntDHCreateByData(&connection->dh, p, g, init->plen, init->glen)){
@@ -326,8 +326,7 @@ int sntProtFuncDHExch(SNTConnection* __restrict__ connection,
 	SNTDHExch* exch = (SNTDHExch*)packet;
 	int plen;
 	void *pkey;
-	void* q;
-
+	const void* q;
 
 	/*	If server, exhange.	*/
 	if(g_bindconnection){
@@ -339,7 +338,9 @@ int sntProtFuncDHExch(SNTConnection* __restrict__ connection,
 	}
 
 	/*	Extract key.	*/
-	q = &((uint8_t*)sntDatagramGetBlock(exch))[exch->offset];
+	q = &((uint8_t const *)sntDatagramGetBlock((SNTUniformPacket*)exch))[exch->offset];
+
+	/*	Allocate for secure shared key.	*/
 	plen = sntDHSize(connection->dh);
 	pkey = malloc(plen);
 
@@ -553,7 +554,7 @@ int sntSendDHpq(const SNTConnection* __restrict__ bind,
 	init->bitsize = bnum * 8;
 
 	/*	Send packet.	*/
-	len = sntWriteSocketPacket(client, init);
+	len = sntWriteSocketPacket(client, (const SNTUniformPacket*)init);
 
 	/*	Release packet from memory.	*/
 	sntMemZero(init, sntProtocolPacketSize(init));
@@ -588,7 +589,7 @@ int sntSendDHExch(const SNTConnection* __restrict__ connection){
 	exch->sym = connection->option->symmetric;
 
 	/*	Send packet.	*/
-	len = sntWriteSocketPacket(connection, exch);
+	len = sntWriteSocketPacket(connection, (const SNTUniformPacket*)exch);
 
 	/*	Release.	*/
 	sntMemZero(exch, sntProtocolPacketSize(exch));
@@ -625,6 +626,5 @@ int sntSendError(const SNTConnection* connection, int code,
 }
 
 int sntSendBenchMarkResult(const SNTConnection* connection, const SNTResultPacket* result){
-	return sntWriteSocketPacket(connection, result);
+	return sntWriteSocketPacket(connection, (const SNTUniformPacket*)result);
 }
-
