@@ -95,16 +95,16 @@ Specifiy number of listing on the TCP socket. Server only.
 .BR \-n ", " \-\-parallel =\fINUMCONNECTIONS\fR
 Number of parallel ports. Client only.
 .TP
-.BR \-b ", " \-\-benchmarkmode
+.BR \-b ", " \-\-benchmarkmode =
 Sets the benchmark to perform.
 .TP
 .BR \-r ", " \-\-duration=
 Specifiy the duration of the benchmark in seonds.
 .TP
-.BR \-c ", " \-\-cipher
+.BR \-c ", " \-\-cipher =
 Set the symmetric cipher used for the secure connection. Default is AES128.
 .TP
-.BR \-P ", " \-\-public-key 
+.BR \-P ", " \-\-public-key =
 Set the asymmetric cipher used for performing key exchange. Default is RSA.
 .TP
 .BR \-B ", " \-\-public-nbits =\fIBITS\fR
@@ -113,11 +113,18 @@ Sets the size of asymmetric cipher key. Default is 1024.
 .BR \-f ", " \-\-file =\fIPATH\fR
 Set file used for the file transfer performance benchmark mode.
 .TP
-.BR \-A ", " \-\-affinity
-Set the affinity of the process. This will limit what CPU and cores that can be used for the process.
+.BR \-A ", " \-\-affinity=\fICPU\fR "," \fICORE\fR "," \fINUM\fR 
+Set the affinity of the process. This will limit what CPU and cores that can be used for the process. The file has to be an X509 file.
 .TP
-.BR \-X ", " \-\-certificate	 
+.BR \-X ", " \-\-certificate =\fIPATH\fR
 Specifiy cerficate file used during the key exchange phase.
+.TP
+.BR \-x ", " \-\-private-key =\fIPATH\fR
+Specifiy private key file used during the key exchange phase. The file has to be PEM file.
+.TP
+.BR \-i ", " \-\-dh =\fIPATH\fR " or " \fINUMBITS\fR 
+Set size of the diffie hellman used in bits. This will generate a diffie hellman p and q. The argument can either be decimal number or PEM file.
+.TP
 
 
 .SH EXIT STATUS
