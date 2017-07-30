@@ -49,7 +49,6 @@ const char* gc_symchi_symbol[] = {
 const char* gc_asymchi_symbol[] = {
 		"",
 		"RSA",
-		"elliptic-curves",
 		NULL,
 };
 
