@@ -352,7 +352,7 @@ int sntProtFuncDHExch(SNTConnection* __restrict__ connection,
 
 	/*	Create symmetric key.	*/
 	if(!sntSymCreateFromKey(connection, exch->sym, pkey)){
-		sntSendError(connection, SNT_ERROR_SERVER, "");
+		sntSendError(connection, SNT_ERROR_SERVER, "Failed create shared key.");
 		return 0;
 	}
 
