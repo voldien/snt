@@ -191,7 +191,7 @@ function snt.dissector(buf, pkt, root)
   
   -- Check if command extract is in range, main dissector of the
   -- the protocol.
-	if result <= SNT_MAX_STYPE then
+	if result <= SNT_MAX_STYPE and result > 0 then
   
     -- Create subtree for packet command type.
     local subtree = tree:add(buf:range(bytes_consumed), "Message type: " .. stype_hdr_symbol[result])
