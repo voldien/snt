@@ -168,7 +168,7 @@ function snt.dissector(buf, pkt, root)
 
   -- Dissect protocol header of the packet.
   local head = buf(0, SNT_MSG_HDR_LEN)
-	local result, tree = dissectSNT(head, pkt, root, bytes_consumed)
+	local result, tree = dissectSNTHeader(head, pkt, root, bytes_consumed)
 	bytes_consumed = sntProtocolHeaderSize(head)
 
   -- Check if to continue the dissection.
@@ -220,7 +220,7 @@ end
 -- Dissect SNT protocol header.
 -- @Return stype command.
 -- 
-function dissectSNT(tvbuf, pktinfo, root, offset)
+function dissectSNTHeader(tvbuf, pktinfo, root, offset)
 
 	local length_val, length_tvbr = tvbuf:len() - offset
 
