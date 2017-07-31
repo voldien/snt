@@ -91,6 +91,7 @@ local snt_hdr_fields =
   -- Error
   err_code = ProtoField.int32("snt.error.code", "Error Code", base.DEC),
   err_length = ProtoField.uint32("snt.error.length", "Error Message Length", base.DEC),
+  err_msg = ProtoField.bytes("snt.error.msg", "Error Message"),
   
   -- Result
   res_type = ProtoField.uint32("snt.result.type", "Result Type", base.DEC),
@@ -467,11 +468,18 @@ end
 -- @Return
 function sntDissectErrorPacket(tvbuf, pktinfo, tree, offset)
   
-  --
+  -- Print error code.
   tree:add(snt_hdr_fields.err_code, tvbuf(offset + 0, 4), tvbuf(offset + 0, 4):le_uint())
 
-  --
-  tree:add(snt_hdr_fields.err_length, tvbuf(offset + 4, 4), tvbuf(offset + 4, 4):le_uint())
+  -- Print error message length in character.
+  local msglen = tvbuf(offset + 4, 4):le_uint()
+  tree:add(snt_hdr_fields.err_length, tvbuf(offset + 4, 4), msglen)
+  
+  -- Check if message exists.
+  if msglen > 0 then
+    msg = tvbuf(offset + 8, msglen)
+    tree:add(snt_hdr_fields.err_msg, msg, tostring(msg))
+  end
   
   -- 
   pktinfo.cols.info = "Error packet."
