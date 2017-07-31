@@ -611,7 +611,7 @@ extern void sntDropPacket(const SNTConnection* connection);
  *	Copy application protocol header. This includes layer
  *	5 to 7 in the OSI model.
  */
-extern void sntCopyHeader(SNTPacketHeader* dest, const SNTPacketHeader* __restrict__ source);
+extern void sntCopyHeader(SNTPacketHeader* __restrict__ dest, const SNTPacketHeader* __restrict__ source);
 
 /**
  *	Copy packet payload.
