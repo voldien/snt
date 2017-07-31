@@ -47,7 +47,7 @@ local snt_hdr_fields =
   -- Presentation layer for resolving encryption padding issue and other.
   presentation = ProtoField.uint8("snt.presentation.noffet", "Negative offset", base.DEC),
   presentationiv = ProtoField.bytes("snt.presentation.IV", "Initilization Vector"),
-  presentationfb = ProtoField.bytes("snt.presentation.fb", base.DEC),
+  presentationfb = ProtoField.uint32("snt.presentation.fb", "Feedback", base.DEC),
   
   -- Initialization packet.
   secure = ProtoField.uint32("snt.init.ssl", "Secure", base.DEC),
