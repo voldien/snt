@@ -40,7 +40,7 @@ case "$1" in
                 then
                         echo "$name is already running."
                 else
-                        echo -n "Starting $name..."
+                        echo -n "Starting $name...\n"
                         # read config file.
 
                         "$daemon" --respawn $daemon_start_args  \
