@@ -60,7 +60,7 @@ install : $(TARGET)
 install_wireshark_dissector:
 	@echo -n "Installing wireshark dissector.\n"
 	$(MKDIR) $(HOME)/.wireshark/plugins
-	$(CP) init.lua $(HOME)/.wireshark/plugins/snt.lua
+	$(CP) snt.lua $(HOME)/.wireshark/plugins/snt.lua
 
 install_service:
 	$(CP) $(SERVICE) /etc/init.d
