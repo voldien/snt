@@ -395,6 +395,8 @@ typedef union snt_unionform_packet_t{
 	};
 }__attribute__ ((__packed__))SNTUniformPacket;
 
+typedef struct snt_benchmark_session_t SNTBenchmarkSession;
+
 /**
  *	Connection container object.
  */
@@ -425,6 +427,7 @@ typedef struct snt_connection_t{
 	void* symdec;                   /*	Symmetric Decryption key, Only used for AES.	*/
 	sntDH* dh;                      /*	Diffie hellman.	*/
 	SNTConnectionOption* option;    /*	Connection option.	*/
+	SNTBenchmarkSession* session;   /*	Benchmark session.	*/
 }SNTConnection;
 
 /**
