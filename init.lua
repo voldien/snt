@@ -98,7 +98,21 @@ local snt_hdr_fields =
   res_npackets = ProtoField.uint64("snt.result.npackets", "Number of Packets", base.DEC),
   res_nbytes = ProtoField.uint64("snt.result.nbytes", "Number of Bytes", base.DEC),
   res_elapse = ProtoField.uint64("snt.result.elapse", "Elapse Time", base.DEC),
-  res_timeres = ProtoField.uint64("snt.result.timeres", "Time Resolution", base.DEC)
+  res_timeres = ProtoField.uint64("snt.result.timeres", "Time Resolution", base.DEC),
+
+  -- Diffie hellman  
+  -- Diffie hellman request don't need 
+  
+  -- Diffie hellman init
+  hs_init_numbit = ProtoField.uint32("snt.dh.numbits", "Number of bits for Diffie hellman.", base.DEC),
+  hs_init_plen = ProtoField.uint32("snt.dh.plen", "P size in bytes.", base.DEC),
+  hs_init_glen = ProtoField.uint32("snt.dh.glen", "G size in bytes.", base.DEC),
+  hs_init_offset = ProtoField.uint32("snt.dh.offset", "Offset in bytes.", base.DEC),
+  
+  -- Diffie hellman exchange.
+  hs_exch_qlen = ProtoField.uint32("snt.dh.qlen", "Q size in bytes.", base.DEC),
+  hs_exch_offset = ProtoField.uint32("snt.dh.offset", "Offset in bytes.", base.DEC),
+  hs_exch_sym = ProtoField.uint32("snt.dh.sym", "Symmetric cipher to create from Diffie hellman.", base.DEC),
   
 }
 
@@ -129,6 +143,9 @@ local stype_hdr_symbol=
   [7] = "Error",
   [8] = "Benchmark",
   [9] = "Result",
+  [10] = "DHReq",
+  [11] = "DHInit",
+  [12] = "DHExch"
 }
 
 -- TODO fix.
@@ -547,6 +564,18 @@ end
 -- @Return
 function sntDissectDHInit(tvbuf, pktinfo, tree, offset)
 
+  --
+  tree:add(snt_hdr_fields.hs_init_numbit, tvbuf(offset + 0, 4), tvbuf(offset + 0, 4):le_uint())
+  
+  --
+  tree:add(snt_hdr_fields.hs_init_plen, tvbuf(offset + 4, 4), tvbuf(offset + 4, 4):le_uint())
+
+  --  
+  tree:add(snt_hdr_fields.hs_init_glen, tvbuf(offset + 8, 4), tvbuf(offset + 8, 4):le_uint())
+  
+  --
+  tree:add(snt_hdr_fields.hs_init_offset, tvbuf(offset + 12, 1), tvbuf(offset + 12, 1):le_uint())
+  
   return 0
 end
 
@@ -555,6 +584,15 @@ end
 -- @Return
 function sntDissectDHExch(tvbuf, pktinfo, tree, offset)
 
+  --
+  tree:add(snt_hdr_fields.hs_exch_qlen, tvbuf(offset + 0, 4), tvbuf(offset + 0, 4):le_uint())
+  
+  --
+  tree:add(snt_hdr_fields.hs_exch_offset, tvbuf(offset + 4, 4), tvbuf(offset + 4, 4):le_uint())
+
+  --  
+  tree:add(snt_hdr_fields.hs_exch_sym, tvbuf(offset + 8, 4), tvbuf(offset + 8, 4):le_uint())
+  
   return 0
 end
 
