@@ -197,8 +197,6 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 		break;
 	}
 
-
-
 	/*	Allocate transmission and receive buffer.	*/
 	connection->tranbuf = malloc(1 << 16);
 	assert(connection->tranbuf);
@@ -207,8 +205,8 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 
 	/*	Allocate payload.	*/
 	connection->mtubuf = malloc(
-			connection->option->payload + sizeof(SNTPacketHeader)
-					+ sizeof(SNTPresentationPacket));
+	        connection->option->payload + sizeof(SNTPacketHeader)
+	                + sizeof(SNTPresentationPacket));
 	assert(connection->mtubuf);
 
 }
@@ -329,6 +327,7 @@ SNTConnection* sntAcceptSocket(SNTConnection* bindcon){
 	/*	Get attribute about connection interface.	*/
 	sntGetInterfaceAttr(connection);
 
+	/**/
 	connection->udpsock = dup(bindcon->udpsock);
 
 	/*	Create init packet to send to client.	*/
@@ -370,6 +369,7 @@ SNTConnection* sntConnectSocket(const char* host, uint16_t port,
 	connection = sntPoolObtain(g_connectionpool);
 	assert(connection);
 
+	/*  */
 	sntConnectionCopyOption(connection, option);
 	domain = option->affamily;
 
@@ -470,7 +470,7 @@ void sntDisconnectSocket(SNTConnection* connection){
 	sntASymFree(connection);
 	sntSymFree(connection);
 
-	/*	Release */
+	/*	Release memories. */
 	free(connection->option);
 	free(connection->extaddr);
 	free(connection->mtubuf);
