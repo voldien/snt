@@ -624,24 +624,24 @@ int sntInitServer(unsigned int port, SNTConnectionOption* option){
 
 		/*  Check if diffie hellman option selected.    */
 		if(option->dh > 0){
-		    /*  Check if to load from file. */
-		    if(g_dhfilepath){
-		    	/*	Create Diffie hellman from file.	*/
-		        sntVerbosePrintf("Loading Diffie hellman from file %s.\n", g_dhfilepath);
-		        if(!sntDHCreateFromPEMFile(&g_bindconnection->dh, g_dhfilepath)){
-                    sntLogErrorPrintf("Failed to load diffie hellman, %s.\n", g_dhfilepath);
-                    sntDisconnectSocket(g_bindconnection);
-                    return 0;
-		        }
-		    }else{
-		    	/*	Generate Diffie hellman.	*/
-                sntVerbosePrintf("Creating Diffie hellman %d bit.\n", option->dh);
-                if(!sntDHCreate(&g_bindconnection->dh, option->dh)){
-                    sntLogErrorPrintf("Failed to create diffie hellman.\n");
-                    sntDisconnectSocket(g_bindconnection);
-                    return 0;
-                }
-		    }
+			/*  Check if to load from file. */
+			if(g_dhfilepath){
+				/*	Create Diffie hellman from file.	*/
+				sntVerbosePrintf("Loading Diffie hellman from file %s.\n", g_dhfilepath);
+				if(!sntDHCreateFromPEMFile(&g_bindconnection->dh, g_dhfilepath)){
+					sntLogErrorPrintf("Failed to load diffie hellman, %s.\n", g_dhfilepath);
+					sntDisconnectSocket(g_bindconnection);
+					return 0;
+				}
+			}else{
+				/*	Generate Diffie hellman.	*/
+				sntVerbosePrintf("Creating Diffie hellman %d bit.\n", option->dh);
+				if (!sntDHCreate(&g_bindconnection->dh, option->dh)) {
+					sntLogErrorPrintf("Failed to create diffie hellman.\n");
+					sntDisconnectSocket(g_bindconnection);
+					return 0;
+				}
+			}
 		}
 	}
 
