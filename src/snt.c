@@ -124,6 +124,13 @@ void sntReadArgument(int argc,  char *const * argv, char* ip, unsigned int* port
 		case 'q':
 			sntVerbosityLevelSet(SNT_LOG_QUITE);
 			break;
+		case 'y':
+			if(g_server){
+				sntLogEnableSys(1);
+			}else{
+				sntLogErrorPrintf("Requires to run as server in order to use syslog.\n");
+			}
+			break;
 		case 's':
 			g_server = 1;
 			g_client = 0;
