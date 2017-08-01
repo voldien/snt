@@ -157,7 +157,6 @@ local stype_col_info=
 -- 
 function snt.dissector(buf, pkt, root)
 
-
   -- Do nothing if dissector is disabled.
   if not default_settings.enabled then
     return 0 -- TODO check default return value actually is.
@@ -205,7 +204,7 @@ function snt.dissector(buf, pkt, root)
       sntProtocolIsEncrypted(head) then
       local consumed = disectcommand[result](buf, pkt, subtree, bytes_consumed)
     else
-      dprint("Packet content not decodable.")
+      dprint("Packet's content not decodable.")
     end
   else
     -- Display invalid or unknown packet.
@@ -325,7 +324,7 @@ end
 ------------------------------------------------------------
 -- Dissect the presentation layer, containing cryptographic
 -- information for decryping the packet payload.
--- 
+-- @Return Presentation layer size in bytes.
 function sntDissectPresentationLayer(tvbuf, pktinfo, tree, flag)
 
   -- 
@@ -411,13 +410,19 @@ end
 -- @Return
 function sntDissectCertPacket(tvbuf, pktinfo, tree, offset)
   
-  --
+  -- Print certificate type in the packet.
   tree:add(snt_hdr_fields.cert_certype, tvbuf(offset + 0, 1), tvbuf(offset + 0, 1):le_uint())
+  
+  -- Print hash type used for computing the hash contained in the encrypted hash block.
   tree:add(snt_hdr_fields.cert_hashtype, tvbuf(offset + 1, 4), tvbuf(offset + 1, 4):le_uint())
   
-  --
+  -- Print hash block size without encryption.
   tree:add(snt_hdr_fields.cert_localhashedsize, tvbuf(offset + 5, 4), tvbuf(offset + 5, 4):le_uint())
+  
+  -- Print hash block size with encryption.
   tree:add(snt_hdr_fields.cert_encryedhashsize, tvbuf(offset + 9, 4), tvbuf(offset + 9, 4):le_uint())
+  
+  --  Print offset to certificate buffer.
   tree:add(snt_hdr_fields.cert_offset, tvbuf(offset + 10, 1), tvbuf(offset + 10, 1):le_uint())
 
   --
@@ -429,9 +434,13 @@ end
 -- @Return
 function sntDissectSecPacket(tvbuf, pktinfo, tree, offset)
 
-  --
+  -- Print symmetric cipher.
   tree:add(snt_hdr_fields.sec_symchiper, tvbuf(offset + 0, 4), tvbuf(offset + 0, 4):le_uint())
+  
+  -- Print symmetric cipher size in bits.
   tree:add(snt_hdr_fields.sec_keybitlen, tvbuf(offset + 4, 4), tvbuf(offset + 4, 4):le_uint())
+  
+  -- Print encrypted symmetric key in bytes.
   tree:add(snt_hdr_fields.sec_encrykeyblock, tvbuf(offset + 8, 4), tvbuf(offset + 8, 4):le_int())  
 
   --
@@ -575,7 +584,7 @@ local function enableDissector()
 	local udp_encap_table = DissectorTable.get("udp.port")
 	local tcp_encap_table = DissectorTable.get("tcp.port")
 	
-	--
+	-- Add dissection for UDP and TCP transport protocol.
 	udp_encap_table:add(54321, snt)
 	tcp_encap_table:add(54321, snt)
 
@@ -595,12 +604,12 @@ function disableDissector()
   local udp_encap_table = DissectorTable.get("udp.port")
   local tcp_encap_table = DissectorTable.get("tcp.port")
 
-  --    
+  -- Remove SNT dissector from UDP table.
   if udp_encap_table:get_dissector(54321) then
     udp_encap_table:remove(54321, udp_encap_table:get_dissector(54321))
    end
    
-  --
+  -- Remove SNT dissector from TCP table.
   if tcp_encap_table:get_dissector(54321) then
     tcp_encap_table:remove(54321, tcp_encap_table:get_dissector(54321))
    end
