@@ -1,4 +1,5 @@
 #include"snt_utility.h"
+#include<limits.h>
 #include<assert.h>
 #include<errno.h>
 
@@ -55,6 +56,14 @@ long int sntLoadFile(const char* cfilename, void** pbuf){
 	long int nbytes;
 	long int size;
 	FILE* f;
+
+	/*	Special case.	*/
+	if(*cfilename == '~'){
+		char buf[PATH_MAX];
+		const char* base = getenv("HOME");
+		sprintf(buf, "%s/%s", base, ++cfilename);
+		cfilename = buf;
+	}
 
 	/*	Open file.	*/
 	f = fopen(cfilename, "rb");
