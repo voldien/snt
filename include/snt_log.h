@@ -33,6 +33,11 @@
 extern void sntVerbosityLevelSet(unsigned int verbosity);
 
 /**
+ *	Set syslog state. Default disabled.
+ */
+extern void sntLogEnableSys(unsigned int enable);
+
+/**
  *	Log.
  *
  *	@Return number of bytes.

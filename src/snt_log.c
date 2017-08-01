@@ -1,8 +1,32 @@
 #include"snt_log.h"
 #include<stdarg.h>
+#include<syslog.h>
+#include<unistd.h>
 
 void sntVerbosityLevelSet(unsigned int verbosity){
 	g_verbosity = verbosity;
+}
+
+void sntLogEnableSys(unsigned int enable){
+	if(enable){
+		/*	*/
+		if(getpgrp() != tcgetpgrp(STDOUT_FILENO)){
+			/*	*/
+			sntDebugPrintf("openlog as daemon process.\n");
+			openlog("snt-server", LOG_PID, LOG_DAEMON);
+		}
+		else{
+			/*	*/
+			sntDebugPrintf("openlog as non daemon process.\n");
+			openlog("snt-server", LOG_PID | LOG_PERROR, LOG_DAEMON);
+		}
+		/*	*/
+		setlogmask (LOG_UPTO (LOG_INFO));
+		atexit(closelog);
+
+	}else{
+		closelog();
+	}
 }
 
 int sntLogPrintfInternal(unsigned int verbosity, const char* fmt,...){
@@ -18,7 +42,6 @@ int sntLogPrintfInternal(unsigned int verbosity, const char* fmt,...){
 
 	return l;
 }
-
 
 int sntLogErrorPrintf(const char* fmt, ...){
 
