@@ -162,7 +162,26 @@ void sntBenchmarkPrintResult(const SNTResultPacket* result){
 	"-----------------------------------------------\n");
 }
 
-void sntBenchmarkEnd(SNTConnection* connection, SNTResultPacket* result){
+void sntBenchmarkPrintSessionResult(const SNTBenchmarkSession* session){
+
+	float duration;
+
+	/*	Benchmark duration.	*/
+	duration = (float)session->elapse / (float)sntGetTimeResolution();
+
+	/*	Display benchmark result.	*/
+	fprintf(stdout, "%f duration.\n", duration);
+	fprintf(stdout, "%3f Mbit sent.\n", (float)(session->nbytes * 8) / (float)(1024 * 1024));
+	fprintf(stdout, "%3f Mbit average.\n",
+			((float)(session->nbytes * 8) / (float)(1024 * 1024)) / duration);
+	fprintf(stdout, "%ld packets sent.\n", session->npackets);
+	fprintf(stdout, "%ld packets out of order.\n", session->ofo);
+	fprintf(stdout, "End of benchmark.\n"
+	"-----------------------------------------------\n");
+}
+
+void sntBenchmarkEnd(SNTConnection* __restrict__ connection,
+		SNTResultPacket* __restrict__ result){
 
 	/*	Get time resolution.	*/
 	result->timeres = (uint64_t)sntGetTimeResolution();

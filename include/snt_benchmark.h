@@ -94,6 +94,11 @@ extern void sntBenchmarkEnd(SNTConnection* __restrict__ connection,
 extern void sntBenchmarkPrintResult(const SNTResultPacket* result);
 
 /**
+ *
+ */
+extern void sntBenchmarkPrintSessionResult(const SNTBenchmarkSession* session);
+
+/**
  *	Send packet diagram with ID string.
  *
  *	@Return null.
