@@ -603,6 +603,7 @@ int sntInitServer(unsigned int port, SNTConnectionOption* option){
 			        g_cerficatefilepath);
 			if(!sntASymCreateFromX509File(g_bindconnection, g_cerficatefilepath)){
 				sntLogErrorPrintf("Failed, X509 not supported.\n");
+				sntDisconnectSocket(g_bindconnection);
 				return 0;
 			}
 
@@ -610,6 +611,7 @@ int sntInitServer(unsigned int port, SNTConnectionOption* option){
 			sntVerbosePrintf("Started loading private key : %s \n", g_prikeyfilepath);
 			if(!sntASymCreateKeyFromFile(g_bindconnection, g_bindconnection->asymchiper, g_prikeyfilepath, 1)){
 				sntLogErrorPrintf("sntASymCreateKeyFromFile Failed.\n");
+				sntDisconnectSocket(g_bindconnection);
 				return 0;
 			}
 		}else{
