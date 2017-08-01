@@ -269,8 +269,8 @@ function dissectSNTHeader(tvbuf, pktinfo, root, offset)
   -- Dissect the total length of incoming packet field.
   tree:add_le(snt_hdr_fields.len, tvbuf(offset + 4, 2))
   
-  -- dissect the flag field
-  tree:add(snt_hdr_fields.flag, tvbuf(offset + 6, 1))
+  -- Dissect the flag field
+  tree:add(snt_hdr_fields.flag, sntProtocolHeaderFlag(tvbuf))
   
 	--
 	-- Return stype of the packet datagram.
@@ -368,6 +368,9 @@ function sntDissectPresentationLayer(tvbuf, pktinfo, tree, flag)
       offset = offset + 4
     end
   end
+  
+  return offset
+  
 end
 
 ------------------------------------------------------------
@@ -444,6 +447,9 @@ function sntDissectCertPacket(tvbuf, pktinfo, tree, offset)
 
   --
   pktinfo.cols.info = "Certificate packet."
+  
+  --
+  return 0
 end
 
 --------------------------------------------------------------------------------
@@ -555,6 +561,7 @@ end
 -- Dissector dummy function.
 -- @Return 
 function sntDissectDHReq(tvbuf, pktinfo, tree, offset)
+
   pktinfo.cols.info = "Diffie hellman request."
   return 0
 end
