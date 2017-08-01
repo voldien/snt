@@ -83,6 +83,10 @@ pthread_t sntBenchmarkCreateThread(unsigned int mode, SNTConnection* patt){
 		return 0;
 	}
 
+	/*	Allocate benchmark session.	*/
+	patt->session = malloc(sizeof(SNTBenchmarkSession));
+	sntMemZero(patt->session, sizeof(SNTBenchmarkSession));
+
 	/*	Create thread.	*/
 	sntDebugPrintf("Creating benchmark thread.\n");
 	err = pthread_create(&thread, &attr, func, patt);

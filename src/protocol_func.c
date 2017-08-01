@@ -210,6 +210,9 @@ int sntProtFuncReady(SNTConnection* connection, const SNTUniformPacket* packet) 
 	}
 	connection->flag |= SNT_CONNECTION_TRANS;
 
+	/*	*/
+	connection->session = malloc(sizeof(SNTBenchmarkSession));
+	sntMemZero(connection->session, sizeof(SNTBenchmarkSession));
 
 	/*	Start.	*/
 	sntLogErrorPrintf("Starting %s benchmark.\n"

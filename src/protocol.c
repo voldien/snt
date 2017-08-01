@@ -476,6 +476,7 @@ void sntDisconnectSocket(SNTConnection* connection){
 	free(connection->mtubuf);
 	free(connection->recvbuf);
 	free(connection->tranbuf);
+	free(connection->session);
 
 	/*	Clean up memory.	*/
 	sntPoolReturn(g_connectionpool, connection);
