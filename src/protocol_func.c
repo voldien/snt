@@ -252,10 +252,14 @@ int sntProtFuncResult(SNTConnection* connection, const SNTUniformPacket* packet)
 
 	const SNTResultPacket* result = (SNTResultPacket*)packet;
 	sntBenchmarkPrintResult(result);
+	sntBenchmarkPrintSessionResult(connection->session);
+
 	return 0;	/*	Kill the connection.	*/
 }
 
 int sntProtFuncBenchmark(SNTConnection* connection, const SNTUniformPacket* packet) {
+
+	SNTBenchmarkSession* session = connection->session;
 
 	switch(connection->option->bm_protocol_mode){
 	case SNT_PROTOCOL_BM_MODE_PERFORMANCE:
@@ -263,26 +267,18 @@ int sntProtFuncBenchmark(SNTConnection* connection, const SNTUniformPacket* pack
 		break;
 	case SNT_PROTOCOL_BM_MODE_FILE:
 		/*	TODO check how to pipe and redirect the data better.	*/
-		fwrite(sntDatagramGetBlock(packet), 1, sntProtocolHeaderDatagramSize(&packet->header), stdout);
-		break;
-	case SNT_PROTOCOL_BM_MODE_INTEGRITY:
-		printf("%s\n", sntDatagramGetBlock(packet));
+		return fwrite(sntDatagramGetBlock(packet), 1,
+				sntProtocolHeaderDatagramSize(&packet->header), stdout);
+	case SNT_PROTOCOL_BM_MODE_INTEGRITY:{
 
-		/*	Compare sequence.	*/
-		switch(connection->option->deltatype){
-		case SNT_DELTA_TYPE_FLOAT:
-			break;
-		case SNT_DELTA_TYPE_HIGHTIMESTAMP:
-			break;
-		case SNT_DELTA_TYPE_TIMESTAMP:
-			break;
-		case SNT_DELTA_TYPE_INT:
-			break;
-		default:
-			break;
+		SNTDelta delta;
+		sntDeltaParse(connection->option->deltatype, sntDatagramGetBlock(packet), &delta);
+		if(!sntDeltaCheckChange(connection->option->deltatype, &session->delta, &delta, &connection->option->delta)){
+			session->ofo++;
 		}
-
-		break;
+		memcpy(&session->delta, &delta, sizeof(delta));
+		printf("%s\n", sntDatagramGetBlock(packet));
+	}break;
 	default:
 		break;
 	}
