@@ -45,7 +45,7 @@ extern void sntSchdSetAffinity(unsigned int cpu, unsigned int cores,
 		unsigned int size);
 
 /**
- *
+ *	Get affinity map of the process.
  */
 extern void sntSchdGetAffinity(unsigned int* cpu, unsigned int* cores,
 		unsigned int* size);

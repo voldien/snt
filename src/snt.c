@@ -453,17 +453,15 @@ void sntServerMain(void){
 							/*	Unmap from IO select blocking.	*/
 							sntUnMapSocket(g_contable, &fd_active, con->udpsock);
 							sntUnMapSocket(g_contable, &fd_active, con->tcpsock);
-							/*
-							g_threadtable[sntPoolGetIndex(g_connectionpool, con)] = NULL;
-							&& g_threadtable[sntPoolGetIndex(g_connectionpool, con)]
-											 */
-							con->flag &= ~SNT_CONNECTION_BENCH;
+
+							con->flag &= ~(SNT_CONNECTION_BENCH);
 							sntDisconnectSocket(con);
 							continue;
 						}
 
 						/*	Create benchmark thread.	*/
 						if( (sntIsBenchEnable(con)) ){
+
 							if(con->option->transport_mode & SNT_TRANSPORT_UDP){
 								sntUnMapSocket(g_contable, &fd_active, con->udpsock);
 							}else{
@@ -595,12 +593,11 @@ int sntInitServer(unsigned int port, SNTConnectionOption* option){
 	/*	Check if encryption is enabled.	*/
 	if(option->ssl){
 
-		/*	TODO add support for X509 here.	*/
 		if(g_cerficatefilepath){
 
 			/*	Create public key from x509 certificate.	*/
 			sntVerbosePrintf("Started loading x509 certificate : %s \n",
-			        g_cerficatefilepath);
+					g_cerficatefilepath);
 			if(!sntASymCreateFromX509File(g_bindconnection, g_cerficatefilepath)){
 				sntLogErrorPrintf("Failed, X509 not supported.\n");
 				sntDisconnectSocket(g_bindconnection);

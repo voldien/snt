@@ -821,4 +821,3 @@ unsigned int sntProtocolHeaderSize(const SNTPacketHeader* header){
 void* sntDatagramGetBlock(SNTUniformPacket* packet){
 	return &packet->totalbuf[packet->header.offset];
 }
-
