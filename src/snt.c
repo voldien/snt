@@ -72,39 +72,39 @@ void sntReadArgument(int argc,  char *const * argv, char* ip, unsigned int* port
 	const char* shortopt = "vVD46ySCUTh:b:p:s:c:P:n:B:f:H:F:m:d:r:A:X:x:";
 
 	static struct option longoption[] = {
-        {"version",         no_argument,        NULL, 'v'}, /*	Print out version.	*/
-        {"verbose",         no_argument,        NULL, 'V'}, /*	Enable verbose.	*/
-        {"debug",           no_argument,        NULL, 'D'}, /*	Enable debug.	*/
-        {"quite",           no_argument,        NULL, 'q'}, /*	Enable debug.	*/
-        {"ipv4",            no_argument,        NULL, '6'}, /*	Use IPv4.	*/
-        {"ipv6",            no_argument,        NULL, '4'}, /*	Use IPv6 mode.	*/
-        {"syslog",          no_argument,        NULL, 'y'}, /*	Syslog.	*/
-        {"udp",             no_argument,        NULL, 'U'}, /*	UDP protocol for transfer. TCP will be used for exchanging keys.	*/
-        {"tcp",             no_argument,        NULL, 'T'}, /*	TCP protocol for transfer.	*/
-        {"payload",         required_argument,  NULL, 'm'}, /*	payload.	*/
-        {"frequency",       required_argument,  NULL, 'F'}, /*	frequency.	*/
-        {"delta",           required_argument,  NULL, 'd'}, /*	Delta type.	*/
-        {"duration",        required_argument,  NULL, 'r'}, /*	Duration.	*/
-        {"duplex",          required_argument,  NULL, 'M'}, /*	Duplex.	*/
-        {"compression",     optional_argument,  NULL, 'C'}, /*	Use compression.	*/
-        {"secure",          optional_argument,  NULL, 'S'}, /*	Use secure connection.	*/
-        {"server",          optional_argument,  NULL, 's'}, /*	Server mode.	*/
-        {"hash",            required_argument,  NULL, 'H'}, /*	Use secure connection.	*/
-        {"host",            required_argument,  NULL, 'h'}, /*	Host to connect too.	*/
-        {"port",            required_argument,  NULL, 'p'}, /*	Port to connect via too.*/
-        {"transport",       required_argument,  NULL, 't'}, /*	Transport layer.	*/
-        {"listen",          required_argument,  NULL, 'l'}, /*	Number TCP listen	*/
-        {"parallel",        required_argument,  NULL, 'n'}, /*	Parallel connections. (Not supported.)	*/
-        {"benchmarkmode",   required_argument,  NULL, 'b'}, /*	benchmark mode.	*/
-        {"cipher",          required_argument,  NULL, 'c'}, /*	Cipher mode.	*/
-        {"public-key",      required_argument,  NULL, 'P'}, /*	Public cipher used for exchanging symmetric key.	*/
-        {"public-nbits",    required_argument,  NULL, 'B'}, /*	Number of bits used for public cipher.	*/
-        {"file",            required_argument,  NULL, 'f'}, /*	File to be transfered.	*/
-        {"affinity",        required_argument,  NULL, 'A'}, /*	Affinity mapping, -A, --affinity n/n,m 	*/
-        {"certificate",     required_argument,  NULL, 'X'}, /*	Certificate.	*/
-        {"private-key",     required_argument,  NULL, 'x'}, /*	Private key.	*/
-        {"dh",              optional_argument,  NULL, 'i'}, /*	Diffie hellman parameter.	*/
-        {NULL, 0, NULL, 0}
+		{"version",         no_argument,        NULL, 'v'}, /*	Print out version.	*/
+		{"verbose",         no_argument,        NULL, 'V'}, /*	Enable verbose.	*/
+		{"debug",           no_argument,        NULL, 'D'}, /*	Enable debug.	*/
+		{"quite",           no_argument,        NULL, 'q'}, /*	Enable debug.	*/
+		{"ipv4",            no_argument,        NULL, '6'}, /*	Use IPv4.	*/
+		{"ipv6",            no_argument,        NULL, '4'}, /*	Use IPv6 mode.	*/
+		{"syslog",          no_argument,        NULL, 'y'}, /*	Syslog.	*/
+		{"udp",             no_argument,        NULL, 'U'}, /*	UDP protocol for transfer. TCP will be used for exchanging keys.	*/
+		{"tcp",             no_argument,        NULL, 'T'}, /*	TCP protocol for transfer.	*/
+		{"payload",         required_argument,  NULL, 'm'}, /*	payload.	*/
+		{"frequency",       required_argument,  NULL, 'F'}, /*	frequency.	*/
+		{"delta",           required_argument,  NULL, 'd'}, /*	Delta type.	*/
+		{"duration",        required_argument,  NULL, 'r'}, /*	Duration.	*/
+		{"duplex",          required_argument,  NULL, 'M'}, /*	Duplex.	*/
+		{"compression",     optional_argument,  NULL, 'C'}, /*	Use compression.	*/
+		{"secure",          optional_argument,  NULL, 'S'}, /*	Use secure connection.	*/
+		{"server",          optional_argument,  NULL, 's'}, /*	Server mode.	*/
+		{"hash",            required_argument,  NULL, 'H'}, /*	Use secure connection.	*/
+		{"host",            required_argument,  NULL, 'h'}, /*	Host to connect too.	*/
+		{"port",            required_argument,  NULL, 'p'}, /*	Port to connect via too.*/
+		{"transport",       required_argument,  NULL, 't'}, /*	Transport layer.	*/
+		{"listen",          required_argument,  NULL, 'l'}, /*	Number TCP listen	*/
+		{"parallel",        required_argument,  NULL, 'n'}, /*	Parallel connections. (Not supported.)	*/
+		{"benchmarkmode",   required_argument,  NULL, 'b'}, /*	benchmark mode.	*/
+		{"cipher",          required_argument,  NULL, 'c'}, /*	Cipher mode.	*/
+		{"public-key",      required_argument,  NULL, 'P'}, /*	Public cipher used for exchanging symmetric key.	*/
+		{"public-nbits",    required_argument,  NULL, 'B'}, /*	Number of bits used for public cipher.	*/
+		{"file",            required_argument,  NULL, 'f'}, /*	File to be transfered.	*/
+		{"affinity",        required_argument,  NULL, 'A'}, /*	Affinity mapping, -A, --affinity n/n,m 	*/
+		{"certificate",     required_argument,  NULL, 'X'}, /*	Certificate.	*/
+		{"private-key",     required_argument,  NULL, 'x'}, /*	Private key.	*/
+		{"dh",              optional_argument,  NULL, 'i'}, /*	Diffie hellman parameter.	*/
+		{NULL, 0, NULL, 0}
 	};
 
 	/*	First pass.	*/
