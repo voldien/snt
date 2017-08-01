@@ -93,7 +93,7 @@ extern const char* gs_symprotocol[];
  */
 #define SNT_CERTIFICATE_NONE    0x0     /*	No certificate.	*/
 #define SNT_CERTIFICATE_RSA     0x1     /*	RSA key certificate.	*/
-#define SNT_CERTIFICATE_X509    0x4     /*	X509 certificate standard.	*/
+#define SNT_CERTIFICATE_X509    0x4     /*	X509 certificate standard, Not supported.	*/
 #define SNT_CERTIFICATE_ALL                             \
         (SNT_CERTIFICATE_RSA | SNT_CERTIFICATE_X509)    \
 
