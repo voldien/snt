@@ -1,4 +1,6 @@
 #include"snt_protocol_func.h"
+#include"snt_protocol.h"
+#include"snt_benchmark.h"
 #include"snt_log.h"
 #include<assert.h>
 #include<sys/socket.h>
