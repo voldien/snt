@@ -49,7 +49,7 @@ debug : $(OBJS)
 	$(CC) $(CLFAGS) $^ -o $(TARGET) $(CLIBS)
 
 %.o : %.c
-	$(CC) $(CFLAGS) -c $^ -o $@
+	$(CC) -MMD $(CFLAGS) -c $< -o $@
 
 install : $(TARGET)
 	@echo -n "Installing snt.\n"
@@ -104,7 +104,9 @@ distribution:
 	$(RM) -r $(TARGET)-$(VERSION)
 
 clean :
-	$(RM) *.o
+	$(RM) *.o *.d
+
+-include *.d
 
 .PHONY: all install distribution clean debug install_wireshark_dissector install_service install_cert cert
 
