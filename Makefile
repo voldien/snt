@@ -55,7 +55,7 @@ install : $(TARGET)
 	@echo -n "Installing snt.\n"
 	$(MKDIR) $(INSTALL_LOCATION)/bin
 	$(CP) $(TARGET) $(INSTALL_LOCATION)/bin
-	$(CP) snt.bc /etc/bash_completion.d/snt
+	$(CP) snt.bc $(INSTALL_LOCATION)/share/bash-completion/completions/snt
 
 install_wireshark_dissector:
 	@echo -n "Installing wireshark dissector.\n"
