@@ -61,7 +61,7 @@ long int sntLoadFile(const char* cfilename, void** pbuf){
 	if(*cfilename == '~'){
 		char buf[PATH_MAX];
 		const char* base = getenv("HOME");
-		sprintf(buf, "%s/%s", base, ++cfilename);
+		sprintf(buf, "%s%s", base, ++cfilename);
 		cfilename = buf;
 	}
 
