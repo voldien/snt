@@ -1,13 +1,45 @@
 # bash completion for snt(1)
 
-
 _snt() 
 {
-    local cur prev opts
-    COMPREPLY=()
-    cur="${COMP_WORDS[COMP_CWORD]}"
-    prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--version --verbose --debug --quite --ipv6 --ipv4 --tcp --udp --hash= --compression= --delta= --secure --server --host= --port= --transport= --listen= --parallel= --duration= --benchmarkmode= --cipher= --public-key= --public-nbits= --file= --affinity= --certificate= --private-key= --payload= --dh= --duplex="
+	local cur prev opts
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+	opts="
+	--version
+	--verbose
+	--debug
+	--quite
+	--ipv6
+	--ipv4
+	--tcp
+	--udp
+	--hash=
+	--compression=
+	--delta=
+	--secure
+	--server
+	--host=
+	--port=
+	--transport=
+	--listen=
+	--parallel=
+	--frequency=
+	--duration=
+	--benchmarkmode=
+	--cipher=
+	--public-key=
+	--public-nbits=
+	--file=
+	--affinity=
+	--certificate=
+	--private-key=
+	--payload=
+	--dh=
+	--duplex=
+	"
 
 
 	#
@@ -60,10 +92,15 @@ _snt()
 	esac
 
 
-#	Display all possible option if not specified.
-#	if [[ ${cur} == --* ]] ; then
-		COMPREPLY=( $(compgen  -W "${opts}" -- ${cur}) )
-		return 0
-#	fi
+	# Default generate compare of all available option.
+	COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+
+	# If there's only one option, without =, then allow a space
+	if [[ ${#COMPREPLY[@]} == 1 && ${COMPREPLY[0]} != "--"*"=" ]] ; then
+		compopt +o nospace
+	fi
+
+	return 0
 }
+
 complete -o nospace -F _snt snt
