@@ -329,6 +329,12 @@ SNTConnection* sntAcceptSocket(SNTConnection* bindcon){
 
 	/**/
 	connection->udpsock = dup(bindcon->udpsock);
+	/*	Set timeout for client.	*/
+	if(setsockopt(connection->udpsock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) != 0){
+		sntLogErrorPrintf("setsockopt failed, %s.\n", strerror(errno));
+		sntDisconnectSocket(connection);
+		return NULL;
+	}
 
 	/*	Create init packet to send to client.	*/
 	sntInitDefaultHeader(&init.header, SNT_PROTOCOL_STYPE_INIT, sizeof(init));
