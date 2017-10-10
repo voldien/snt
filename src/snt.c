@@ -613,7 +613,7 @@ int sntInitServer(unsigned int port, SNTConnectionOption* option){
 			}
 		}else{
 			sntVerbosePrintf("Started generating asymmetric key, %s : %d.\n",
-					gc_asymchi_symbol[Log2MutExlusive32(option->asymmetric)], option->asymmetric_bits);
+					gc_asymchi_symbol[sntLog2MutExlusive32(option->asymmetric)], option->asymmetric_bits);
 			/*	Create asymmetric key and check if successfully.	*/
 			if(sntASymGenerateKey(g_bindconnection, option->asymmetric, option->asymmetric_bits) == 0){
 				sntLogErrorPrintf("Failed to create asymmetric cipher key.\n");
