@@ -196,7 +196,7 @@ int sntProtFuncSecure(SNTConnection* connection, const SNTUniformPacket* packet)
 
 	/*	TODO FIX!	*/
 	connection->flag |= SNT_CONNECTION_BENCH;
-	return len;
+	return 1;
 }
 
 int sntProtFuncReady(SNTConnection* connection, const SNTUniformPacket* packet) {
