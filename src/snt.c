@@ -240,7 +240,7 @@ void sntReadArgument(int argc,  char *const * argv, char* ip, unsigned int* port
 		case 'r':
 			if(optarg){
 				option->duration = (uint64_t)(strtod(optarg, NULL) * (double)sntGetTimeResolution());
-				sntVerbosePrintf("Duration time set to : %ld.\n", option->duration / sntGetTimeResolution() );
+				sntVerbosePrintf("Duration time set to : %ld.\n", (long int)option->duration / sntGetTimeResolution() );
 			}
 			break;
 		case 'M':
@@ -266,7 +266,7 @@ void sntReadArgument(int argc,  char *const * argv, char* ip, unsigned int* port
 			break;
 		case 'n':
 			if(optarg){
-				g_numcliconne = strtol(optarg, NULL, 10);
+				g_numcliconne = (int)strtol(optarg, NULL, 10);
 				sntVerbosePrintf("Number of parallel connection set to %d.\n", g_numcliconne);
 			}
 			break;
@@ -548,10 +548,10 @@ void sntClientMain(const char* host, unsigned int port, int nconnector, const SN
 
 int sntInitServer(unsigned int port, SNTConnectionOption* option){
 
-	int poolsize;
+	unsigned int poolsize;
 
 	/*	*/
-	poolsize = option->listen;
+	poolsize = (unsigned int)option->listen;
 	sntVerbosePrintf(
 			"Creating connection pool %d connections, size %d bytes.\n",
 			option->listen, sizeof(SNTConnection) * option->listen);
@@ -613,7 +613,7 @@ int sntInitServer(unsigned int port, SNTConnectionOption* option){
 			}
 		}else{
 			sntVerbosePrintf("Started generating asymmetric key, %s : %d.\n",
-					gc_asymchi_symbol[sntLog2MutExlusive32(option->asymmetric)], option->asymmetric_bits);
+					gc_asymchi_symbol[Log2MutExlusive32(option->asymmetric)], option->asymmetric_bits);
 			/*	Create asymmetric key and check if successfully.	*/
 			if(sntASymGenerateKey(g_bindconnection, option->asymmetric, option->asymmetric_bits) == 0){
 				sntLogErrorPrintf("Failed to create asymmetric cipher key.\n");
@@ -648,7 +648,7 @@ int sntInitServer(unsigned int port, SNTConnectionOption* option){
 	return 1;
 }
 
-int sntInitClient(int nparallcon){
+int sntInitClient(unsigned int nparallcon){
 
 	nparallcon += 1;
 
@@ -714,5 +714,6 @@ int sntPacketInterpreter(SNTConnection* connection){
 		sntSendError(connection, SNT_ERROR_BAD_REQUEST, "Invalid protocol command.\n");
 		break;
 	}
+
 	return len;
 }
