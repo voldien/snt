@@ -699,6 +699,8 @@ int sntWriteSocketPacket(const SNTConnection* connection,
 	SNTUniformPacket* tranpack;
 	SNTPresentationUnion* pres;
 
+	assert(pack);
+
 	/*	Set flag of packet.	*/
 	tranpack = (SNTUniformPacket*)connection->tranbuf;
 
@@ -802,6 +804,9 @@ void sntCopyPacket(SNTUniformPacket* dest, const SNTUniformPacket* source){
 
 void sntInitDefaultHeader(SNTPacketHeader* header, unsigned int command,
 		unsigned int len) {
+
+	assert(header);
+
 	header->version = SNT_VERSION;
 	header->offset = sizeof(SNTPacketHeader);
 	header->stype = (uint8_t)command;

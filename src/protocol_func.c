@@ -279,7 +279,7 @@ int sntProtFuncBenchmark(SNTConnection* connection, const SNTUniformPacket* pack
 			session->ofo++;
 		}
 		memcpy(&session->delta, &delta, sizeof(delta));
-		printf("%s\n", sntDatagramGetBlock(packet));
+		printf("%s\n", (const char*)sntDatagramGetBlock(packet));
 	}break;
 	default:
 		break;
@@ -610,6 +610,7 @@ int sntSendReady(const SNTConnection* __restrict__ connection){
 
 	return len;
 }
+
 
 int sntSendError(const SNTConnection* connection, int code,
 		const char* message) {

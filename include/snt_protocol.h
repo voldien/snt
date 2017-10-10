@@ -433,8 +433,8 @@ typedef struct snt_connection_t{
 /**
  *	Connection flag.
  */
-#define SNT_CONNECTION_TRANS	0x1	/*	Transport mode enabled.	*/
-#define SNT_CONNECTION_BENCH	0x2	/*	Benchmark mode.	*/
+#define SNT_CONNECTION_TRANS	(unsigned int)0x1	/*	Transport mode enabled.	*/
+#define SNT_CONNECTION_BENCH	(unsigned int)0x2	/*	Benchmark mode.	*/
 
 /**
  *	Check connection flag status.

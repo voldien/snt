@@ -22,8 +22,13 @@
 
 /**
  *	Generate random sequence.
+ *
+ *	\rand memory location where to store
+ *	the random data.
+ *
+ *	\size sizeof the memory location in bytes.
  */
-extern void sntGenRandom(unsigned char * rand, int size);
+extern void sntGenRandom(unsigned char* rand, int size);
 
 
 #endif
