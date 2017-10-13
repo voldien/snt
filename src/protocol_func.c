@@ -508,6 +508,7 @@ int sntSendDHpq(const SNTConnection* __restrict__ bind,
 	SNTDHInit* init;
 	const size_t packlen = sizeof(SNTDHInit);
 	const int32_t bnum = sntDHSize(bind->dh);
+	const size_t size = (size_t)(packlen + bnum * 2);
 	int len;
 	/*	*/
 	uint8_t* p;
@@ -516,11 +517,11 @@ int sntSendDHpq(const SNTConnection* __restrict__ bind,
 	assert(bind->dh);
 
 	/*	Allocate packet.	*/
-	init = malloc(packlen + bnum * 2);
+	init = malloc(size);
 	assert(init);
 
 	/*	Initialize the packet.	*/
-	sntInitDefaultHeader(&init->header, SNT_PROTOCOL_STYPE_DH_INIT, packlen + bnum * 2);
+	sntInitDefaultHeader(&init->header, SNT_PROTOCOL_STYPE_DH_INIT, (unsigned int)size);
 
 	/*	Get p and g address.	*/
 	p = ((uint8_t*)init) + packlen;

@@ -22,16 +22,19 @@
 
 /**
  *	Get time in nano seconds.
+ *	@Return time in nano seconds.
  */
 extern long int sntGetNanoTime(void);
 
 /**
  *	Get time since Epoch.
+ *	@Return time in Epoch format.
  */
 extern long int sntGetUnixTime(void);
 
 /**
  *	Get time resolution per second unit.
+ *	@Return time resolution.
  */
 extern long int sntGetTimeResolution(void);
 

@@ -23,7 +23,7 @@
 #include"snt_time.h"
 
 /**
- *	struct forward declartion.
+ *	Struct forward declaration.
  */
 typedef struct snt_connection_t SNTConnection;
 typedef struct snt_result_packet_t SNTResultPacket;
@@ -72,7 +72,7 @@ extern pthread_t sntBenchmarkCreateThread(unsigned int mode,
 extern int sntBenchmarkWait(SNTConnection* connection);
 
 /**
- *	Sleep thread (1/freq) second.
+ *	Sleep thread (1/frequency) second.
  */
 extern void sntWaitFrequency(const SNTConnectionOption* connection);
 

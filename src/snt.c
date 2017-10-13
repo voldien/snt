@@ -5,6 +5,7 @@
 #include "snt_protocol_func.h"
 #include "snt_schd.h"
 #include "snt_parser.h"
+#include "snt_benchmark.h"
 #include <assert.h>
 #include <unistd.h>
 #include <getopt.h>

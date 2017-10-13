@@ -51,7 +51,8 @@ extern void sntSchdGetAffinity(unsigned int* cpu, unsigned int* cores,
 		unsigned int* size);
 
 /**
- *
+ *	Set thread affinity for thread attribute data struct.
+ *	@Return non-zero if successfully.
  */
 extern int sntSchdSetThreadAttrAffinity(void* att, unsigned int cpu,
 		unsigned int cores, unsigned int size);

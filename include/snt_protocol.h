@@ -24,7 +24,6 @@
 #include"snt_encryption.h"
 #include"snt_pool.h"
 #include"snt.h"
-#include"snt_benchmark.h"
 #include"snt_utility.h"
 #include"snt_delta.h"
 #include"snt_dh.h"
@@ -68,7 +67,7 @@
  *	SNT application protocol.
  */
 #define SNT_PROTOCOL_STYPE_NONE         0x0 /*	No command.	*/
-#define SNT_PROTOCOL_STYPE_INIT         0x1 /*	Initialization packet sent by server.	*/
+#define SNT_PROTOCOL_STYPE_INIT         0x1 /*	Initialization packet sent by the server.	*/
 #define SNT_PROTOCOL_STYPE_CLIENTOPT    0x2 /*	Connection option selected by the client.	*/
 #define SNT_PROTOCOL_STYPE_CERTIFICATE  0x3 /*	Asymmetric cipher certificate with public key.	*/
 #define SNT_PROTOCOL_STYPE_SECURE       0x4 /*	Packet for establishing a secure connection, sent by the client. Not mandatory.	*/
@@ -182,7 +181,8 @@ extern const char* gs_error_sym[];
 #define SNT_PACKET_FB_ENCRYPTION    0x8     /*	Packet contains feedback number.	*/
 
 /**
- *
+ *	Package header flag bitwise
+ *	tester macro.
  */
 #define sntPacketHasEncrypted(head) ( ( head ).flag & SNT_PACKET_ENCRYPTION)
 #define sntPacketHasIV(head)        ( ( head ).flag & SNT_PACKET_IV_ENCRYPTION)
@@ -376,7 +376,8 @@ typedef struct snt_result_packet_t{
 /**
  *	Uniform buffer packet data type.
  *	Never use sizeof of this data type.
- *	It's only intended to simply the programming.
+ *	It's only intended to simplify
+ *	the programming.
  *
  *	It can be used with a buffer that exceeds the size
  *	of sizeof(totalbuf).
@@ -460,7 +461,7 @@ extern void sntGetInterfaceAttr(SNTConnection* connection);
  *
  *	\ip Address the socket will be binded to.
  *
- *	\port port for listening for incomming packets.
+ *	\port port for listening for incoming packets.
  *
  *	\option supported options on the connection.
  *
@@ -493,7 +494,7 @@ extern SNTConnection* sntConnectSocket(const char* __restrict__ host,
  *	Disconnect and release all resource associated
  *	with the connection.
  *
- *	Remark: The connction object will be returned to the global
+ *	Remark: The connection object will be returned to the global
  *	connector pool allocator.
  */
 extern void sntDisconnectSocket(SNTConnection* connection);
@@ -598,9 +599,9 @@ extern int sntReadSocketPacket(const SNTConnection* __restrict__ connection,
 		SNTUniformPacket* __restrict__ pack);
 
 /**
- *	Recv application protocol header.
+ *	Peek application protocol header.
  *
- *	@Return none zero if sucesfully fetch. zero otherwise.
+ *	@Return none zero if successfully fetch. zero otherwise.
  */
 extern int sntPeekPacketHeader(const SNTConnection* __restrict__ connection,
 		SNTUniformPacket* __restrict__ header);
@@ -622,8 +623,8 @@ extern void sntCopyHeader(SNTPacketHeader* __restrict__ dest, const SNTPacketHea
 #define sntCopyPacketPayload(a,b,c) memcpy(a, b, c)
 
 /**
- *	Copy whole packet based on the values in the application
- *	protocl header.
+ *	Copy the whole packet based on the values
+ *	in the application protocol header.
  */
 extern void sntCopyPacket(SNTUniformPacket* __restrict__ dest,
 		const SNTUniformPacket* __restrict__ source);
