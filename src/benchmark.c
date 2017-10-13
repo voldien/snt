@@ -1,4 +1,5 @@
 #include"snt_benchmark.h"
+#include"snt_protocol.h"
 #include"snt_utility.h"
 #include"snt_log.h"
 #include"snt_protocol_func.h"
@@ -203,6 +204,7 @@ void* sntClientIntegrityBenchmark(void* patt){
 	SNTConnection* con = patt;
 	SNTConnectionOption* conopt = con->option;
 	SNTUniformPacket* pack;
+	SNTBenchmarkSession* session = con->session;
 	size_t clne;
 	int len = 0;
 	SNTDelta delta = {0};

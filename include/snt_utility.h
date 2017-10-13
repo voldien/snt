@@ -20,7 +20,6 @@
 #define _SNT_UTILITY_H_ 1
 #include"snt_def.h"
 
-
 /**
  *	Swap pointer value.
  */
@@ -66,7 +65,7 @@ extern unsigned int sntSymbolArraySize(const void** array);
 extern long int sntLoadFile(const char* cfilename, void** pbuf);
 
 /**
- *	Memset memory for data chunk containing sensetive information.
+ *	Memset memory for data chunk containing sensitive information.
  *	The memory will be memset three times in succession.
  */
 extern void sntMemZero(void* __restrict__ pbuf, size_t size);

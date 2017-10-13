@@ -23,6 +23,8 @@
 
 /**
  *	Print information about packet.
+ *	The packet is required to be a valid
+ *	packet in order to be print out properly.
  */
 extern void sntPrintPacketInfo(const SNTUniformPacket* packet);
 
