@@ -234,7 +234,6 @@ int sntProtFuncError(SNTConnection* connection, const SNTUniformPacket* packet) 
 	const char* codedesc = "";
 	SNTErrorPacket* error = (SNTErrorPacket*)packet;
 
-
 	/*	Prevent segmentation violation.	*/
 	if(error->errorcode <= sntSymbolArraySize((const void**)gs_error_sym)){
 		codedesc = gs_error_sym[error->errorcode];
@@ -245,7 +244,7 @@ int sntProtFuncError(SNTConnection* connection, const SNTUniformPacket* packet) 
 		sntLogErrorPrintf("Error code %d : %s | '%s'.\n", error->errorcode,
 				codedesc, error->message);
 	}else{
-		sntLogErrorPrintf("Error code %d : %s .\n", error->errorcode, codedesc);
+		sntLogErrorPrintf("Error code %d : %s.\n", error->errorcode, codedesc);
 	}
 	return 0;
 }
@@ -369,6 +368,8 @@ int sntProtFuncDHExch(SNTConnection* __restrict__ connection,
 }
 
 int sntValidateCapability(const SNTClientOption* option){
+
+	assert(option);
 
 	/*	Check if options are mutually exclusive.	*/
 	if (!sntIsPower2(option->benchmode) || !sntIsPower2(option->compression)

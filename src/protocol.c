@@ -102,7 +102,10 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 	}addrU;
 	struct sockaddr_in* sockaddr;	/*	*/
 	struct sockaddr* addr;			/*	*/
+	const size_t bufsize = 1 << 16;
 
+	assert(connection);
+	assert(connection->option);
 	assert(connection->tcpsock > 0);
 
 	/*	*/
@@ -157,7 +160,7 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 	assert(connection->extaddr);
 	assert(connection->intaddr);
 
-	/*	zero out.	*/
+	/*	Zero out.	*/
 	memset(connection->extaddr, 0, connection->sclen);
 	memset(connection->intaddr, 0, connection->sclen);
 
@@ -198,10 +201,14 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 	}
 
 	/*	Allocate transmission and receive buffer.	*/
-	connection->tranbuf = malloc(1 << 16);
+
+	connection->tranbuf = malloc(bufsize);
 	assert(connection->tranbuf);
-	connection->recvbuf = malloc(1 << 16);
+	memset(connection->tranbuf, 0, bufsize);
+
+	connection->recvbuf = malloc(bufsize);
 	assert(connection->recvbuf);
+	memset(connection->recvbuf, 0, bufsize);
 
 	/*	Allocate payload.	*/
 	connection->mtubuf = malloc(
@@ -327,9 +334,8 @@ SNTConnection* sntAcceptSocket(SNTConnection* bindcon){
 	/*	Get attribute about connection interface.	*/
 	sntGetInterfaceAttr(connection);
 
-	/**/
+	/*	Set UDP socket and set timeout for client.	*/
 	connection->udpsock = dup(bindcon->udpsock);
-	/*	Set timeout for client.	*/
 	if(setsockopt(connection->udpsock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) != 0){
 		sntLogErrorPrintf("setsockopt failed, %s.\n", strerror(errno));
 		sntDisconnectSocket(connection);
@@ -757,8 +763,9 @@ int sntWriteSocketPacket(const SNTConnection* connection,
 int sntReadSocketPacket(const SNTConnection* connection, SNTUniformPacket* pack) {
 
 	int len;
+
 	/*	Receive header.	*/
-	sntDebugPrintf("Receiving.\n");
+	sntDebugPrintf("Receiving package.\n");
 	len = sntPeekPacketHeader(connection, &pack->header);
 	if(len <= 0){
 		return 0;
@@ -769,6 +776,7 @@ int sntReadSocketPacket(const SNTConnection* connection, SNTUniformPacket* pack)
 	if (sntReadSocket(connection, pack,
 			sntProtocolPacketSize(&pack->header), 0)
 			!= sntProtocolPacketSize(&pack->header)) {
+		fprintf(stderr, "Failed loading package datagram.\n");
 		return 0;
 	}
 
@@ -777,16 +785,17 @@ int sntReadSocketPacket(const SNTConnection* connection, SNTUniformPacket* pack)
 			sntProtocolHeaderDatagramSize(&pack->header),
 			(SNTPresentationUnion*) &pack->presentation);
 
-	/*	Update size.	*/
+	/*	Update packet header size.	*/
 	pack->header.len = (uint16_t)len;
 
-	/*	*/
+	/*	Display packet information.	*/
 	sntPrintPacketInfo(pack);
+
 	return len;
 }
 
-int sntPeekPacketHeader(const SNTConnection* connection,
-		SNTUniformPacket* header) {
+int sntPeekPacketHeader(const SNTConnection* __restrict__ connection,
+		SNTUniformPacket* __restrict__ header) {
 	return sntReadSocket(connection, header, sizeof(SNTPacketHeader), MSG_PEEK);
 }
 

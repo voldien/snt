@@ -279,7 +279,7 @@ typedef struct snt_client_option_packet_t{
 	uint16_t payload;               /*	Payload.	*/
 	uint32_t extension;             /*	Not supported.	*/
 	uint64_t duration;              /*	Duration of the benchmark in nano seconds.	*/
-	uint32_t dh;                    /*	Use diffie hellman for key exchange.	*/
+	uint32_t dh;                    /*	Use Diffie Hellman for key exchange.	*/
 }__attribute__ ((__packed__))SNTClientOption;
 
 /**
