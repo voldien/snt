@@ -673,17 +673,19 @@ int sntInitClient(unsigned int nparallcon){
 
 int sntPacketInterpreter(SNTConnection* connection){
 
-	int len;						/*	*/
+	int len;
 	SNTUniformPacket* packbuf = (SNTUniformPacket*)connection->mtubuf;
 
-	/*	Fetch Packet.	*/
+	assert(packbuf);
+
+	/*	Fetch incoming packet.	*/
 	len = sntReadSocketPacket(connection, packbuf);
 	if(len <= 0){
 		return 0;
 	}
 
 	/*	Protocol command.	*/
-	switch(packbuf->header.stype){
+	switch(sntProtocolPacketCommand(&packbuf->header)){
 	case SNT_PROTOCOL_STYPE_INIT:
 		return sntProtFuncInit(connection, packbuf);
 	case SNT_PROTOCOL_STYPE_CLIENTOPT:

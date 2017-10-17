@@ -279,7 +279,7 @@ typedef struct snt_client_option_packet_t{
 	uint16_t payload;               /*	Payload.	*/
 	uint32_t extension;             /*	Not supported.	*/
 	uint64_t duration;              /*	Duration of the benchmark in nano seconds.	*/
-	uint32_t dh;                    /*	Use diffie hellman for key exchange.	*/
+	uint32_t dh;                    /*	Use Diffie Hellman for key exchange.	*/
 }__attribute__ ((__packed__))SNTClientOption;
 
 /**
@@ -651,6 +651,11 @@ extern void sntInitDefaultHeader(SNTPacketHeader* header, unsigned int command,
 extern void sntInitHeader(SNTPacketHeader* header, unsigned int command,
 		unsigned int buffer);
 extern void sntSetDatagramSize(SNTPacketHeader* header, unsigned int buffer);
+
+/**
+ *
+ */
+extern unsigned int sntProtocolPacketCommand(const SNTPacketHeader* header);
 
 /**
  *	@Return Total size of packet in bytes.
