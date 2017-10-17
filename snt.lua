@@ -170,7 +170,13 @@ local stype_col_info=
 ----------------------------------------
 -- main root dissector function.
 -- 
--- @Return number of bytes dissected.
+-- @param buf
+-- 
+-- @param pkt
+-- 
+-- @param root
+-- 
+-- @return number of bytes dissected.
 -- 
 function snt.dissector(buf, pkt, root)
 
@@ -229,13 +235,13 @@ function snt.dissector(buf, pkt, root)
     pkt.cols.info:set("Unknown packet.")
   end
 
-  -- return length of packet.
+  -- Return length of the packet in bytes.
   return bytes_consumed
 end
 
 ----------------------------------------
 -- Dissect SNT protocol header.
--- @Return stype command.
+-- @return stype command.
 -- 
 function dissectSNTHeader(tvbuf, pktinfo, root, offset)
 
@@ -279,49 +285,49 @@ end
 
 ----------------------------------------
 -- Get protocol header size in bytes.
--- @Return size in bytes.
+-- @return size in bytes.
 function sntProtocolHeaderSize(tvbuf)
   return bit.band( tvbuf(3, 1):le_uint(), 0xffff)
 end
 
 ----------------------------------------
 -- Get protocol header flag.
--- @Return flag.
+-- @return flag.
 function sntProtocolHeaderFlag(tvbuf)
   return tvbuf(6, 1):le_uint()
 end
 
 ----------------------------------------
 -- Check if packet contains encrypted data.
--- @Return true if packet is encrypted.
+-- @return true if packet is encrypted.
 function sntProtocolIsEncrypted(tvbuf)
   return bit.band(sntProtocolHeaderFlag(tvbuf), SNT_MSG_FLAG_ENCR) == SNT_MSG_FLAG_ENCR
 end
 
 ----------------------------------------
 -- Check if packet is compressed.
--- @Return true if packet is compressed.
+-- @return true if packet is compressed.
 function sntProtocolIsCompressed(tvbuf)
   return bit.band(sntProtocolHeaderFlag(tvbuf), SNT_MSG_FLAG_COMP) == SNT_MSG_FLAG_COMP
 end
 
 ----------------------------------------
 -- Check if IV data contains in packet.
--- @Return true if flag in packet is set.
+-- @return true if flag in packet is set.
 function sntProtocolUseIV(tvbuf)
   return bit.band(sntProtocolHeaderFlag(tvbuf), SNT_MSG_FLAG_IV) == SNT_MSG_FLAG_IV 
 end
 
 ----------------------------------------
 -- Check if feedback data contains in packet.
--- @Return true if flag in packet is set.
+-- @return true if flag in packet is set.
 function sntProtocolUseFB(tvbuf)
   return bit.band(sntProtocolHeaderFlag(tvbuf), SNT_MSG_FLAG_FB) == SNT_MSG_FLAG_FB
 end
 
 ----------------------------------------
 -- Get version in string format.
--- @Return version in string format.
+-- @return version in string format.
 function sntProtocolGetVersionStr(tvbuf)
 
   local version_val  = tvbuf:le_uint()
@@ -341,7 +347,7 @@ end
 ------------------------------------------------------------
 -- Dissect the presentation layer, containing cryptographic
 -- information for decryping the packet payload.
--- @Return Presentation layer size in bytes.
+-- @return Presentation layer size in bytes.
 function sntDissectPresentationLayer(tvbuf, pktinfo, tree, flag)
 
   -- 
@@ -375,7 +381,7 @@ end
 
 ------------------------------------------------------------
 -- Initialization packet dissector function.
--- @Return
+-- @return
 function sntDissectInitPacket(tvbuf, pktinfo, tree, offset)
   
   --
@@ -400,7 +406,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Client-Option packet dissector function.
--- @Return
+-- @return
 function sntDissectClientPacket(tvbuf, pktinfo, tree, offset)
 
   --
@@ -425,9 +431,9 @@ function sntDissectClientPacket(tvbuf, pktinfo, tree, offset)
   return 48;
 end
 
---------------------------------------------------------------------------------
+--------------------------------------------------------------
 -- Certificate packet dissector function.
--- @Return
+-- @return
 function sntDissectCertPacket(tvbuf, pktinfo, tree, offset)
   
   -- Print certificate type in the packet.
@@ -454,7 +460,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Secure symmetric key exchange dissector function.
--- @Return
+-- @return
 function sntDissectSecPacket(tvbuf, pktinfo, tree, offset)
 
   -- Print symmetric cipher.
@@ -475,7 +481,7 @@ end
 
 --------------------------------------------------------------------------------
 --
--- @Return
+-- @return
 function sntDissectReadyPacket(tvbuf, pktinfo, tree, offset)
 
   pktinfo.cols.info = "Ready packet."
@@ -486,7 +492,7 @@ end
 
 --------------------------------------------------------------------------------
 --
--- @Return
+-- @return
 function sntDissectStartPacket(tvbuf, pktinfo, tree, offset)
 
   pktinfo.cols.info = "Start packet."
@@ -497,7 +503,7 @@ end
 
 --------------------------------------------------------------------------------
 -- 
--- @Return
+-- @return
 function sntDissectErrorPacket(tvbuf, pktinfo, tree, offset)
   
   -- Print error code.
@@ -522,7 +528,7 @@ end
 
 --------------------------------------------------------------------------------
 --
--- @Return
+-- @return
 function sntDissectBenchmarkPacket(tvbuf, pktinfo, tree, offset)
 
   --
@@ -534,7 +540,7 @@ end
 
 --------------------------------------------------------------------------------
 --
--- @Return
+-- @return
 function sntDissectResultPacket(tvbuf, pktinfo, tree, offset)
 
   --
@@ -559,7 +565,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Dissector dummy function.
--- @Return 
+-- @return 
 function sntDissectDHReq(tvbuf, pktinfo, tree, offset)
 
   pktinfo.cols.info = "Diffie hellman request."
@@ -568,7 +574,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Dissect Diffie hellman initialization packet.
--- @Return
+-- @return
 function sntDissectDHInit(tvbuf, pktinfo, tree, offset)
 
   --
@@ -588,7 +594,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Dissect Diffie hellman exchange packet.
--- @Return
+-- @return
 function sntDissectDHExch(tvbuf, pktinfo, tree, offset)
 
   --
