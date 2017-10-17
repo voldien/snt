@@ -653,6 +653,11 @@ extern void sntInitHeader(SNTPacketHeader* header, unsigned int command,
 extern void sntSetDatagramSize(SNTPacketHeader* header, unsigned int buffer);
 
 /**
+ *
+ */
+extern unsigned int sntProtocolPacketCommand(const SNTPacketHeader* header);
+
+/**
  *	@Return Total size of packet in bytes.
  */
 extern unsigned int sntProtocolPacketSize(const SNTPacketHeader* header);

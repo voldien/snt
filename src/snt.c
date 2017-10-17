@@ -683,7 +683,7 @@ int sntPacketInterpreter(SNTConnection* connection){
 	}
 
 	/*	Protocol command.	*/
-	switch(packbuf->header.stype){
+	switch(sntProtocolPacketCommand(&packbuf->header)){
 	case SNT_PROTOCOL_STYPE_INIT:
 		return sntProtFuncInit(connection, packbuf);
 	case SNT_PROTOCOL_STYPE_CLIENTOPT:

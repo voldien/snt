@@ -819,6 +819,10 @@ void sntInitHeader(SNTPacketHeader* header, unsigned int command,
 	sntInitDefaultHeader(header, command, buffer + sizeof(SNTPacketHeader));
 }
 
+unsigned int sntProtocolPacketCommand(const SNTPacketHeader* header){
+	return header->stype;
+}
+
 unsigned int sntProtocolPacketSize(const SNTPacketHeader* header){
 	return header->len;
 }
