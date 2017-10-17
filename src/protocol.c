@@ -479,6 +479,7 @@ void sntDisconnectSocket(SNTConnection* connection){
 	/*	Release memories. */
 	free(connection->option);
 	free(connection->extaddr);
+	free(connection->intaddr);
 	free(connection->mtubuf);
 	free(connection->recvbuf);
 	free(connection->tranbuf);
