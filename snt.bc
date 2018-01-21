@@ -33,6 +33,7 @@ _snt()
 	--public-key=
 	--public-nbits=
 	--file=
+	--frequency
 	--affinity=
 	--certificate=
 	--private-key=

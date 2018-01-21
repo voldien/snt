@@ -253,7 +253,7 @@ int sntProtFuncResult(SNTConnection* connection, const SNTUniformPacket* packet)
 
 	const SNTResultPacket* result = (SNTResultPacket*)packet;
 	sntBenchmarkPrintResult(result);
-	sntBenchmarkPrintSessionResult(connection->session);
+	//sntBenchmarkPrintSessionResult(connection->session);
 
 	return 0;	/*	Kill the connection.	*/
 }
