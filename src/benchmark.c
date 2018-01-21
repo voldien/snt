@@ -154,12 +154,12 @@ void sntBenchmarkPrintResult(const SNTResultPacket* result){
 	duration = (float)result->elapse / (float)sntGetTimeResolution();
 
 	/*	Display benchmark result.	*/
-	fprintf(stdout, "%f duration.\n", duration);
-	fprintf(stdout, "%3f Mbit sent.\n", (float)(result->nbytes * 8) / (float)(1024 * 1024));
-	fprintf(stdout, "%3f Mbit average.\n",
+	fprintf(stderr, "%f duration.\n", duration);
+	fprintf(stderr, "%3f Mbit sent.\n", (float)(result->nbytes * 8) / (float)(1024 * 1024));
+	fprintf(stderr, "%3f Mbit average.\n",
 			((float)(result->nbytes * 8) / (float)(1024 * 1024)) / duration);
-	fprintf(stdout, "%ld packets sent.\n", result->npackets);
-	fprintf(stdout, "End of benchmark.\n"
+	fprintf(stderr, "%ld packets sent.\n", result->npackets);
+	fprintf(stderr, "End of benchmark.\n"
 	"-----------------------------------------------\n");
 }
 
@@ -171,13 +171,13 @@ void sntBenchmarkPrintSessionResult(const SNTBenchmarkSession* session){
 	duration = (float)session->elapse / (float)sntGetTimeResolution();
 
 	/*	Display benchmark result.	*/
-	fprintf(stdout, "%f duration.\n", duration);
-	fprintf(stdout, "%3f Mbit sent.\n", (float)(session->nbytes * 8) / (float)(1024 * 1024));
-	fprintf(stdout, "%3f Mbit average.\n",
+	fprintf(stderr, "%f duration.\n", duration);
+	fprintf(stderr, "%3f Mbit sent.\n", (float)(session->nbytes * 8) / (float)(1024 * 1024));
+	fprintf(stderr, "%3f Mbit average.\n",
 			((float)(session->nbytes * 8) / (float)(1024 * 1024)) / duration);
-	fprintf(stdout, "%ld packets sent.\n", session->npackets);
-	fprintf(stdout, "%ld packets out of order.\n", session->ofo);
-	fprintf(stdout, "End of benchmark.\n"
+	fprintf(stderr, "%ld packets sent.\n", session->npackets);
+	fprintf(stderr, "%ld packets out of order.\n", session->ofo);
+	fprintf(stderr, "End of benchmark.\n"
 	"-----------------------------------------------\n");
 }
 
