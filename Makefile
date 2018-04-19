@@ -28,6 +28,7 @@ VPATH = ./src
 SRC = $(wildcard src/*.c)
 OBJS = $(notdir $(subst .c,.o,$(SRC)))
 SERVICE := sntd
+SERVICED := sntd.service
 # Main Targets
 TARGET ?= snt
 # Certificates files
@@ -64,6 +65,7 @@ install_wireshark_dissector:
 
 install_service:
 	$(CP) $(SERVICE) /etc/init.d
+	$(CP) $(SERVICED) /etc/systemd/system
 	@echo -n "Installed service daemon.\n"
 
 $(DHPEM) :

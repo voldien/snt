@@ -33,7 +33,10 @@ The service script can be installed to run the snt program as a deamon service. 
 ```bash
 make insall_service 
 ```
-The the service can be started as followed:
+```bash
+make install_systemd_service
+```
+The service can be started as followed:
 ```bash
 service sntd start
 ```
@@ -62,6 +65,7 @@ snt --server --secure --compression=all --verbose
 ```
 
 # Contributing # 
+
 Please read the [CONTRIBUTING.md](CONTRIBUTING) for more details of how you can contriubute.
 
 # Dependencies #

@@ -312,7 +312,7 @@ typedef struct snt_secure_establishment_packet_t{
 }__attribute__ ((__packed__))SNTSecureEstablismentPacket;
 
 /**
- *	Initialized number agreed between the parties, p and g.
+ *	Init number agreed between the parties, p and g.
  */
 typedef struct snt_diffe_hellman_init_t{
 	SNTPacketHeader header;     /*	Protocol header.	*/
@@ -682,6 +682,8 @@ extern unsigned int sntProtocolHeaderSize(const SNTPacketHeader* header);
 /**
  *	Get pointer of datagram block pointer based on the header
  *	values.
+ *
+ *	@Return address pointer to begining.
  */
 extern void* sntDatagramGetBlock(SNTUniformPacket* packet);
 
