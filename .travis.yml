@@ -33,6 +33,6 @@ before_script:
 
 # Build library.
 script:
-  - make .
+  - make -C .
   - mkdir build && cd build
 
