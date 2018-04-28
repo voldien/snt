@@ -35,5 +35,8 @@ before_script:
 script:
   - make -C .
   - sudo make -C . install
+  - make -C . distribution
+  - make -C . install_wireshark_dissector
+  - make -C . install_service
   - mkdir build && cd build
 
