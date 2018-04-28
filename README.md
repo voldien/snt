@@ -1,5 +1,7 @@
 # snt #
 ----
+[![Travis Build Status](https://travis-ci.org/voldien/snt.svg?branch=master)](https://travis-ci.org/voldien/snt)
+
 *snt* - simple-network-tool is a network tool for performing network performance tests. The program supports multiple benchmark modes for testing various aspect of the network. The benchmark can use compression and encryption optionally in order to check how encryption and compression will change the network performance.
 
 The *snt* program uses the server/client connection model. Where the server and client is executed on the same executable binary.
