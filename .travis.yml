@@ -36,6 +36,3 @@ script:
   - make -C .
   - mkdir build && cd build
 
-install:
-  - make install
-
