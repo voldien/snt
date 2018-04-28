@@ -34,6 +34,6 @@ before_script:
 # Build library.
 script:
   - make -C .
-  - make -C . install
+  - sudo make -C . install
   - mkdir build && cd build
 
