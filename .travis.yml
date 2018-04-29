@@ -34,5 +34,9 @@ before_script:
 # Build library.
 script:
   - make -C .
+  - sudo make -C . install
+  - sudo make -C . install_service
+  - make -C . distribution
+  - make -C . install_wireshark_dissector
   - mkdir build && cd build
 
