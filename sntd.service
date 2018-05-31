@@ -1,0 +1,13 @@
+[Unit]
+Description=SNT - Simple Nework Tool server
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/snt --server --verbose --cipher=all --delta=all --compression=all --transport=all --secure --listen=128
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure # or always, on-abort, etc
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
