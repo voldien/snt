@@ -57,6 +57,9 @@ install : $(TARGET)
 	$(MKDIR) $(INSTALL_LOCATION)/bin
 	$(CP) $(TARGET) $(INSTALL_LOCATION)/bin
 	$(CP) snt.bc $(INSTALL_LOCATION)/share/bash-completion/completions/snt
+	$(MKDIR) $(INSTALL_LOCATION)/share/man/man1/
+	gzip -ck snt.1  > snt.1.gz
+	$(CP) snt.1.gz $(INSTALL_LOCATION)/share/man/man1/
 
 install_wireshark_dissector:
 	@echo -n "Installing wireshark dissector.\n"
