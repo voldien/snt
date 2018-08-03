@@ -210,7 +210,8 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 	assert(connection->recvbuf);
 	memset(connection->recvbuf, 0, bufsize);
 
-	/*	Allocate payload.	*/
+	/*	Allocate payload buffer.	*/
+	sntDebugPrintf("%d.\n", connection->option->payload);
 	connection->mtubuf = malloc(
 	        connection->option->payload + sizeof(SNTPacketHeader)
 	                + sizeof(SNTPresentationPacket));
