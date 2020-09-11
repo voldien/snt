@@ -78,7 +78,7 @@ Please read the [CONTRIBUTING.md](CONTRIBUTING) for more details of how you can 
 # Dependencies #
 In order to compile the program, the following *Debian* packages is required.
 ```
-apt-get install libzip-dev liblz4-dev libssl-dev libbz2-dev
+apt-get install libzip-dev liblz4-dev libssl1.0-dev libbz2-dev
 ```
 In order to use the *system v* service, the following *Debian* package is required.
 ```
