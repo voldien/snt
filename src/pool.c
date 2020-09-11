@@ -72,6 +72,8 @@ void* sntPoolReturn(SNTPool* allocator, void* data) {
 	tmp->next = allocator->pool->next;
 	allocator->pool->next = tmp;
 
+	/*	Clear the data to prevent sensitive information to retain on the system
+		memory.*/
 	memset(tmp->data, 0, allocator->itemsize);
 	return tmp;
 }

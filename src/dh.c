@@ -42,23 +42,35 @@ int sntDHCreateByData(sntDH** __restrict__ dh, const void* __restrict__ p,
 	/*	Create DH.*/
 	*dh = DH_new();
 
-	/*	Assign p.	*/
-	((DH*)*dh)->p = BN_bin2bn(p, plen, NULL);
-	if(!((DH*)*dh)->p){
+	/*	Assign p key.	*/
+	//BN_bn2bin
+	//BN_bn2bin(p, )
+
+//	((DH*)*dh)->p = BN_bin2bn(p, plen, NULL);
+	BIGNUM* pkey = BN_bin2bn(p, plen, plen);
+	BIGNUM* gkey = BN_bin2bn(g, glen, NULL);
+
+	if(!DH_set0_pqg(*dh, pkey, NULL, gkey)){
 		sntLogErrorPrintf("BN_bin2bn failed for p.\n");
 		sntSSLPrintError();
 		sntDHRelease(*dh);
 		return 0;
 	}
+	// if(!((DH*)*dh)->p){
+	// 	sntLogErrorPrintf("BN_bin2bn failed for p.\n");
+	// 	sntSSLPrintError();
+	// 	sntDHRelease(*dh);
+	// 	return 0;
+	// }
 
-	/*	Assigned g.	*/
-	((DH*)*dh)->g = BN_bin2bn(g, glen, NULL);
-	if(!((DH*)*dh)->g){
-		sntLogErrorPrintf("BN_bin2bn failed for g.\n");
-		sntSSLPrintError();
-		sntDHRelease(*dh);
-		return 0;
-	}
+	// /*	Assigned g.	*/
+	// ((DH*)*dh)->g = BN_bin2bn(g, glen, NULL);
+	// if(!((DH*)*dh)->g){
+	// 	sntLogErrorPrintf("BN_bin2bn failed for g.\n");
+	// 	sntSSLPrintError();
+	// 	sntDHRelease(*dh);
+	// 	return 0;
+	// }
 
 	int rc, codes = 0;
 	rc = DH_check(*dh, &codes);
@@ -118,10 +130,11 @@ int sntDHCopyCommon(sntDH* __restrict__ dh, void* __restrict__ p,
 		uint32_t* __restrict__ pglen){
 
 	/*	Compute length for p and g.	*/
-	const int plen = BN_num_bytes(((DH*)dh)->p);
-	const int glen = BN_num_bytes(((DH*)dh)->g);
 
-	/*	*/
+	const int plen = BN_num_bytes(DH_get0_p(dh));
+	const int glen = BN_num_bytes(DH_get0_g(dh));
+
+        /*	*/
 	assert(p && g && plen && glen);
 
 	/*	Invalid g or p.	*/
@@ -133,12 +146,12 @@ int sntDHCopyCommon(sntDH* __restrict__ dh, void* __restrict__ p,
 	*pglen = glen;
 
 	/*	Copy p.	*/
-	if(!BN_bn2bin(((DH*)dh)->p, p)){
+	if(!BN_bn2bin(DH_get0_p(dh), p)){
 		sntLogErrorPrintf("BN_bn2bin failed for p.\n");
 		return 0;
 	}
 	/*	Copy g.	*/
-	if(!BN_bn2bin(((DH*)dh)->g, g)){
+	if(!BN_bn2bin(DH_get0_g(dh), g)){
 		sntLogErrorPrintf("BN_bn2bin failed for g.\n");
 		return 0;
 	}
@@ -162,7 +175,8 @@ int sntDHGetExchange(sntDH* __restrict__ dh,
 		void* __restrict__ ex){
 
 	/*	Copy public number binary to ex.	*/
-	if(!BN_bn2bin(((DH*)dh)->pub_key, ex)){
+	
+	if(!BN_bn2bin(DH_get0_pub_key(dh), ex)){
 		sntLogErrorPrintf("BN_bn2bin failed for p.\n");
 		sntSSLPrintError();
 		return 0;
@@ -175,9 +189,10 @@ int sntDHGetComputedKey(sntDH* __restrict__ dh, const void* q,
 		void* __restrict__ key) {
 
 	BIGNUM* pub;
+	const int plen = BN_num_bytes(DH_get0_p(dh));
 
 	/*	Create bignum from binary.	*/
-	pub = BN_bin2bn(q, BN_num_bytes(((DH*)dh)->p), NULL);
+	pub = BN_bin2bn(q, plen, NULL);
 	if(!pub){
 		sntSSLPrintError();
 		return 0;

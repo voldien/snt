@@ -463,10 +463,12 @@ void sntServerMain(void){
 						/*	Create benchmark thread.	*/
 						if( (sntIsBenchEnable(con)) ){
 
-							if(con->option->transport_mode & SNT_TRANSPORT_UDP){
+							if(con->option->transport_mode & SNT_TRANSPORT_UDP) {
 								sntUnMapSocket(g_contable, &fd_active, con->udpsock);
-							}else{
+							}else if(con->option->transport_mode & SNT_TRANSPORT_TCP) {
 								sntUnMapSocket(g_contable, &fd_active, con->tcpsock);
+							}else {
+								assert(0);
 							}
 							/*	*/
 							((pthread_t*)g_threadtable)[sntPoolGetIndex(g_connectionpool, con)] =

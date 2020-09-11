@@ -117,7 +117,8 @@ int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned 
 			return 0;
 		}
 
-		asymksize = sizeof(RSA);
+		asymksize = RSA_size((RSA*)connection->asymkey);
+		// asymksize = sizeof(RSA);
 
 		break;
 	default:
@@ -176,7 +177,7 @@ int sntASymCreateKeyFromData(SNTConnection* __restrict__ connection,
 			return 0;
 		}
 		RSA_set_method(connection->asymkey, RSA_get_default_method());
-		asymksize = sizeof(RSA);
+		asymksize = RSA_size(connection->asymkey) * 8;
 		bitsize = RSA_size(connection->asymkey) * 8;
 
 		break;
@@ -288,7 +289,8 @@ int sntASymCreateFromX509File(SNTConnection* __restrict__ connection,
 	}
 
 	/*	Check public key type.	*/
-	switch (pkey->type) {
+	
+	switch (EVP_MD_type(pkey)) {
 	case EVP_PKEY_RSA:
 		asym = SNT_ENCRYPTION_ASYM_RSA;
 		connection->asymkey = EVP_PKEY_get1_RSA(pkey);

@@ -28,8 +28,9 @@ int sntLog2MutExlusive32(unsigned int a){
 	assert(0);
 }
 
-int sntIsPower2(unsigned int a){
-	return (a && ((a - 1) & a)) == 0;
+int sntIsPower2(unsigned int n){
+	if(n==0) { return 1; }
+	return n && !(n & (n - 1));
 }
 
 int sntMax(int a, int b){

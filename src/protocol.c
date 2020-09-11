@@ -216,7 +216,6 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 	        connection->option->payload + sizeof(SNTPacketHeader)
 	                + sizeof(SNTPresentationPacket));
 	assert(connection->mtubuf);
-
 }
 
 SNTConnection* sntBindSocket(const char* ip, uint16_t port,
