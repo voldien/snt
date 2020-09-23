@@ -53,6 +53,13 @@ IF((CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX) AND NOT CMAKE_COMPILER_
 		ADD_DEFINITIONS(-D_DEBUG)
 		ADD_DEFINITIONS(-g3 -O0)
 		SET(CMAKE_DEBUG TRUE)
+
+		#
+		IF (BUILD_WITH_UBSAN)
+			MESSAGE(STATUS "Undefined Behavior sanitizer enabled")
+			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined -fno-sanitize-recover=all")
+			SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=undefined -fno-sanitize-recover=all")
+		ENDIF()
 	ENDIF()
 
 	#
@@ -72,12 +79,7 @@ IF((CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX) AND NOT CMAKE_COMPILER_
 		SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -pg")
 	ENDIF()
 
-	#
-	IF (BUILD_WITH_UBSAN)
-		MESSAGE(STATUS "Undefined Behavior sanitizer enabled")
-		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined,shift,shift-exponent,integer-divide-by-zero,unreachable,vla-bound,null,return,signed-integer-overflow,bounds,float-divide-by-zero,float-cast-overflow,nonnull-attribute,returns-nonnull-attribute,bool,enum,vptr,pointer-overflow,builtin -fno-sanitize-recover=all")
-		SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=undefined,shift,shift-exponent,integer-divide-by-zero,unreachable,vla-bound,null,return,signed-integer-overflow,bounds,float-divide-by-zero,float-cast-overflow,nonnull-attribute,returns-nonnull-attribute,bool,enum,vptr,pointer-overflow,builtin -fno-sanitize-recover=all")
-	ENDIF()
+
 	#
 	IF (BUILD_WITH_ASAN)
 		MESSAGE(STATUS "AddressSanitizer enabled")
@@ -114,7 +116,6 @@ FILE(GLOB HEADER_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
 SET(SNT_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 FIND_PACKAGE(ZLIB)
-FIND_PACKAGE(Backtrace)
 FIND_PACKAGE(OpenSSL)
 
 # Core library for adding support for plugin.
