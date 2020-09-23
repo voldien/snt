@@ -54,12 +54,12 @@ void sntInitCompression(unsigned int type){
 		/*	*/
 		err = BZ2_bzCompressInit(bzip2com, 9, 0, 0);
 		if(err < BZ_OK){
-			sntLogErrorPrintf("bzip2 failed to initialize with error %ld.\n", err);
+			sntLogErrorPrintf("bzip2 failed to initialize with error %d.\n", err);
 			exit(EXIT_FAILURE);
 		}
 		err = BZ2_bzDecompressInit(bzip2uncom, 0, 0);
 		if(err < BZ_OK){
-			sntLogErrorPrintf("bzip2 failed to initialize with error %ld.\n", err);
+			sntLogErrorPrintf("bzip2 failed to initialize with error %d.\n", err);
 			exit(EXIT_FAILURE);
 		}
 	}

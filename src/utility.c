@@ -25,7 +25,7 @@ int sntLog2MutExlusive32(unsigned int a){
 			return (i + 1);
 	}
 
-	assert(0);
+	return 0;
 }
 
 int sntIsPower2(unsigned int n){

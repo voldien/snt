@@ -39,8 +39,8 @@ SNTPool* sntPoolCreate(unsigned int num, unsigned int itemsize) {
 }
 
 int sntPoolLockMem(SNTPool* poolallocator){
-	return sntLockMemory(poolallocator->pool,
-			sntPoolNumNodes(poolallocator) * sntPoolItemSize(poolallocator));
+	size_t sizeInBytes = (size_t)sntPoolNumNodes(poolallocator) * (size_t)sntPoolItemSize(poolallocator);
+	return sntLockMemory(poolallocator->pool, sizeInBytes);
 }
 
 void* sntPoolObtain(SNTPool* allocator) {

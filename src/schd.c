@@ -65,11 +65,12 @@ void sntSchdGetAffinity(unsigned int* cpu, unsigned int* cores,
 		sntLogErrorPrintf("sched_setaffinity failed, %s.\n", strerror(errno));
 	}
 
-	for (j = 0; j < CPU_SETSIZE; ++j){
-		if (CPU_ISSET(j, &set)){
+	// Disabled intill needed.
+	// for (j = 0; j < CPU_SETSIZE; ++j){
+	// 	if (CPU_ISSET(j, &set)){
 
-		}
-	}
+	// 	}
+	// }
 
 	*cpu = 0;
 	*cores = 0;
