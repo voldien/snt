@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 3.0 )
-PROJECT(fragview VERSION 0.11.1 LANGUAGES C)
+PROJECT(fragview VERSION 0.13.1 LANGUAGES C)
 
 # Build shared/dynamic library option
 OPTION(BUILD_SHARED_LIBS "Build package with shared libraries." ON)
@@ -10,14 +10,6 @@ OPTION(BUILD_WITH_UBSAN "" OFF)
 OPTION(BUILD_WITH_ASAN "Enable AddressSanitizer." OFF )
 OPTION(BUILD_OPT_BUILD_PACKAGES "Set to ON to generate CPack configuration files and packaging targets" OFF)
 OPTION(BUILD_WITH_DEBUG_BOUNDSCHECK "Array/Pointer BoundsChecking, buffer overflow protection. Used in debug only." OFF)
-IF(NOT BUILD_SHARED_LIBS)
-	SET(CMAKE_EXE_LINKER_FLAGS "-static")
-	SET(LINK_SEARCH_START_STATIC TRUE)
-ELSE()
-	MESSAGE(STATUS "Shared libraries enabled")
-ENDIF(NOT BUILD_SHARED_LIBS)
-
-#
 OPTION(BUILD_WITH_TEST "Enable Testing." OFF)
 
 IF(MSVC)
@@ -34,9 +26,9 @@ ENDIF()
 
 # Set version of the project.
 SET(VERSION_MAJOR 0)
-SET(VERSION_MINOR 11)
-SET(VERSION_REVISION 0)
-SET(VERSION_STATE a)
+SET(VERSION_MINOR 13)
+SET(VERSION_REVISION 1)
+SET(VERSION_STATE b)
 SET(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}${VERSION_STATE}${VERSION_REVISION} )
 SET(PROJECT_VERSION "${VERSION}")
 
@@ -102,6 +94,20 @@ ELSE()
 
 ENDIF()
 
+#
+IF (BUILD_WITH_UBSAN)
+	MESSAGE(STATUS "Undefined Behavior sanitizer enabled")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined,shift,shift-exponent,integer-divide-by-zero,unreachable,vla-bound,null,return,signed-integer-overflow,bounds,float-divide-by-zero,float-cast-overflow,nonnull-attribute,returns-nonnull-attribute,bool,enum,vptr,pointer-overflow,builtin -fno-sanitize-recover=all")
+	SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=undefined,shift,shift-exponent,integer-divide-by-zero,unreachable,vla-bound,null,return,signed-integer-overflow,bounds,float-divide-by-zero,float-cast-overflow,nonnull-attribute,returns-nonnull-attribute,bool,enum,vptr,pointer-overflow,builtin -fno-sanitize-recover=all")
+ENDIF()
+
+#
+IF (BUILD_WITH_ASAN)
+	MESSAGE(STATUS "AddressSanitizer enabled")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+	SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
+ENDIF()
+
 # Define all file lists.
 FILE(GLOB SOURCE_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
 FILE(GLOB HEADER_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
@@ -124,3 +130,8 @@ TARGET_INCLUDE_DIRECTORIES (snt PUBLIC
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
 	$<INSTALL_INTERFACE:include>)
+
+
+#make cert
+#make install_cert
+#install_wireshark

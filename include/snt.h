@@ -49,6 +49,8 @@ extern char* g_dhfilepath;              /*	Diffie hellman certificate file.    *
 typedef struct snt_connection_option_t{
 	int32_t affamily;           /*	Address family.	*/
 	uint32_t ssl;               /*	Use secure connection via SSL.	*/
+	uint32_t useCert;			/*	*/
+	uint32_t useDHfile;			/*	*/
 	uint32_t compression;       /*	Compression.	*/
 	uint32_t bm_protocol_mode;  /*	Benchmark mode.	*/
 	uint32_t transport_mode;    /*	Transport layer protocol.	*/

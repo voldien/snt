@@ -37,6 +37,8 @@ static void snt_default_con_option(SNTConnectionOption* option, unsigned int isS
 
 	option->affamily = AF_INET;
 	option->ssl = 0;
+	option->useCert = 0;
+	option->useDHfile = 0;
 	option->compression = 0;
 	option->symmetric = SNT_ENCRYPTION_AES_ECB128;
 	option->asymmetric = SNT_ENCRYPTION_ASYM_RSA;
@@ -596,7 +598,7 @@ int sntInitServer(unsigned int port, SNTConnectionOption* option){
 	/*	Check if encryption is enabled.	*/
 	if(option->ssl){
 
-		if(g_cerficatefilepath){
+		if(g_cerficatefilepath && option->useCert){
 
 			/*	Create public key from x509 certificate.	*/
 			sntVerbosePrintf("Started loading x509 certificate : %s \n",
@@ -628,7 +630,7 @@ int sntInitServer(unsigned int port, SNTConnectionOption* option){
 		/*  Check if diffie hellman option selected.    */
 		if(option->dh > 0){
 			/*  Check if to load from file. */
-			if(g_dhfilepath){
+			if(g_dhfilepath && option->useCert){
 				/*	Create Diffie hellman from file.	*/
 				sntVerbosePrintf("Loading Diffie hellman from file %s.\n", g_dhfilepath);
 				if(!sntDHCreateFromPEMFile(&g_bindconnection->dh, g_dhfilepath)){
