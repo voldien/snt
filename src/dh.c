@@ -43,10 +43,6 @@ int sntDHCreateByData(sntDH** __restrict__ dh, const void* __restrict__ p,
 	*dh = DH_new();
 
 	/*	Assign p key.	*/
-	//BN_bn2bin
-	//BN_bn2bin(p, )
-
-//	((DH*)*dh)->p = BN_bin2bn(p, plen, NULL);
 	BIGNUM* pkey = BN_bin2bn(p, plen, NULL);
 	BIGNUM* gkey = BN_bin2bn(g, glen, NULL);
 
@@ -56,21 +52,6 @@ int sntDHCreateByData(sntDH** __restrict__ dh, const void* __restrict__ p,
 		sntDHRelease(*dh);
 		return 0;
 	}
-	// if(!((DH*)*dh)->p){
-	// 	sntLogErrorPrintf("BN_bin2bn failed for p.\n");
-	// 	sntSSLPrintError();
-	// 	sntDHRelease(*dh);
-	// 	return 0;
-	// }
-
-	// /*	Assigned g.	*/
-	// ((DH*)*dh)->g = BN_bin2bn(g, glen, NULL);
-	// if(!((DH*)*dh)->g){
-	// 	sntLogErrorPrintf("BN_bin2bn failed for g.\n");
-	// 	sntSSLPrintError();
-	// 	sntDHRelease(*dh);
-	// 	return 0;
-	// }
 
 	int rc, codes = 0;
 	rc = DH_check(*dh, &codes);
@@ -134,7 +115,7 @@ int sntDHCopyCommon(sntDH* __restrict__ dh, void* __restrict__ p,
 	const int plen = BN_num_bytes(DH_get0_p(dh));
 	const int glen = BN_num_bytes(DH_get0_g(dh));
 
-        /*	*/
+		/*	*/
 	assert(p && g && plen && glen);
 
 	/*	Invalid g or p.	*/
@@ -206,4 +187,3 @@ int sntDHGetComputedKey(sntDH* __restrict__ dh, const void* q,
 
 	return 1;
 }
-

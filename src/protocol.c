@@ -24,36 +24,36 @@
 
 
 const char* gs_symprotocol[] = {
-		"Undefined",	/*0x0*/
-		"Init",
-		"ClientOption",
-		"Certificate",
-		"Secure",
-		"Ready",
-		"Start",
-		"Error",
-		"Benchmark",
-		"Result",
-		"DHReq",
-		"DHInit",
-		"DHExch",
-		NULL
+	"Undefined",	/*0x0*/
+	"Init",
+	"ClientOption",
+	"Certificate",
+	"Secure",
+	"Ready",
+	"Start",
+	"Error",
+	"Benchmark",
+	"Result",
+	"DHReq",
+	"DHInit",
+	"DHExch",
+	NULL
 };
 
 const char* gs_sym_cert[] = {
-		"",
-		"rsa",
-		"ec",
-		"x509",
-		NULL
+	"",
+	"rsa",
+	"ec",
+	"x509",
+	NULL
 };
 
 const char* gs_sym_duplex[] = {
-		"",
-		"simple",
-		"half",
-		"full",
-		NULL
+	"",
+	"simple",
+	"half",
+	"full",
+	NULL
 };
 
 const char* gs_sym_transport[] = {
@@ -64,28 +64,28 @@ const char* gs_sym_transport[] = {
 };
 
 const char* gs_delta_sym[] = {
-		"",
-		"float",
-		"int",
-		"time",
-		"hrestime",
-		"double",
-		NULL
+	"",
+	"float",
+	"int",
+	"time",
+	"hrestime",
+	"double",
+	NULL
 };
 
 const char* gs_error_sym[] = {
-		"No error",
-		"Invalid argument",
-		"Signature failed",
-		"Server error",
-		"incompatible version",
-		"SSL not supported",
-		"Bad request",
-		"Service unavailable",
-		"Cipher not supported",
-		"Benchmark mode not supported",
-		"Diffie hellman not supported",
-		NULL
+	"No error",
+	"Invalid argument",
+	"Signature failed",
+	"Server error",
+	"incompatible version",
+	"SSL not supported",
+	"Bad request",
+	"Service unavailable",
+	"Cipher not supported",
+	"Benchmark mode not supported",
+	"Diffie hellman not supported",
+	NULL
 };
 
 void sntGetInterfaceAttr(SNTConnection* connection){

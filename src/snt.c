@@ -348,13 +348,13 @@ void sntReadArgument(int argc,  char *const * argv, char* ip, unsigned int* port
 			break;
 		case 'i':
 			if(optarg){
-                if(access(optarg, F_OK | R_OK) != 0){
-                	g_dhfilepath = optarg;
-                }else{
-                    option->dh = (uint32_t)strtol(optarg, NULL, 10);
-                    g_dhfilepath = NULL;
-                    sntVerbosePrintf("Diffie hellman set to %d bit.\n", option->dh);
-                }
+				if(access(optarg, F_OK | R_OK) != 0){
+					g_dhfilepath = optarg;
+				}else{
+					option->dh = (uint32_t)strtol(optarg, NULL, 10);
+					g_dhfilepath = NULL;
+					sntVerbosePrintf("Diffie hellman set to %d bit.\n", option->dh);
+				}
 			}else{
 				option->dh = 1;
 			}

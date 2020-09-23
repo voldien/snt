@@ -4,15 +4,15 @@
 #include<openssl/md4.h>
 
 const char* gc_hash_symbol[] = {
-		"none",
-		"md4",
-		"md5",
-		"sha",
-		"sha224",
-		"sha256",
-		"sha384",
-		"sha512",
-		NULL
+	"none",
+	"md4",
+	"md5",
+	"sha",
+	"sha224",
+	"sha256",
+	"sha384",
+	"sha512",
+	NULL
 };
 
 

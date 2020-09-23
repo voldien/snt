@@ -20,36 +20,36 @@
 
 
 const char* gc_symchi_symbol[] = {
-		"",
-		"aesecb128",
-		"aesecb192",
-		"aesecb256",
-		"blowfish",
-		"des",
-		"3des",
-		"aescbc128",
-		"aescbc192",
-		"aescbc256",
-		"aescfb128",
-		"aescfb192",
-		"aescfb256",
-		"aesofb128",
-		"aesofb192",
-		"aesofb256",
-		"3descbc",
-		"bfcbc",
-		"bfcfb",
-		"rc4",
-		"cast",
-		"castcbc",
-		"castcfb",
-		NULL,
+	"",
+	"aesecb128",
+	"aesecb192",
+	"aesecb256",
+	"blowfish",
+	"des",
+	"3des",
+	"aescbc128",
+	"aescbc192",
+	"aescbc256",
+	"aescfb128",
+	"aescfb192",
+	"aescfb256",
+	"aesofb128",
+	"aesofb192",
+	"aesofb256",
+	"3descbc",
+	"bfcbc",
+	"bfcfb",
+	"rc4",
+	"cast",
+	"castcbc",
+	"castcfb",
+	NULL,
 };
 
 const char* gc_asymchi_symbol[] = {
-		"",
-		"RSA",
-		NULL,
+	"",
+	"RSA",
+	NULL,
 };
 
 void sntSSLPrintError(void){
@@ -295,8 +295,8 @@ int sntASymCreateFromX509File(SNTConnection* __restrict__ connection,
 		asym = SNT_ENCRYPTION_ASYM_RSA;
 		connection->asymkey = EVP_PKEY_get1_RSA(pkey);
 		break;
-    case EVP_PKEY_DSA:
-    case EVP_PKEY_EC:
+	case EVP_PKEY_DSA:
+	case EVP_PKEY_EC:
 	default:
 		sntLogErrorPrintf("Not Supported.\n");
 		return 0;
@@ -304,7 +304,7 @@ int sntASymCreateFromX509File(SNTConnection* __restrict__ connection,
 
 	/*	Assign asymmetric meta. */
 	connection->asymchiper = asym;
-    connection->asynumbits = (unsigned int)EVP_PKEY_size(pkey) * 8;
+	connection->asynumbits = (unsigned int)EVP_PKEY_size(pkey) * 8;
 
 	/*	Release.    */
 	EVP_PKEY_free(pkey);

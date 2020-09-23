@@ -94,7 +94,7 @@ unsigned int sntParserBitWiseMultiParam(const char* __restrict__ arg,
 			j++;
 			if(opts[j] == NULL){
 				sntLogErrorPrintf("Invalid option, %s.\n", param);
-				exit(EXIT_FAILURE);	/*	TODO resolve.	*/
+				exit(EXIT_FAILURE);
 			}
 
 			/*	*/

@@ -252,7 +252,7 @@ void* sntClientIntegrityBenchmark(void* patt){
 	result.elapse = sntGetNanoTime() - starttime;
 	result.type = 0;
 
-    /*  End benchmark.  */
+	/*  End benchmark.  */
 	sntBenchmarkEnd(con, &result);
 	return NULL;
 }
@@ -302,7 +302,7 @@ void* sntClientPerformanceBenchmark(void* patt){
 	result.elapse = (sntGetNanoTime() - starttime);
 	result.type = 0;
 
-    /*  End benchmark.  */
+	/*  End benchmark.  */
 	sntBenchmarkEnd(con, &result);
 	return NULL;
 }

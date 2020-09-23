@@ -23,11 +23,11 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 
 	/*	Application protocol header.	*/
 	fprintf(stdout, "--- header ---\n"
-					"version : %u.%u.\n"
-					"stype   : %u : %s.\n"
-					"offset  : %u.\n"
-					"len     : %u.\n"
-					"flag    : %u.\n"
+					"version : %u.%u\n"
+					"stype   : %u : (%s)\n"
+					"offset  : %u\n"
+					"len     : %u\n"
+					"flag    : %u\n"
 					"--------------\n",
 					SNT_GET_MAJ_VERSION(packet->header.version),
 					SNT_GET_MIN_VERSION(packet->header.version),
@@ -41,7 +41,7 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 	if(sntPacketHasEncrypted(packet->header)){
 		SNTPresentationUnion* press = (SNTPresentationUnion*)&packet->presentation;
 		fprintf(stdout, "--- presentation layer ---\n"
-						"noffset : %u.\n",
+						"noffset : %u\n",
 						press->offset.noffset);
 		/*	Print Initialization vector.	*/
 		if(sntPacketHasIV(packet->header)){
@@ -70,16 +70,16 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 	switch(packet->header.stype){
 	case SNT_PROTOCOL_STYPE_INIT:
 		fprintf(stdout,
-				"ssl         : %u.\n"
-				"asymchiper  : %u.\n"
-				"symchiper   : %u.\n"
-				"compression : %u.\n"
-				"mode        : %u.\n"
-				"inetbuffer  : %u.\n"
-				"transmode   : %u.\n"
-				"extension   : %u.\n"
-				"deltaTypes  : %u.\n"
-				"duplex      : %d.\n",
+				"ssl         : %u\n"
+				"asymchiper  : %u\n"
+				"symchiper   : %u\n"
+				"compression : %u\n"
+				"mode        : %u\n"
+				"inetbuffer  : %u\n"
+				"transmode   : %u\n"
+				"extension   : %u\n"
+				"deltaTypes  : %u\n"
+				"duplex      : %d\n",
 				pack.init->ssl,
 				pack.init->asymchiper,
 				pack.init->symchiper,
@@ -93,18 +93,18 @@ void sntPrintPacketInfo(const SNTUniformPacket* packet){
 		break;
 	case SNT_PROTOCOL_STYPE_CLIENTOPT:
 		fprintf(stdout,
-				"ssl            : %u.\n"
-				"symchiper      : %u.\n"
-				"compression    : %u.\n"
-				"benchmode      : %u.\n"
-				"transprotocol  : %u.\n"
-				"deltaTypes     : %u.\n"
-				"incdelta       : %lu.\n"
-				"duplex         : %u.\n"
-				"frequency      : %lu.\n"
-				"playload       : %hu.\n"
-				"extension      : %u.\n"
-				"duration       : %lu.\n",
+				"ssl            : %u\n"
+				"symchiper      : %u\n"
+				"compression    : %u\n"
+				"benchmode      : %u\n"
+				"transprotocol  : %u\n"
+				"deltaTypes     : %u\n"
+				"incdelta       : %lu\n"
+				"duplex         : %u\n"
+				"frequency      : %lu\n"
+				"playload       : %hu\n"
+				"extension      : %u\n"
+				"duration       : %lu\n",
 				pack.cli->ssl,
 				pack.cli->symchiper,
 				pack.cli->compression,
