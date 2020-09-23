@@ -1,5 +1,5 @@
 #include"snt_parser.h"
-
+#include"snt_log.h"
 
 /**
  *	Get number of parameter in argument.

@@ -3,6 +3,8 @@
 #include <string.h>
 #include <snt_pool.h>
 #include <snt_schd.h>
+#include"snt_utility.h"
+#include"snt_log.h"
 
 
 SNTPool* sntPoolCreate(unsigned int num, unsigned int itemsize) {

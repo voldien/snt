@@ -234,7 +234,7 @@ int sntASymCopyPublicKey(const SNTConnection* connection, void* cpkey){
 	return pub_len;
 }
 
-int sntASymCreateKeyFromFile(const SNTConnection* __restrict__ connection,
+int sntASymCreateKeyFromFile(SNTConnection* __restrict__ connection,
 		unsigned int cipher, void* __restrict__ filepath, unsigned int private) {
 
 	int res;
@@ -248,7 +248,7 @@ int sntASymCreateKeyFromFile(const SNTConnection* __restrict__ connection,
 	}
 
 	/*	Create key from data.	*/
-	res = sntASymCreateKeyFromData(connection, cipher, pkey, len, private);
+	res = sntASymCreateKeyFromData(connection, cipher, (const void*)pkey, len, private);
 
 	/*	Release key.	*/
 	sntMemZero(pkey, len);
@@ -290,7 +290,7 @@ int sntASymCreateFromX509File(SNTConnection* __restrict__ connection,
 
 	/*	Check public key type.	*/
 	
-	switch (EVP_MD_type(pkey)) {
+	switch (EVP_MD_type((const EVP_MD*)pkey)) {
 	case EVP_PKEY_RSA:
 		asym = SNT_ENCRYPTION_ASYM_RSA;
 		connection->asymkey = EVP_PKEY_get1_RSA(pkey);
@@ -408,7 +408,7 @@ static int sntGetSignHashEnum(unsigned int hash){
 }
 
 int sntASymSignDigSign(const SNTConnection* connection, unsigned int hashtype,
-		const void* hash, unsigned int len, void* output, unsigned int* diglen) {
+		const void* hash, unsigned int len, void* output, int32_t* diglen) {
 
 	int res = 0;
 
@@ -815,13 +815,14 @@ unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 		}
 		break;
 	case SNT_ENCRYPTION_3DESCBC:{
-		unsigned char iiv[8];
+		DES_cblock iiv;
+		//unsigned char iiv[8];
 		sntGenRandom(iv, sntSymBlockSize(connection->symchiper));
 		memcpy(iiv, iv, 8);
 		DES_ede3_cbc_encrypt(in, dest, delen,
 				&((DES_key_schedule*)connection->symenc)[0],
 				&((DES_key_schedule*)connection->symenc)[1],
-				&((DES_key_schedule*)connection->symenc)[2], iiv, DES_ENCRYPT);
+				&((DES_key_schedule*)connection->symenc)[2], &iiv, DES_ENCRYPT);
 	}break;
 	case SNT_ENCRYPTION_BLOWFISH:
 		for(i = 0; i < delen; i += connection->blocksize){

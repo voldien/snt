@@ -47,7 +47,7 @@ int sntDHCreateByData(sntDH** __restrict__ dh, const void* __restrict__ p,
 	//BN_bn2bin(p, )
 
 //	((DH*)*dh)->p = BN_bin2bn(p, plen, NULL);
-	BIGNUM* pkey = BN_bin2bn(p, plen, plen);
+	BIGNUM* pkey = BN_bin2bn(p, plen, NULL);
 	BIGNUM* gkey = BN_bin2bn(g, glen, NULL);
 
 	if(!DH_set0_pqg(*dh, pkey, NULL, gkey)){

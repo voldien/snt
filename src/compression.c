@@ -87,7 +87,7 @@ int sntInflate(unsigned int com, const char* source, char* dest,
 		assert(inflen >= 0);
 		break;
 	case SNT_COMPRESSION_BZIP2:
-		bzip2uncom->next_in = source;
+		bzip2uncom->next_in = (char*)source;
 		bzip2uncom->avail_in = slen;
 		bzip2uncom->next_out = (char*)dest;
 		bzip2uncom->avail_out = g_compressbound;
@@ -112,7 +112,7 @@ int sntDeflate(unsigned int com, const char* source, char* dest,
 
 	switch(com){
 	case SNT_COMPRESSION_LZ4:
-		deflen = LZ4_compress(source, dest, (int)slen);
+		deflen = LZ4_compress_default(source, dest, (int)slen, (int)slen);
 		sntDebugPrintf("sntDeflate, lz4 %u:%d.\n", slen, deflen);
 		assert(deflen >= 0);
 		break;

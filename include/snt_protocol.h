@@ -620,7 +620,7 @@ extern void sntCopyHeader(SNTPacketHeader* __restrict__ dest, const SNTPacketHea
 /**
  *	Copy packet payload.
  */
-#define sntCopyPacketPayload(a,b,c) memcpy(a, b, c)
+#define sntCopyPacketPayload(a,b,c) memcpy( ( a ), ( b ), ( c ) )
 
 /**
  *	Copy the whole packet based on the values
@@ -685,6 +685,6 @@ extern unsigned int sntProtocolHeaderSize(const SNTPacketHeader* header);
  *
  *	@Return address pointer to begining.
  */
-extern void* sntDatagramGetBlock(SNTUniformPacket* packet);
+extern void* sntDatagramGetBlock(const SNTUniformPacket* packet);
 
 #endif

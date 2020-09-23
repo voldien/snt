@@ -213,8 +213,8 @@ void sntGetInterfaceAttr(SNTConnection* connection){
 	/*	Allocate payload buffer.	*/
 	sntDebugPrintf("%d.\n", connection->option->payload);
 	connection->mtubuf = malloc(
-	        connection->option->payload + sizeof(SNTPacketHeader)
-	                + sizeof(SNTPresentationPacket));
+			connection->option->payload + sizeof(SNTPacketHeader)
+					+ sizeof(SNTPresentationPacket));
 	assert(connection->mtubuf);
 }
 
@@ -582,8 +582,9 @@ unsigned int sntCreateSendPacket(const SNTConnection* connection, void* buffer,
 	des = buf;
 
 	/*	*/
-	if(connection->symchiper && connection->usecompression){
-		size = sntSymEncrypt(connection, sou, des, size, pres->iv.iv, &pres->iv.iv[pres->iv.len]);
+	if(connection->symchiper && connection->usecompression) {
+		SNTPresentationIVPacket* ivSection = &pres->iv;
+		size = sntSymEncrypt(connection, sou, des, size, pres->iv.iv, (void*)&ivSection->iv[pres->iv.len]);
 		pres->offset.noffset = (uint8_t)(size - buflen);
 		sntSwapPointer((void**)&des, (void**)&sou);
 		size = sntDeflate(connection->usecompression, (const char*)sou, (char*)des,
@@ -597,7 +598,8 @@ unsigned int sntCreateSendPacket(const SNTConnection* connection, void* buffer,
 		}
 		/*	Encryption.	*/
 		if(connection->symchiper){
-			size = sntSymEncrypt(connection, sou, des, size, pres->iv.iv, &pres->iv.iv[pres->iv.len]);
+			SNTPresentationIVPacket* ivSection = &pres->iv;
+			size = sntSymEncrypt(connection, sou, des, size, pres->iv.iv, (void*)&ivSection->iv[pres->iv.len]);
 			pres->offset.noffset = size - buflen;
 		}
 
@@ -627,17 +629,19 @@ unsigned int sntCreateRecvPacket(const SNTConnection* connection, void* buffer,
 	des = buf;
 
 	if(connection->symchiper && connection->usecompression){
+		SNTPresentationIVPacket* ivSection = &pres->iv;
 		size = sntInflate(connection->usecompression, (const char*)sou, (char*)des, size);
 		sntSwapPointer((void**)&sou, (void**)&des);
-		size = sntSymDecrypt(connection, sou, des, size, pres->iv.iv, &pres->iv.iv[pres->iv.len]);
+		size = sntSymDecrypt(connection, sou, des, size, pres->iv.iv, (void*)&ivSection->iv[pres->iv.len]);
 		size -= pres->offset.noffset;
 		return size;
 	}
 	else{
 		/*	Decrypt.	*/
 		if(connection->symchiper){
+			SNTPresentationIVPacket* ivSection = &pres->iv;
 			sntDebugPrintf("Receiving encrypted data, %d.\n", size);
-			size = sntSymDecrypt(connection, sou, des, size, pres->iv.iv, &pres->iv.iv[pres->iv.len]);
+			size = sntSymDecrypt(connection, sou, des, size, pres->iv.iv,(void*)&ivSection->iv[pres->iv.len]);
 			size -= pres->offset.noffset ;
 		}
 		/*	Decompress.	*/
@@ -740,8 +744,8 @@ int sntWriteSocketPacket(const SNTConnection* connection,
 	}
 
 	/*	Copy packet payload.	*/
-	sntCopyPacketPayload((void*)&tranpack->totalbuf[sntProtocolHeaderSize(tranpack)],
-			sntDatagramGetBlock(pack), sntProtocolHeaderDatagramSize(pack));
+	sntCopyPacketPayload((void*)&tranpack->totalbuf[sntProtocolHeaderSize(&tranpack->header)],
+			sntDatagramGetBlock(pack), sntProtocolHeaderDatagramSize(&pack->header));
 
 	/*	Construct the packet.	*/
 	translen = sntCreateSendPacket(connection, sntDatagramGetBlock(tranpack),
@@ -766,7 +770,7 @@ int sntReadSocketPacket(const SNTConnection* connection, SNTUniformPacket* pack)
 
 	/*	Receive header.	*/
 	sntDebugPrintf("Receiving package.\n");
-	len = sntPeekPacketHeader(connection, &pack->header);
+	len = sntPeekPacketHeader(connection, pack);
 	if(len <= 0){
 		return 0;
 	}
@@ -843,6 +847,6 @@ unsigned int sntProtocolHeaderSize(const SNTPacketHeader* header){
 	return header->offset;
 }
 
-void* sntDatagramGetBlock(SNTUniformPacket* packet){
-	return &packet->totalbuf[packet->header.offset];
+void* sntDatagramGetBlock(const SNTUniformPacket* packet){
+	return (void*)&packet->totalbuf[packet->header.offset];
 }

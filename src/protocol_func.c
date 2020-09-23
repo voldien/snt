@@ -65,8 +65,8 @@ int sntProtFuncCliOpt(SNTConnection* connection, const SNTUniformPacket* packet)
 	/*	Reallocate payload buffer size. */
 	connection->option->payload = cliopt->payload;
 	connection->mtubuf = realloc(connection->mtubuf,
-	        connection->option->payload + sizeof(SNTPresentationUnion)
-	                + sizeof(SNTPacketHeader));
+			connection->option->payload + sizeof(SNTPresentationUnion)
+					+ sizeof(SNTPacketHeader));
 	assert(connection->mtubuf);
 
 	/*	*/
@@ -480,13 +480,15 @@ int sntSendCertificate(const SNTConnection* __restrict__ bind,
 	memcpy(tmphash, cert->hash, sntHashGetTypeSize(cert->hashtype));
 
 	/*	Create digital signature.	*/
+	int32_t encrypt_hash_size;
 	if (!sntASymSignDigSign(bind, cert->hashtype, tmphash,
 			sntHashGetTypeSize(cert->hashtype), cert->hash,
-			(unsigned int*)&cert->encryedhashsize)) {
+			&encrypt_hash_size)) {
 		sntSendError(client, SNT_ERROR_SERVER, "Couldn't create a digital signature");
 		free(tmphash);
 		return 0;
 	}
+	cert->encryedhashsize = encrypt_hash_size;
 	free(tmphash);
 
 	/*	Send certificate.	*/
@@ -497,7 +499,7 @@ int sntSendCertificate(const SNTConnection* __restrict__ bind,
 	client->asynumbits = bind->asynumbits;
 
 	/*	Release memory.	*/
-	sntMemZero(cert, sntProtocolPacketSize(cert));
+	sntMemZero(cert, sntProtocolPacketSize(&cert->header));
 	free(cert);
 
 	return len;
@@ -528,11 +530,16 @@ int sntSendDHpq(const SNTConnection* __restrict__ bind,
 	p = ((uint8_t*)init) + packlen;
 	g = p + bnum;
 
+	uint32_t pkey_size;
+	uint32_t gkey_size;
+
 	/*	Copy p and q.	*/
-	if(!sntDHCopyCommon(bind->dh, p, g, &init->plen, &init->glen)){
+	if(!sntDHCopyCommon(bind->dh, p, g, &pkey_size, &gkey_size)){
 		sntSendError(client, SNT_ERROR_SERVER, "Failed copy common diffie helmman p and g");
 		return 0;
 	}
+	init->plen = pkey_size;
+	init->glen = gkey_size;
 
 	/*	Create copy of diffie hellman for the client connection.	*/
 	if(!sntDHCreateByData(&client->dh, p, g, init->plen, init->glen)){
@@ -541,10 +548,12 @@ int sntSendDHpq(const SNTConnection* __restrict__ bind,
 	}
 
 	/*	Copy p and q.	*/
-	if(!sntDHCopyCommon(client->dh, p, g, &init->plen, &init->glen)){
+	if(!sntDHCopyCommon(client->dh, p, g,  &pkey_size, &gkey_size)){
 		sntSendError(client, SNT_ERROR_SERVER, "Failed copy common diffie helmman p and g");
 		return 0;
 	}
+	init->plen = pkey_size;
+	init->glen = gkey_size;
 
 	/*	Compute diffie hellman for public exchange q.	*/
 	if(!sntDHCompute(client->dh)){
@@ -560,7 +569,7 @@ int sntSendDHpq(const SNTConnection* __restrict__ bind,
 	len = sntWriteSocketPacket(client, (const SNTUniformPacket*)init);
 
 	/*	Release packet from memory.	*/
-	sntMemZero(init, sntProtocolPacketSize(init));
+	sntMemZero(init, sntProtocolPacketSize(&init->header));
 	free(init);
 
 	return len;
@@ -595,7 +604,7 @@ int sntSendDHExch(const SNTConnection* __restrict__ connection){
 	len = sntWriteSocketPacket(connection, (const SNTUniformPacket*)exch);
 
 	/*	Release.	*/
-	sntMemZero(exch, sntProtocolPacketSize(exch));
+	sntMemZero(exch, sntProtocolPacketSize(&exch->header));
 	free(exch);
 
 	return len;

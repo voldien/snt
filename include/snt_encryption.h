@@ -110,7 +110,7 @@ extern int sntASymCopyPublicKey(
  *	@Return non zero if successful.
  */
 extern int sntASymCreateKeyFromFile(
-		const SNTConnection* __restrict__ connection, unsigned int cipher,
+		SNTConnection* __restrict__ connection, unsigned int cipher,
 		void* __restrict__ filepath, unsigned int private);
 
 /**
@@ -160,7 +160,7 @@ extern void sntASymFree(SNTConnection* connection);
  */
 extern int sntASymSignDigSign(const SNTConnection* __restrict__ connection,
 		unsigned int hashtype, const void* __restrict__ hash, unsigned int len,
-		void* __restrict__ output, unsigned int* __restrict__ diglen);
+		void* __restrict__ output, int32_t* __restrict__ diglen);
 
 /**
  *	Verify signed digital signature.

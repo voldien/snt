@@ -9,6 +9,7 @@
 #include <pthread.h>
 #include <sys/mman.h>
 #include "snt_schd.h"
+#include "snt_log.h"
 
 
 void sntMemoryLockAll(void){
