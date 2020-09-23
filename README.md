@@ -64,10 +64,27 @@ Running in client mode requires at least the *-h* option with the hostname or IP
 ```
 snt -h localhost --secure --compression -b performance --verbose
 ```
+Using the file benchmark mode.
+```
+snt -h localhost --secure --compression -b file --file='valid path' --verbose
+```
+Specifying a compression algorithm. Valid options are: lz4, gzip, and bzip2.
+```
+snt -h localhost --secure --compression=lz4
+```
+Specifying a symmetric cipher algorithm. Valid options are: aesecb128, aesecb192, aesecb256, blowfish, des, 3des, aescbc128, aescbc192, aescbc256, aescfb128, aescfb192, aescfb256, aesofb128, aesofb192, aesofb256, 3descbc, bfcbc, bfcfb, rc4, cast, castcbc and castcfb.
+```
+snt -h localhost --secure --cipher=aescbc128
+```
+
 ## Server
 The server mode requires at least that the *--server* option is specified in order for the *snt* program to run in server mode.
 ```
 snt --server --secure --compression=all --verbose
+```
+Set the affinity mapping that has the following format: CPU, core index, number of adjacent cores.
+```
+snt --server affinity=0,1,2
 ```
 
 ## Contributing
