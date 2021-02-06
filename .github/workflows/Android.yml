@@ -4,7 +4,7 @@ on: [push, pull_request]
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
-  ANDROID_NDK_VERSION: 21.1.6352462
+  ANDROID_NDK_VERSION: 21.4.7075529
 
 jobs:
   android:
@@ -37,7 +37,7 @@ jobs:
         # Note the current convention is to use the -S and -B options here to specify source 
         # and build directories, but this is only available with CMake 3.13 and higher.  
         # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-        run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=android.toolchain.cmake \
+        run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake \
           -DANDROID_NDK=$ANDROID_NDK_HOME -DANDROID_ABI="armeabi-v7a with NEON" $GITHUB_WORKSPACE 
 
       - name: Compilation
