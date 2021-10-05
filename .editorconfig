@@ -33,9 +33,3 @@ insert_final_newline = true
 indent_style = tab
 indent_size = 4
 max_line_length = 99
-
-# Lua
-[*.lua]
-indent_style = tab
-indent_size = 4
-
