@@ -20,6 +20,16 @@
 #define _SNT_HASH_H_
 #include"snt_def.h"
 
+enum SNTHashAlgorithm {
+    SntHashNone,
+    SntHashMD4,
+    SntHashMD5,
+    SntHashSHA224,
+    SntHashSHA256,
+    SntHashSHA384,
+    SntHashSHA512,
+};
+
 /**
  *	Hash types.
  */
