@@ -1,18 +1,17 @@
+#include "snt_log.h"
+#include "snt_utility.h"
 #include <assert.h>
 #include <errno.h>
-#include <string.h>
 #include <snt_pool.h>
 #include <snt_schd.h>
-#include"snt_utility.h"
-#include"snt_log.h"
+#include <string.h>
 
+SNTPool *sntPoolCreate(unsigned int num, unsigned int itemsize) {
 
-SNTPool* sntPoolCreate(unsigned int num, unsigned int itemsize) {
-
-	SNTPool* alloc;
-	unsigned char* tmp;
+	SNTPool *alloc;
+	unsigned char *tmp;
 	unsigned int i;
-	const int size = (itemsize + sizeof(SNTPool));	/*	Total size of each node.	*/
+	const int size = (itemsize + sizeof(SNTPool)); /*	Total size of each node.	*/
 
 	/*	Allocate pool descriptor.	*/
 	alloc = malloc(sizeof(SNTPool));
@@ -25,28 +24,28 @@ SNTPool* sntPoolCreate(unsigned int num, unsigned int itemsize) {
 	assert(alloc->pool);
 
 	/*	Create pool chain.	*/
-	tmp = (unsigned char*)alloc->pool;
+	tmp = (unsigned char *)alloc->pool;
 	for (i = 0; i < num; i++) {
-		((SNTPoolNode*)tmp)->next = (SNTPoolNode*)( tmp + sizeof(SNTPoolNode) + itemsize );
+		((SNTPoolNode *)tmp)->next = (SNTPoolNode *)(tmp + sizeof(SNTPoolNode) + itemsize);
 		tmp += itemsize + sizeof(SNTPoolNode);
 	}
 
 	/*	Terminator of the pool.	*/
 	tmp -= itemsize + sizeof(SNTPoolNode);
-	((SNTPoolNode*)tmp)->next = NULL;
+	((SNTPoolNode *)tmp)->next = NULL;
 
 	return alloc;
 }
 
-int sntPoolLockMem(SNTPool* poolallocator){
+int sntPoolLockMem(SNTPool *poolallocator) {
 	size_t sizeInBytes = (size_t)sntPoolNumNodes(poolallocator) * (size_t)sntPoolItemSize(poolallocator);
 	return sntLockMemory(poolallocator->pool, sizeInBytes);
 }
 
-void* sntPoolObtain(SNTPool* allocator) {
+void *sntPoolObtain(SNTPool *allocator) {
 
-	SNTPoolNode* tmp;
-	void* block;
+	SNTPoolNode *tmp;
+	void *block;
 
 	if (allocator->pool->next == NULL) {
 		return NULL;
@@ -62,13 +61,13 @@ void* sntPoolObtain(SNTPool* allocator) {
 	return block;
 }
 
-void* sntPoolReturn(SNTPool* allocator, void* data) {
+void *sntPoolReturn(SNTPool *allocator, void *data) {
 
-	SNTPoolNode* tmp;
+	SNTPoolNode *tmp;
 
 	/*	Decrement with size of a pointer
 	 *	to get pointer for the next element.*/
-	tmp = (SNTPoolNode*)(((char*) data) - sizeof(void*));
+	tmp = (SNTPoolNode *)(((char *)data) - sizeof(void *));
 
 	/*	Update next value.	*/
 	tmp->next = allocator->pool->next;
@@ -80,28 +79,24 @@ void* sntPoolReturn(SNTPool* allocator, void* data) {
 	return tmp;
 }
 
-void* sntPoolResize(SNTPool* pool, unsigned int num, unsigned int itemsize){
+void *sntPoolResize(SNTPool *pool, unsigned int num, unsigned int itemsize) {
 	sntLogErrorPrintf("Not supported.\n");
 	return NULL;
 }
 
-unsigned int sntPoolNumNodes(const SNTPool* pool){
-	return pool->num;
+unsigned int sntPoolNumNodes(const SNTPool *pool) { return pool->num; }
+
+unsigned int sntPoolItemSize(const SNTPool *pool) { return pool->itemsize; }
+
+int sntPoolGetIndex(const SNTPool *pool, const void *data) {
+	return ((const char *)data - (const char *)pool->pool) / pool->itemsize;
 }
 
-unsigned int sntPoolItemSize(const SNTPool* pool){
-	return pool->itemsize;
+static void *sntPoolItemByIndex(SNTPool *pool, unsigned int index) {
+	return ((char *)pool->pool) + ((pool->itemsize + sizeof(void *)) * index + sizeof(void *));
 }
 
-int sntPoolGetIndex(const SNTPool* pool, const void* data){
-	return ((const char*)data - (const char*)pool->pool) / pool->itemsize;
-}
-
-static void* sntPoolItemByIndex(SNTPool* pool, unsigned int index){
-	return ((char*)pool->pool) + ( (pool->itemsize + sizeof(void*)) * index + sizeof(void*));
-}
-
-void sntPoolFree(SNTPool* pool){
+void sntPoolFree(SNTPool *pool) {
 
 	/*	Zero out each pool item.	*/
 	sntPoolZeroFrame(pool);
@@ -111,10 +106,10 @@ void sntPoolFree(SNTPool* pool){
 	free(pool);
 }
 
-void sntPoolZeroFrame(SNTPool* pool){
+void sntPoolZeroFrame(SNTPool *pool) {
 	unsigned int i;
 
-	for(i = 0; i < sntPoolNumNodes(pool); i++){
+	for (i = 0; i < sntPoolNumNodes(pool); i++) {
 		sntMemZero(sntPoolItemByIndex(pool, i), sntPoolItemSize(pool));
 	}
 }

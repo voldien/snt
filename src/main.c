@@ -1,24 +1,24 @@
 #include "snt_benchmark.h"
-#include "snt_utility.h"
 #include "snt_debug.h"
+#include "snt_log.h"
 #include "snt_protocol.h"
 #include "snt_schd.h"
-#include "snt_log.h"
-#include <signal.h>
+#include "snt_utility.h"
 #include <errno.h>
+#include <signal.h>
 
-static void snt_release(){
+static void snt_release() {
 
 	unsigned int i;
 
-	if( g_bindconnection){
+	if (g_bindconnection) {
 		sntDisconnectSocket(g_bindconnection);
 		g_bindconnection = NULL;
 	}
 	/*	cleanup.	*/
-	if(g_contable && g_connectionpool){
-		for( i = 0; i < FD_SETSIZE; i++){
-			if(g_contable[i] != NULL){
+	if (g_contable && g_connectionpool) {
+		for (i = 0; i < FD_SETSIZE; i++) {
+			if (g_contable[i] != NULL) {
 				sntDisconnectSocket(g_contable[i]);
 			}
 		}
@@ -29,7 +29,7 @@ static void snt_release(){
 	}
 
 	/*	Free connection pool.	*/
-	if(g_connectionpool){
+	if (g_connectionpool) {
 		sntPoolFree(g_connectionpool);
 		g_connectionpool = NULL;
 	}
@@ -39,10 +39,10 @@ static void snt_release(){
 }
 
 /*	signal interrupts.	*/
-void snt_catch(int signal){
+void snt_catch(int signal) {
 
 	/*	Ignore SIGPIPE.	*/
-	if(signal == SIGPIPE)
+	if (signal == SIGPIPE)
 		return;
 
 	/*	*/
@@ -51,12 +51,12 @@ void snt_catch(int signal){
 	exit(EXIT_SUCCESS);
 }
 
-int main(int argc,  char *const * argv){
+int main(int argc, char *const *argv) {
 
 	/*	*/
-	SNTConnectionOption conopt;				/*	*/
-	char host[256] = {"127.0.0.1"};			/*	*/
-	unsigned int port = SNT_DEFAULT_PORT;	/*	*/
+	SNTConnectionOption conopt;			  /*	*/
+	char host[256] = {"127.0.0.1"};		  /*	*/
+	unsigned int port = SNT_DEFAULT_PORT; /*	*/
 
 	/*	Read user input argument.	*/
 	sntReadArgument(argc, argv, host, &port, &conopt);
@@ -69,25 +69,24 @@ int main(int argc,  char *const * argv){
 	signal(SIGABRT, snt_catch);
 	atexit(snt_release);
 
-
 	/*	Create server.	*/
-	if(g_server){
+	if (g_server) {
 
 		/*	Lock memory.	*/
 		sntMemoryLockAll();
 
 		/*  Create server.  */
 		sntVerbosePrintf("Creating server socket.\n");
-		if(sntInitServer(port, &conopt) == 0){
+		if (sntInitServer(port, &conopt) == 0) {
 			return EXIT_FAILURE;
 		}
 		sntServerMain();
 	}
 
 	/*	Create client.	*/
-	if(g_client){
+	if (g_client) {
 		sntVerbosePrintf("Creating client socket.\n");
-		if(sntInitClient(g_numcliconne) == 0){
+		if (sntInitClient(g_numcliconne) == 0) {
 			sntLogErrorPrintf("Failed to connect to %s:%d.\n", host, port);
 			return EXIT_FAILURE;
 		}

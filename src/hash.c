@@ -1,46 +1,34 @@
-#include"snt_hash.h"
-#include<openssl/sha.h>
-#include<openssl/md5.h>
-#include<openssl/md4.h>
+#include "snt_hash.h"
+#include <openssl/md4.h>
+#include <openssl/md5.h>
+#include <openssl/sha.h>
 
-const char* gc_hash_symbol[] = {
-	"none",
-	"md4",
-	"md5",
-	"sha",
-	"sha224",
-	"sha256",
-	"sha384",
-	"sha512",
-	NULL
-};
+const char *gc_hash_symbol[] = {"none", "md4", "md5", "sha", "sha224", "sha256", "sha384", "sha512", NULL};
 
+unsigned int sntHash(unsigned int hashtype, const void *block, unsigned int len, void *result) {
 
-unsigned int sntHash(unsigned int hashtype, const void* block, unsigned int len,
-		void* result) {
+	union {
+		MD4_CTX *md4;
+		MD5_CTX *md5;
+		SHA_CTX *sha;
+		SHA256_CTX *sha256;
+		SHA512_CTX *sha512;
+	} ctx;
 
-	union{
-		MD4_CTX* md4;
-		MD5_CTX* md5;
-		SHA_CTX* sha;
-		SHA256_CTX* sha256;
-		SHA512_CTX* sha512;
-	}ctx;
-
-	switch(hashtype){
+	switch (hashtype) {
 	case SNT_HASH_MD4:
-		ctx.md4 = (MD4_CTX*)malloc(sizeof(MD4_CTX));
+		ctx.md4 = (MD4_CTX *)malloc(sizeof(MD4_CTX));
 		MD4_Init(ctx.md4);
 		MD4_Update(ctx.md4, block, len);
-		if(!MD4_Final(result, ctx.md4)){
+		if (!MD4_Final(result, ctx.md4)) {
 			return 0;
 		}
 		break;
 	case SNT_HASH_MD5:
-		ctx.md5 = (MD5_CTX*)malloc(sizeof(MD5_CTX));
+		ctx.md5 = (MD5_CTX *)malloc(sizeof(MD5_CTX));
 		MD5_Init(ctx.md5);
 		MD5_Update(ctx.md5, block, len);
-		if(!MD5_Final(result, ctx.md5)){
+		if (!MD5_Final(result, ctx.md5)) {
 			return 0;
 		}
 		break;
@@ -48,7 +36,7 @@ unsigned int sntHash(unsigned int hashtype, const void* block, unsigned int len,
 		ctx.sha = malloc(sizeof(SHA_CTX));
 		SHA1_Init(ctx.sha);
 		SHA1_Update(ctx.sha, block, len);
-		if(!SHA1_Final(result, ctx.sha)){
+		if (!SHA1_Final(result, ctx.sha)) {
 			return 0;
 		}
 		break;
@@ -56,7 +44,7 @@ unsigned int sntHash(unsigned int hashtype, const void* block, unsigned int len,
 		ctx.sha256 = malloc(sizeof(SHA256_CTX));
 		SHA224_Init(ctx.sha256);
 		SHA224_Update(ctx.sha256, block, len);
-		if(!SHA224_Final(result, ctx.sha256)){
+		if (!SHA224_Final(result, ctx.sha256)) {
 			return 0;
 		}
 		break;
@@ -64,7 +52,7 @@ unsigned int sntHash(unsigned int hashtype, const void* block, unsigned int len,
 		ctx.sha256 = malloc(sizeof(SHA256_CTX));
 		SHA256_Init(ctx.sha256);
 		SHA256_Update(ctx.sha256, block, len);
-		if(!SHA256_Final(result, ctx.sha256)){
+		if (!SHA256_Final(result, ctx.sha256)) {
 			return 0;
 		}
 		break;
@@ -72,7 +60,7 @@ unsigned int sntHash(unsigned int hashtype, const void* block, unsigned int len,
 		ctx.sha512 = malloc(sizeof(SHA512_CTX));
 		SHA384_Init(ctx.sha512);
 		SHA384_Update(ctx.sha512, block, len);
-		if(!SHA384_Final(result, ctx.sha512)){
+		if (!SHA384_Final(result, ctx.sha512)) {
 			return 0;
 		}
 		break;
@@ -80,7 +68,7 @@ unsigned int sntHash(unsigned int hashtype, const void* block, unsigned int len,
 		ctx.sha512 = malloc(sizeof(SHA512_CTX));
 		SHA512_Init(ctx.sha512);
 		SHA512_Update(ctx.sha512, block, len);
-		if(!SHA512_Final(result, ctx.sha512)){
+		if (!SHA512_Final(result, ctx.sha512)) {
 			return 0;
 		}
 		break;
@@ -92,9 +80,8 @@ unsigned int sntHash(unsigned int hashtype, const void* block, unsigned int len,
 	return sntHashGetTypeSize(hashtype);
 }
 
-
-unsigned int sntHashGetTypeSize(unsigned int hashtype){
-	switch(hashtype){
+unsigned int sntHashGetTypeSize(unsigned int hashtype) {
+	switch (hashtype) {
 	case SNT_HASH_MD4:
 		return MD4_DIGEST_LENGTH;
 	case SNT_HASH_MD5:
@@ -113,4 +100,3 @@ unsigned int sntHashGetTypeSize(unsigned int hashtype){
 		return 0;
 	}
 }
-

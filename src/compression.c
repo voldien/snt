@@ -1,48 +1,42 @@
-#include"snt.h"
-#include"snt_log.h"
-#include"snt_compression.h"
-#include<assert.h>
-#include<lz4.h>
-#include<zlib.h>
-#include<bzlib.h>
+#include "snt.h"
+#include "snt_compression.h"
+#include "snt_log.h"
+#include <assert.h>
+#include <bzlib.h>
+#include <lz4.h>
+#include <zlib.h>
 
 static unsigned int g_compressbound = 4096;
 
-const char* gs_symcompression[] = {
-		"",
-		"lz4",
-		"gzip",
-		"bzip2",
-		NULL
-};
+const char *gs_symcompression[] = {"", "lz4", "gzip", "bzip2", NULL};
 
-bz_stream* bzip2com = NULL;
-bz_stream* bzip2uncom = NULL;
+bz_stream *bzip2com = NULL;
+bz_stream *bzip2uncom = NULL;
 
-void sntInitCompression(unsigned int type){
+void sntInitCompression(unsigned int type) {
 
-	if(type & SNT_COMPRESSION_LZ4){
+	if (type & SNT_COMPRESSION_LZ4) {
 		int err;
 		int compbound = (int)LZ4_COMPRESSBOUND(g_compressbound);
 		sntDebugPrintf("Initialize LZ4, %d.\n", compbound);
 		g_compressbound = (unsigned int)compbound;
 		err = LZ4_compressBound(compbound);
-		if(err <= 0){
+		if (err <= 0) {
 			sntLogErrorPrintf("lz4 failed to initialize with error %d.\n", err);
 			exit(EXIT_FAILURE);
 		}
 	}
-	if(type & SNT_COMPRESSION_GZIP){
+	if (type & SNT_COMPRESSION_GZIP) {
 		uLong err;
 		err = compressBound((uLong)g_compressbound);
 		g_compressbound = (unsigned int)err;
 		sntDebugPrintf("Initialize gzip, %d.\n", g_compressbound);
-		if(err < g_compressbound){
+		if (err < g_compressbound) {
 			sntLogErrorPrintf("gzip failed to initialize with error %ld.\n", err);
 			exit(EXIT_FAILURE);
 		}
 	}
-	if(type & SNT_COMPRESSION_BZIP2){
+	if (type & SNT_COMPRESSION_BZIP2) {
 		int err;
 
 		/*	Allocate.	*/
@@ -53,27 +47,25 @@ void sntInitCompression(unsigned int type){
 
 		/*	*/
 		err = BZ2_bzCompressInit(bzip2com, 9, 0, 0);
-		if(err < BZ_OK){
+		if (err < BZ_OK) {
 			sntLogErrorPrintf("bzip2 failed to initialize with error %d.\n", err);
 			exit(EXIT_FAILURE);
 		}
 		err = BZ2_bzDecompressInit(bzip2uncom, 0, 0);
-		if(err < BZ_OK){
+		if (err < BZ_OK) {
 			sntLogErrorPrintf("bzip2 failed to initialize with error %d.\n", err);
 			exit(EXIT_FAILURE);
 		}
 	}
-
 }
 
-int sntInflate(unsigned int com, const char* source, char* dest,
-		unsigned int slen) {
+int sntInflate(unsigned int com, const char *source, char *dest, unsigned int slen) {
 
 	long int inflen = 0;
 	int i;
 	int err;
 
-	switch(com){
+	switch (com) {
 	case SNT_COMPRESSION_LZ4:
 		inflen = LZ4_decompress_safe(source, dest, slen, g_compressbound);
 		sntDebugPrintf("sntInflate, lz4 %u:%d.\n", slen, inflen);
@@ -81,15 +73,15 @@ int sntInflate(unsigned int com, const char* source, char* dest,
 		break;
 	case SNT_COMPRESSION_GZIP:
 		inflen = g_compressbound;
-		err = uncompress((Bytef*)dest, (uLongf*)&inflen, (const Bytef*)source, (uLongf)slen);
+		err = uncompress((Bytef *)dest, (uLongf *)&inflen, (const Bytef *)source, (uLongf)slen);
 		assert(err == Z_OK);
 		sntDebugPrintf("sntInflate, gzip %u:%d.\n", slen, inflen);
 		assert(inflen >= 0);
 		break;
 	case SNT_COMPRESSION_BZIP2:
-		bzip2uncom->next_in = (char*)source;
+		bzip2uncom->next_in = (char *)source;
 		bzip2uncom->avail_in = slen;
-		bzip2uncom->next_out = (char*)dest;
+		bzip2uncom->next_out = (char *)dest;
 		bzip2uncom->avail_out = g_compressbound;
 		err = BZ2_bzDecompress(bzip2uncom);
 		assert(err >= BZ_OK);
@@ -103,14 +95,13 @@ int sntInflate(unsigned int com, const char* source, char* dest,
 	return (int)inflen;
 }
 
-int sntDeflate(unsigned int com, const char* source, char* dest,
-		unsigned int slen) {
+int sntDeflate(unsigned int com, const char *source, char *dest, unsigned int slen) {
 
 	long int deflen;
 	int i;
 	int err;
 
-	switch(com){
+	switch (com) {
 	case SNT_COMPRESSION_LZ4:
 		deflen = LZ4_compress_default(source, dest, (int)slen, (int)slen);
 		sntDebugPrintf("sntDeflate, lz4 %u:%d.\n", slen, deflen);
@@ -118,16 +109,15 @@ int sntDeflate(unsigned int com, const char* source, char* dest,
 		break;
 	case SNT_COMPRESSION_GZIP:
 		deflen = g_compressbound;
-		err = compress((Bytef*)dest, (uLongf*) &deflen,
-				(const Bytef*)source, (uLongf) slen);
+		err = compress((Bytef *)dest, (uLongf *)&deflen, (const Bytef *)source, (uLongf)slen);
 		assert(err == Z_OK);
 		sntDebugPrintf("sntDeflate, gzip %u:%d.\n", slen, deflen);
 		assert(deflen >= 0);
 		break;
 	case SNT_COMPRESSION_BZIP2:
-		bzip2com->next_in = (char*)source;
+		bzip2com->next_in = (char *)source;
 		bzip2com->avail_in = slen;
-		bzip2com->next_out = (char*)dest;
+		bzip2com->next_out = (char *)dest;
 		bzip2com->avail_out = g_compressbound;
 		err = BZ2_bzCompress(bzip2com, BZ_RUN);
 		err = BZ2_bzCompress(bzip2com, BZ_FLUSH);
@@ -141,4 +131,3 @@ int sntDeflate(unsigned int com, const char* source, char* dest,
 
 	return (int)deflen;
 }
-

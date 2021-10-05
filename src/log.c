@@ -1,40 +1,37 @@
-#include"snt_log.h"
-#include<stdarg.h>
-#include<syslog.h>
-#include<unistd.h>
+#include "snt_log.h"
+#include <stdarg.h>
+#include <syslog.h>
+#include <unistd.h>
 
-void sntVerbosityLevelSet(unsigned int verbosity){
-	g_verbosity = verbosity;
-}
+void sntVerbosityLevelSet(unsigned int verbosity) { g_verbosity = verbosity; }
 
-void sntLogEnableSys(unsigned int enable){
-	if(enable){
+void sntLogEnableSys(unsigned int enable) {
+	if (enable) {
 		/*	*/
-		if(getpgrp() != tcgetpgrp(STDOUT_FILENO)){
+		if (getpgrp() != tcgetpgrp(STDOUT_FILENO)) {
 			/*	*/
 			sntDebugPrintf("openlog as daemon process.\n");
 			openlog("snt-server", LOG_PID, LOG_DAEMON);
-		}
-		else{
+		} else {
 			/*	*/
 			sntDebugPrintf("openlog as non daemon process.\n");
 			openlog("snt-server", LOG_PID | LOG_PERROR, LOG_DAEMON);
 		}
 		/*	*/
-		setlogmask (LOG_UPTO (LOG_INFO));
+		setlogmask(LOG_UPTO(LOG_INFO));
 		atexit(closelog);
 
-	}else{
+	} else {
 		closelog();
 	}
 }
 
-int sntLogPrintfInternal(unsigned int verbosity, const char* fmt,...){
+int sntLogPrintfInternal(unsigned int verbosity, const char *fmt, ...) {
 
 	int l;
 	va_list vl;
 
-	if(verbosity <= g_verbosity){
+	if (verbosity <= g_verbosity) {
 		va_start(vl, fmt);
 		l = vprintf(fmt, vl);
 		va_end(vl);
@@ -43,7 +40,7 @@ int sntLogPrintfInternal(unsigned int verbosity, const char* fmt,...){
 	return l;
 }
 
-int sntLogErrorPrintf(const char* fmt, ...){
+int sntLogErrorPrintf(const char *fmt, ...) {
 
 	int l;
 	va_list vl;

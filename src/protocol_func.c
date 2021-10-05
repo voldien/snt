@@ -1,14 +1,14 @@
-#include"snt_protocol_func.h"
-#include"snt_protocol.h"
-#include"snt_benchmark.h"
-#include"snt_log.h"
-#include<assert.h>
-#include<sys/socket.h>
+#include "snt_benchmark.h"
+#include "snt_log.h"
+#include "snt_protocol.h"
+#include "snt_protocol_func.h"
+#include <assert.h>
+#include <sys/socket.h>
 
-int sntProtFuncInit(SNTConnection* connection, const SNTUniformPacket* packet) {
+int sntProtFuncInit(SNTConnection *connection, const SNTUniformPacket *packet) {
 
 	int len;
-	SNTInitPackage* initpack = (SNTInitPackage*)packet->totalbuf;
+	SNTInitPackage *initpack = (SNTInitPackage *)packet->totalbuf;
 	SNTClientOption cliopt;
 
 	/*	Set client options for the connection.	*/
@@ -28,7 +28,7 @@ int sntProtFuncInit(SNTConnection* connection, const SNTUniformPacket* packet) {
 
 	/*	Send option.	*/
 	sntInitDefaultHeader(&cliopt.header, SNT_PROTOCOL_STYPE_CLIENTOPT, sizeof(cliopt));
-	len = sntWriteSocketPacket(connection, (SNTUniformPacket*)&cliopt);
+	len = sntWriteSocketPacket(connection, (SNTUniformPacket *)&cliopt);
 
 	/*	Update connection for next incoming packet.	*/
 	connection->symchiper = 0;
@@ -37,16 +37,16 @@ int sntProtFuncInit(SNTConnection* connection, const SNTUniformPacket* packet) {
 	return len;
 }
 
-int sntProtFuncCliOpt(SNTConnection* connection, const SNTUniformPacket* packet) {
+int sntProtFuncCliOpt(SNTConnection *connection, const SNTUniformPacket *packet) {
 
 	int len;
 	int error;
-	SNTClientOption* cliopt = (SNTClientOption*)packet->totalbuf;
+	SNTClientOption *cliopt = (SNTClientOption *)packet->totalbuf;
 	SNTReadyPacket ready;
 
 	/*	Validate client's options.	*/
 	error = sntValidateCapability(cliopt);
-	if(error != SNT_ERROR_NONE){
+	if (error != SNT_ERROR_NONE) {
 		sntSendError(connection, error, "");
 		sntLogErrorPrintf("Invalid options. denying client.\n");
 		sntDisconnectSocket(connection);
@@ -65,8 +65,7 @@ int sntProtFuncCliOpt(SNTConnection* connection, const SNTUniformPacket* packet)
 	/*	Reallocate payload buffer size. */
 	connection->option->payload = cliopt->payload;
 	connection->mtubuf = realloc(connection->mtubuf,
-			connection->option->payload + sizeof(SNTPresentationUnion)
-					+ sizeof(SNTPacketHeader));
+								 connection->option->payload + sizeof(SNTPresentationUnion) + sizeof(SNTPacketHeader));
 	assert(connection->mtubuf);
 
 	/*	*/
@@ -74,9 +73,9 @@ int sntProtFuncCliOpt(SNTConnection* connection, const SNTUniformPacket* packet)
 	connection->usecompression = cliopt->compression;
 
 	/*	Send Certificate. */
-	if(cliopt->ssl){
+	if (cliopt->ssl) {
 		len = sntSendCertificate(g_bindconnection, connection);
-	}else{
+	} else {
 
 		/*	Assigned connection values.	*/
 		connection->symchiper = 0;
@@ -84,23 +83,23 @@ int sntProtFuncCliOpt(SNTConnection* connection, const SNTUniformPacket* packet)
 
 		/*	*/
 		sntInitDefaultHeader(&ready.header, SNT_PROTOCOL_STYPE_READY, sizeof(ready));
-		len = sntWriteSocketPacket(connection, (SNTUniformPacket*)&ready);
+		len = sntWriteSocketPacket(connection, (SNTUniformPacket *)&ready);
 	}
 
 	return len;
 }
 
-int sntProtFuncCertificate(SNTConnection* connection, const SNTUniformPacket* packet) {
+int sntProtFuncCertificate(SNTConnection *connection, const SNTUniformPacket *packet) {
 
 	int len;
-	SNTCertificate* cer = (SNTCertificate*)packet->totalbuf;
+	SNTCertificate *cer = (SNTCertificate *)packet->totalbuf;
 	SNTSecureEstablismentPacket sec;
-	char* localhash;
-	void* key;
+	char *localhash;
+	void *key;
 
 	/*	Create asymmetric.	*/
 	sntDebugPrintf("%s", cer->cert);
-	if(!sntASymCreateKeyFromData(connection, cer->asymchiper, cer->cert, cer->certlen, 0)){
+	if (!sntASymCreateKeyFromData(connection, cer->asymchiper, cer->cert, cer->certlen, 0)) {
 		sntLogErrorPrintf("sntASymmetricCreateKeyFromData failed.\n");
 		return 0;
 	}
@@ -110,16 +109,14 @@ int sntProtFuncCertificate(SNTConnection* connection, const SNTUniformPacket* pa
 	assert(localhash);
 
 	/*	Generate hash and compare to remote and local hash.	*/
-	if(sntHash(cer->hashtype, cer->cert, cer->localhashedsize, localhash) !=
-			sntHashGetTypeSize(cer->hashtype)){
+	if (sntHash(cer->hashtype, cer->cert, cer->localhashedsize, localhash) != sntHashGetTypeSize(cer->hashtype)) {
 		sntLogErrorPrintf("sntHash failed.\n");
 		return 0;
 	}
 
 	/*	Attempt to verify signature.	*/
-	if (!sntASymVerifyDigSign(connection, cer->hashtype, localhash,
-			sntHashGetTypeSize(cer->hashtype), cer->hash,
-			cer->encryedhashsize)) {
+	if (!sntASymVerifyDigSign(connection, cer->hashtype, localhash, sntHashGetTypeSize(cer->hashtype), cer->hash,
+							  cer->encryedhashsize)) {
 		sntLogErrorPrintf("None matching hashes.\n");
 		return 0;
 	}
@@ -130,23 +127,23 @@ int sntProtFuncCertificate(SNTConnection* connection, const SNTUniformPacket* pa
 
 	/*	Check if to use diffie hellman instead for creating
 	 *	secret key.	*/
-	if(connection->option->dh > 0){
+	if (connection->option->dh > 0) {
 		SNTPacketHeader pack;
 		sntInitDefaultHeader(&pack, SNT_PROTOCOL_STYPE_DH_REQ, sizeof(pack));
-		return sntWriteSocketPacket(connection, (const SNTUniformPacket*)&pack);
+		return sntWriteSocketPacket(connection, (const SNTUniformPacket *)&pack);
 	}
 
 	/*	Generate symmetric key to use.	*/
-	if(!sntSymGenerateKey(connection, connection->option->symmetric)){
+	if (!sntSymGenerateKey(connection, connection->option->symmetric)) {
 		sntLogErrorPrintf("sntSymmetricGenerateKey failed.\n");
 		return 0;
 	}
 
 	/*	Encrypt symmetric key with asymmetric cipher.	*/
 	sntSymCopyKey(connection, &key);
-	sec.encrykeyblock = sntASymPubEncrypt(connection->asymchiper, key,
-			sntSymKeyByteSize(connection->symchiper), sec.key, connection->asymkey);
-	if(sec.encrykeyblock <= 0){
+	sec.encrykeyblock = sntASymPubEncrypt(connection->asymchiper, key, sntSymKeyByteSize(connection->symchiper),
+										  sec.key, connection->asymkey);
+	if (sec.encrykeyblock <= 0) {
 		sntLogErrorPrintf("sntAsymPubEncrypt failed.\n");
 		return 0;
 	}
@@ -161,27 +158,27 @@ int sntProtFuncCertificate(SNTConnection* connection, const SNTUniformPacket* pa
 	sec.symchiper = connection->symchiper;
 	/*	*/
 	connection->symchiper = 0;
-	len = sntWriteSocketPacket(connection, (SNTUniformPacket*)&sec);
+	len = sntWriteSocketPacket(connection, (SNTUniformPacket *)&sec);
 	connection->symchiper = connection->option->symmetric;
 
 	return len;
 }
 
-int sntProtFuncSecure(SNTConnection* connection, const SNTUniformPacket* packet) {
+int sntProtFuncSecure(SNTConnection *connection, const SNTUniformPacket *packet) {
 
 	/*	*/
 	int len;
-	SNTSecureEstablismentPacket* sec = (SNTSecureEstablismentPacket*)packet->totalbuf;
-	unsigned char* symkey;
+	SNTSecureEstablismentPacket *sec = (SNTSecureEstablismentPacket *)packet->totalbuf;
+	unsigned char *symkey;
 
 	/*	Decrypt symmetric key from client.	*/
 	symkey = malloc(sntASymGetBlockSize(g_bindconnection->asymchiper, g_bindconnection->asymkey));
-	if(!sntASymPriDecrypt(g_bindconnection->asymchiper, sec->key, sec->encrykeyblock,
-			symkey, g_bindconnection->asymkey)){
+	if (!sntASymPriDecrypt(g_bindconnection->asymchiper, sec->key, sec->encrykeyblock, symkey,
+						   g_bindconnection->asymkey)) {
 		sntSendError(connection, SNT_ERROR_SERVER, "Couldn't decrypt asymmetric cipher block");
 		return 0;
 	}
-	if(!sntSymCreateFromKey(connection, sec->symchiper, symkey)){
+	if (!sntSymCreateFromKey(connection, sec->symchiper, symkey)) {
 		sntSendError(connection, SNT_ERROR_SERVER, "Couldn't extract symmetric key");
 		return 0;
 	}
@@ -199,15 +196,15 @@ int sntProtFuncSecure(SNTConnection* connection, const SNTUniformPacket* packet)
 	return 1;
 }
 
-int sntProtFuncReady(SNTConnection* connection, const SNTUniformPacket* packet) {
+int sntProtFuncReady(SNTConnection *connection, const SNTUniformPacket *packet) {
 
 	int len;
 	SNTstartPacket start;
 
 	/*	Send packet.	*/
 	sntInitDefaultHeader(&start.header, SNT_PROTOCOL_STYPE_STARTTEST, sizeof(start));
-	len = sntWriteSocketPacket(connection, (SNTUniformPacket*)&start);
-	if(!sntSetTransportProcotcol(connection, connection->option->transport_mode)){
+	len = sntWriteSocketPacket(connection, (SNTUniformPacket *)&start);
+	if (!sntSetTransportProcotcol(connection, connection->option->transport_mode)) {
 		return 0;
 	}
 	connection->flag |= SNT_CONNECTION_TRANS;
@@ -218,99 +215,95 @@ int sntProtFuncReady(SNTConnection* connection, const SNTUniformPacket* packet) 
 
 	/*	Start.	*/
 	sntLogErrorPrintf("Starting %s benchmark.\n"
-	"-----------------------------------------------\n",
-	gc_bench_symbol[sntLog2MutExlusive32(connection->option->bm_protocol_mode)]);
+					  "-----------------------------------------------\n",
+					  gc_bench_symbol[sntLog2MutExlusive32(connection->option->bm_protocol_mode)]);
 
 	return len;
 }
 
-int sntProtFuncStart(SNTConnection* connection, const SNTUniformPacket* packet){
+int sntProtFuncStart(SNTConnection *connection, const SNTUniformPacket *packet) {
 	/*	Do nothing.	*/
 	return 1;
 }
 
-int sntProtFuncError(SNTConnection* connection, const SNTUniformPacket* packet) {
+int sntProtFuncError(SNTConnection *connection, const SNTUniformPacket *packet) {
 
-	const char* codedesc = "";
-	SNTErrorPacket* error = (SNTErrorPacket*)packet;
+	const char *codedesc = "";
+	SNTErrorPacket *error = (SNTErrorPacket *)packet;
 
 	/*	Prevent segmentation violation.	*/
-	if(error->errorcode <= sntSymbolArraySize((const void**)gs_error_sym)){
+	if (error->errorcode <= sntSymbolArraySize((const void **)gs_error_sym)) {
 		codedesc = gs_error_sym[error->errorcode];
 	}
 
 	/*	Print error message or predefine error message.	*/
-	if(error->meslen > 0){
-		sntLogErrorPrintf("Error code %d : %s | '%s'.\n", error->errorcode,
-				codedesc, error->message);
-	}else{
+	if (error->meslen > 0) {
+		sntLogErrorPrintf("Error code %d : %s | '%s'.\n", error->errorcode, codedesc, error->message);
+	} else {
 		sntLogErrorPrintf("Error code %d : %s.\n", error->errorcode, codedesc);
 	}
 	return 0;
 }
 
-int sntProtFuncResult(SNTConnection* connection, const SNTUniformPacket* packet) {
+int sntProtFuncResult(SNTConnection *connection, const SNTUniformPacket *packet) {
 
-	const SNTResultPacket* result = (SNTResultPacket*)packet;
+	const SNTResultPacket *result = (SNTResultPacket *)packet;
 	sntBenchmarkPrintResult(result);
 
-	return 0;	/*	Kill the connection.	*/
+	return 0; /*	Kill the connection.	*/
 }
 
-int sntProtFuncBenchmark(SNTConnection* connection, const SNTUniformPacket* packet) {
+int sntProtFuncBenchmark(SNTConnection *connection, const SNTUniformPacket *packet) {
 
-	SNTBenchmarkSession* session = connection->session;
+	SNTBenchmarkSession *session = connection->session;
 
-	switch(connection->option->bm_protocol_mode){
+	switch (connection->option->bm_protocol_mode) {
 	case SNT_PROTOCOL_BM_MODE_PERFORMANCE:
 		/*	Pass.	*/
 		break;
 	case SNT_PROTOCOL_BM_MODE_FILE:
 		/*	TODO check how to pipe and redirect the data better.	*/
-		return fwrite(sntDatagramGetBlock(packet), 1,
-				sntProtocolHeaderDatagramSize(&packet->header), stdout);
-	case SNT_PROTOCOL_BM_MODE_INTEGRITY:{
+		return fwrite(sntDatagramGetBlock(packet), 1, sntProtocolHeaderDatagramSize(&packet->header), stdout);
+	case SNT_PROTOCOL_BM_MODE_INTEGRITY: {
 
 		SNTDelta delta;
 		sntDeltaParse(connection->option->deltatype, sntDatagramGetBlock(packet), &delta);
-		if(!sntDeltaCheckChange(connection->option->deltatype, &session->delta, &delta, &connection->option->delta)){
+		if (!sntDeltaCheckChange(connection->option->deltatype, &session->delta, &delta, &connection->option->delta)) {
 			session->ofo++;
 		}
 		memcpy(&session->delta, &delta, sizeof(delta));
-		//printf("%s\n", (const char*)sntDatagramGetBlock(packet));
-	}break;
+		// printf("%s\n", (const char*)sntDatagramGetBlock(packet));
+	} break;
 	default:
 		break;
 	}
 	return 1;
 }
 
-int sntProtFuncDHReq(SNTConnection* __restrict__ connection,
-		const SNTUniformPacket* __restrict__ packet){
+int sntProtFuncDHReq(SNTConnection *__restrict__ connection, const SNTUniformPacket *__restrict__ packet) {
 	return sntSendDHpq(g_bindconnection, connection);
 }
 
-int sntProtFuncDHInit(SNTConnection* __restrict__ connection,
-		const SNTUniformPacket* __restrict__ packet){
+int sntProtFuncDHInit(SNTConnection *__restrict__ connection, const SNTUniformPacket *__restrict__ packet) {
 
-	SNTDHInit* init = (SNTDHInit*)packet;
+	SNTDHInit *init = (SNTDHInit *)packet;
 	const size_t packlen = sizeof(SNTDHExch);
 	int len;
-	const uint8_t* p;
-	const uint8_t* g;
+	const uint8_t *p;
+	const uint8_t *g;
 
 	/*	Extract p and g from packet.	*/
-	p = &((const uint8_t*)sntDatagramGetBlock(packet))[init->offset];
-	g = &((const uint8_t*)sntDatagramGetBlock(packet))[init->offset + init->plen];
+	p = &((const uint8_t *)sntDatagramGetBlock(packet))[init->offset];
+	g = &((const uint8_t *)sntDatagramGetBlock(packet))[init->offset + init->plen];
 
 	/*	Create diffie hellman from p and g.	*/
-	if(!sntDHCreateByData(&connection->dh, p, g, init->plen, init->glen)){
+	if (!sntDHCreateByData(&connection->dh, p, g, init->plen, init->glen)) {
 		sntSendError(connection, SNT_ERROR_SERVER, "sntDHCreate failed");
 		return 0;
 	}
 
 	/*	Compute.	*/
-	if(!sntDHCompute(connection->dh)){
+	if (!sntDHCompute(connection->dh)) {
 		sntSendError(connection, SNT_ERROR_SERVER, "sntDHCompute failed");
 		return 0;
 	}
@@ -319,17 +312,16 @@ int sntProtFuncDHInit(SNTConnection* __restrict__ connection,
 	return sntSendDHExch(connection);
 }
 
-int sntProtFuncDHExch(SNTConnection* __restrict__ connection,
-		const SNTUniformPacket* __restrict__ packet){
+int sntProtFuncDHExch(SNTConnection *__restrict__ connection, const SNTUniformPacket *__restrict__ packet) {
 
-	SNTDHExch* exch = (SNTDHExch*)packet;
+	SNTDHExch *exch = (SNTDHExch *)packet;
 	int plen;
 	void *pkey;
-	const void* q;
+	const void *q;
 
 	/*	If server, exhange.	*/
-	if(g_bindconnection){
-		if(sntSendDHExch(connection) <= 0)
+	if (g_bindconnection) {
+		if (sntSendDHExch(connection) <= 0)
 			return 0;
 		/*	*/
 		sntSendReady(connection);
@@ -337,20 +329,20 @@ int sntProtFuncDHExch(SNTConnection* __restrict__ connection,
 	}
 
 	/*	Extract key.	*/
-	q = &((uint8_t const *)sntDatagramGetBlock((SNTUniformPacket*)exch))[exch->offset];
+	q = &((uint8_t const *)sntDatagramGetBlock((SNTUniformPacket *)exch))[exch->offset];
 
 	/*	Allocate for secure shared key.	*/
 	plen = sntDHSize(connection->dh);
 	pkey = malloc(plen);
 
 	/*	Compute secret key.	*/
-	if(!sntDHGetComputedKey(connection->dh, q, pkey)){
+	if (!sntDHGetComputedKey(connection->dh, q, pkey)) {
 		sntSendError(connection, SNT_ERROR_SERVER, "sntDHGetComputedKey failed");
 		return 0;
 	}
 
 	/*	Create symmetric key.	*/
-	if(!sntSymCreateFromKey(connection, exch->sym, pkey)){
+	if (!sntSymCreateFromKey(connection, exch->sym, pkey)) {
 		sntSendError(connection, SNT_ERROR_SERVER, "Failed create shared key.");
 		return 0;
 	}
@@ -366,70 +358,67 @@ int sntProtFuncDHExch(SNTConnection* __restrict__ connection,
 	return 1;
 }
 
-int sntValidateCapability(const SNTClientOption* option){
+int sntValidateCapability(const SNTClientOption *option) {
 
 	assert(option);
 
 	/*	Check if options are mutually exclusive.	*/
-	if (!sntIsPower2(option->benchmode) || !sntIsPower2(option->compression)
-			|| !sntIsPower2(option->symchiper)
-			|| !sntIsPower2(option->transprotocol)
-			|| !sntIsPower2(option->deltaTypes)
-			|| !sntIsPower2(option->duplex)) {
+	if (!sntIsPower2(option->benchmode) || !sntIsPower2(option->compression) || !sntIsPower2(option->symchiper) ||
+		!sntIsPower2(option->transprotocol) || !sntIsPower2(option->deltaTypes) || !sntIsPower2(option->duplex)) {
 		sntLogErrorPrintf("Non mutually exclusive option is not supported.\n");
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
 
 	/*	Check options are valid to be executed.	*/
-	if(option->compression && !(option->compression & g_bindconnection->option->compression)){
+	if (option->compression && !(option->compression & g_bindconnection->option->compression)) {
 		sntLogErrorPrintf("compression not supported.\n");
 		return SNT_ERROR_COMPRESSION_NOT_SUPPORTED;
 	}
 
 	/*	Check if secure connection is supported and requested.	*/
-	if(option->ssl && g_bindconnection->option->ssl == 0){
+	if (option->ssl && g_bindconnection->option->ssl == 0) {
 		sntLogErrorPrintf("ssl/secure connection not supported.\n");
 		return SNT_ERROR_SSL_NOT_SUPPORTED;
 	}
 
 	/*	Check if diffie hellman is supported.	*/
-	if(option->dh && !(g_bindconnection->option->dh)){
+	if (option->dh && !(g_bindconnection->option->dh)) {
 		sntLogErrorPrintf("Diffie hellman supported.\n");
 		return SNT_ERROR_DH_NOT_SUPPORTED;
 	}
 
 	/*	Check symmetric cipher support and requested.	*/
-	if(option->symchiper && !(option->symchiper & g_bindconnection->option->symmetric)){
+	if (option->symchiper && !(option->symchiper & g_bindconnection->option->symmetric)) {
 		sntLogErrorPrintf("cipher option not supported.\n");
 		return SNT_ERROR_CIPHER_NOT_SUPPORTED;
 	}
 
 	/*	Check delta mode is supported.	*/
-	if(option->deltaTypes && !(option->deltaTypes & g_bindconnection->option->deltatype)){
+	if (option->deltaTypes && !(option->deltaTypes & g_bindconnection->option->deltatype)) {
 		sntLogErrorPrintf("%d: Invalid delta type.\n", option->deltaTypes);
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
 
 	/*	Check asymmetric cipher support and requested.	*/
-	if(!(option->benchmode & g_bindconnection->option->bm_protocol_mode)){
+	if (!(option->benchmode & g_bindconnection->option->bm_protocol_mode)) {
 		sntLogErrorPrintf("%d: Invalid benchmark mode.\n", option->symchiper);
 		return SNT_ERROR_BENCHMARK_NOT_SUPPORTED;
 	}
 
 	/*	Check if transport protocol supported.	*/
-	if(!(option->transprotocol & g_bindconnection->option->transport_mode)){
+	if (!(option->transprotocol & g_bindconnection->option->transport_mode)) {
 		sntLogErrorPrintf("%d: Invalid transport protocol.\n", option->transprotocol);
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
 
 	/*	Check if duplex protocol is supported.	*/
-	if(!(option->duplex & g_bindconnection->option->duplex)){
+	if (!(option->duplex & g_bindconnection->option->duplex)) {
 		sntLogErrorPrintf("%d: Invalid duplex mode.\n", option->duplex);
 		return SNT_ERROR_INVALID_ARGUMENT;
 	}
 
 	/*	Check version compatibility.	*/
-	if(SNT_GET_MAJ_VERSION(option->header.version) < SNT_GET_MAJ_VERSION(SNT_VERSION)){
+	if (SNT_GET_MAJ_VERSION(option->header.version) < SNT_GET_MAJ_VERSION(SNT_VERSION)) {
 		sntLogErrorPrintf("Invalid version.\n");
 		return SNT_ERROR_INCOMPATIBLE_VERSION;
 	}
@@ -438,12 +427,11 @@ int sntValidateCapability(const SNTClientOption* option){
 	return SNT_ERROR_NONE;
 }
 
-int sntSendCertificate(const SNTConnection* __restrict__ bind,
-		SNTConnection* __restrict__ client) {
+int sntSendCertificate(const SNTConnection *__restrict__ bind, SNTConnection *__restrict__ client) {
 
 	int len;
-	SNTCertificate* cert;
-	void* tmphash;
+	SNTCertificate *cert;
+	void *tmphash;
 
 	cert = malloc(sizeof(SNTCertificate));
 
@@ -454,7 +442,7 @@ int sntSendCertificate(const SNTConnection* __restrict__ bind,
 	sntInitDefaultHeader(&cert->header, SNT_PROTOCOL_STYPE_CERTIFICATE, sizeof(SNTCertificate));
 	memset(cert->cert, 0, sizeof(cert->cert));
 	cert->certlen = sntASymCopyPublicKey(bind, &cert->cert[0]);
-	if(cert->certlen <= 0){
+	if (cert->certlen <= 0) {
 		sntSendError(client, SNT_ERROR_SERVER, "Can't provide certificate data.");
 		sntLogErrorPrintf("sntAsymmetricCopyPublicKey failed.\n");
 		return 0;
@@ -466,7 +454,7 @@ int sntSendCertificate(const SNTConnection* __restrict__ bind,
 	/*	Hash the certificate and meta data.	*/
 	cert->hashtype = bind->option->hash;
 	cert->localhashedsize = sizeof(cert->cert);
-	if(!sntHash(cert->hashtype, cert->cert, cert->localhashedsize, cert->hash)){
+	if (!sntHash(cert->hashtype, cert->cert, cert->localhashedsize, cert->hash)) {
 		sntSendError(client, SNT_ERROR_SERVER, "");
 		sntLogErrorPrintf("sntHash failed.\n");
 		return 0;
@@ -480,9 +468,8 @@ int sntSendCertificate(const SNTConnection* __restrict__ bind,
 
 	/*	Create digital signature.	*/
 	int32_t encrypt_hash_size;
-	if (!sntASymSignDigSign(bind, cert->hashtype, tmphash,
-			sntHashGetTypeSize(cert->hashtype), cert->hash,
-			&encrypt_hash_size)) {
+	if (!sntASymSignDigSign(bind, cert->hashtype, tmphash, sntHashGetTypeSize(cert->hashtype), cert->hash,
+							&encrypt_hash_size)) {
 		sntSendError(client, SNT_ERROR_SERVER, "Couldn't create a digital signature");
 		free(tmphash);
 		return 0;
@@ -491,7 +478,7 @@ int sntSendCertificate(const SNTConnection* __restrict__ bind,
 	free(tmphash);
 
 	/*	Send certificate.	*/
-	len = sntWriteSocketPacket(client, (SNTUniformPacket*)cert);
+	len = sntWriteSocketPacket(client, (SNTUniformPacket *)cert);
 
 	/*	Copy bind connection asymmetric.	*/
 	client->asymchiper = bind->asymchiper;
@@ -504,17 +491,16 @@ int sntSendCertificate(const SNTConnection* __restrict__ bind,
 	return len;
 }
 
-int sntSendDHpq(const SNTConnection* __restrict__ bind,
-		SNTConnection* __restrict__ client){
+int sntSendDHpq(const SNTConnection *__restrict__ bind, SNTConnection *__restrict__ client) {
 
-	SNTDHInit* init;
+	SNTDHInit *init;
 	const size_t packlen = sizeof(SNTDHInit);
 	const int32_t bnum = sntDHSize(bind->dh);
 	const size_t size = (size_t)(packlen + bnum * 2);
 	int len;
 	/*	*/
-	uint8_t* p;
-	uint8_t* g;
+	uint8_t *p;
+	uint8_t *g;
 
 	assert(bind->dh);
 
@@ -526,14 +512,14 @@ int sntSendDHpq(const SNTConnection* __restrict__ bind,
 	sntInitDefaultHeader(&init->header, SNT_PROTOCOL_STYPE_DH_INIT, (unsigned int)size);
 
 	/*	Get p and g address.	*/
-	p = ((uint8_t*)init) + packlen;
+	p = ((uint8_t *)init) + packlen;
 	g = p + bnum;
 
 	uint32_t pkey_size;
 	uint32_t gkey_size;
 
 	/*	Copy p and q.	*/
-	if(!sntDHCopyCommon(bind->dh, p, g, &pkey_size, &gkey_size)){
+	if (!sntDHCopyCommon(bind->dh, p, g, &pkey_size, &gkey_size)) {
 		sntSendError(client, SNT_ERROR_SERVER, "Failed copy common diffie helmman p and g");
 		return 0;
 	}
@@ -541,13 +527,13 @@ int sntSendDHpq(const SNTConnection* __restrict__ bind,
 	init->glen = gkey_size;
 
 	/*	Create copy of diffie hellman for the client connection.	*/
-	if(!sntDHCreateByData(&client->dh, p, g, init->plen, init->glen)){
+	if (!sntDHCreateByData(&client->dh, p, g, init->plen, init->glen)) {
 		sntSendError(client, SNT_ERROR_SERVER, "sntDHCreateByData failed");
 		return 0;
 	}
 
 	/*	Copy p and q.	*/
-	if(!sntDHCopyCommon(client->dh, p, g,  &pkey_size, &gkey_size)){
+	if (!sntDHCopyCommon(client->dh, p, g, &pkey_size, &gkey_size)) {
 		sntSendError(client, SNT_ERROR_SERVER, "Failed copy common diffie helmman p and g");
 		return 0;
 	}
@@ -555,7 +541,7 @@ int sntSendDHpq(const SNTConnection* __restrict__ bind,
 	init->glen = gkey_size;
 
 	/*	Compute diffie hellman for public exchange q.	*/
-	if(!sntDHCompute(client->dh)){
+	if (!sntDHCompute(client->dh)) {
 		sntSendError(client, SNT_ERROR_SERVER, "sntDHCompute failed");
 		return 0;
 	}
@@ -565,7 +551,7 @@ int sntSendDHpq(const SNTConnection* __restrict__ bind,
 	init->bitsize = bnum * 8;
 
 	/*	Send packet.	*/
-	len = sntWriteSocketPacket(client, (const SNTUniformPacket*)init);
+	len = sntWriteSocketPacket(client, (const SNTUniformPacket *)init);
 
 	/*	Release packet from memory.	*/
 	sntMemZero(init, sntProtocolPacketSize(&init->header));
@@ -574,21 +560,21 @@ int sntSendDHpq(const SNTConnection* __restrict__ bind,
 	return len;
 }
 
-int sntSendDHExch(const SNTConnection* __restrict__ connection){
+int sntSendDHExch(const SNTConnection *__restrict__ connection) {
 
-	SNTDHExch* exch;
+	SNTDHExch *exch;
 	const size_t packlen = sizeof(SNTDHExch);
 	int hdsize;
 	int len;
-	void* q;
+	void *q;
 
 	/*	*/
 	hdsize = sntDHSize(connection->dh);
 	exch = malloc(packlen + hdsize);
-	q = ((uint8_t*)exch) + packlen;
+	q = ((uint8_t *)exch) + packlen;
 
 	/*	Get exchange.	*/
-	if(!sntDHGetExchange(connection->dh, q)){
+	if (!sntDHGetExchange(connection->dh, q)) {
 		sntSendError(connection, SNT_ERROR_SERVER, "sntDHGetExchange failed");
 		return 0;
 	}
@@ -600,7 +586,7 @@ int sntSendDHExch(const SNTConnection* __restrict__ connection){
 	exch->sym = connection->option->symmetric;
 
 	/*	Send packet.	*/
-	len = sntWriteSocketPacket(connection, (const SNTUniformPacket*)exch);
+	len = sntWriteSocketPacket(connection, (const SNTUniformPacket *)exch);
 
 	/*	Release.	*/
 	sntMemZero(exch, sntProtocolPacketSize(&exch->header));
@@ -609,21 +595,19 @@ int sntSendDHExch(const SNTConnection* __restrict__ connection){
 	return len;
 }
 
-int sntSendReady(const SNTConnection* __restrict__ connection){
+int sntSendReady(const SNTConnection *__restrict__ connection) {
 
 	SNTReadyPacket ready;
 	int len;
 
 	/*	Send packet.	*/
 	sntInitDefaultHeader(&ready.header, SNT_PROTOCOL_STYPE_READY, sizeof(ready));
-	len = sntWriteSocketPacket(connection, (SNTUniformPacket*)&ready);
+	len = sntWriteSocketPacket(connection, (SNTUniformPacket *)&ready);
 
 	return len;
 }
 
-
-int sntSendError(const SNTConnection* connection, int code,
-		const char* message) {
+int sntSendError(const SNTConnection *connection, int code, const char *message) {
 	SNTErrorPacket error;
 
 	sntInitDefaultHeader(&error.header, SNT_PROTOCOL_STYPE_ERROR, sizeof(error));
@@ -634,9 +618,9 @@ int sntSendError(const SNTConnection* connection, int code,
 	memcpy(error.message, message, error.meslen);
 	error.message[error.meslen] = '\0';
 
-	return sntWriteSocketPacket(connection, (SNTUniformPacket*)&error);
+	return sntWriteSocketPacket(connection, (SNTUniformPacket *)&error);
 }
 
-int sntSendBenchMarkResult(const SNTConnection* connection, const SNTResultPacket* result){
-	return sntWriteSocketPacket(connection, (const SNTUniformPacket*)result);
+int sntSendBenchMarkResult(const SNTConnection *connection, const SNTResultPacket *result) {
+	return sntWriteSocketPacket(connection, (const SNTUniformPacket *)result);
 }

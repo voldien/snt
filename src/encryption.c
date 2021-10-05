@@ -1,86 +1,64 @@
 #include "snt_encryption.h"
-#include "snt_protocol.h"
 #include "snt_log.h"
-#include "snt_schd.h"
+#include "snt_protocol.h"
 #include "snt_rand.h"
-#include <stdarg.h>
+#include "snt_schd.h"
 #include <assert.h>
-#include <openssl/ssl.h>
-#include <openssl/rsa.h>
-#include <openssl/crypto.h>
 #include <openssl/aes.h>
-#include <openssl/des.h>
 #include <openssl/blowfish.h>
-#include <openssl/rc4.h>
 #include <openssl/cast.h>
+#include <openssl/crypto.h>
+#include <openssl/des.h>
 #include <openssl/err.h>
-#include <openssl/x509v3.h>
-#include <openssl/x509.h>
 #include <openssl/evp.h>
+#include <openssl/rc4.h>
+#include <openssl/rsa.h>
+#include <openssl/ssl.h>
+#include <openssl/x509.h>
+#include <openssl/x509v3.h>
+#include <stdarg.h>
 
-
-const char* gc_symchi_symbol[] = {
-	"",
-	"aesecb128",
-	"aesecb192",
-	"aesecb256",
-	"blowfish",
-	"des",
-	"3des",
-	"aescbc128",
-	"aescbc192",
-	"aescbc256",
-	"aescfb128",
-	"aescfb192",
-	"aescfb256",
-	"aesofb128",
-	"aesofb192",
-	"aesofb256",
-	"3descbc",
-	"bfcbc",
-	"bfcfb",
-	"rc4",
-	"cast",
-	"castcbc",
-	"castcfb",
-	NULL,
+const char *gc_symchi_symbol[] = {
+	"",			 "aesecb128", "aesecb192", "aesecb256", "blowfish",	 "des",		  "3des",	   "aescbc128",
+	"aescbc192", "aescbc256", "aescfb128", "aescfb192", "aescfb256", "aesofb128", "aesofb192", "aesofb256",
+	"3descbc",	 "bfcbc",	  "bfcfb",	   "rc4",		"cast",		 "castcbc",	  "castcfb",   NULL,
 };
 
-const char* gc_asymchi_symbol[] = {
+const char *gc_asymchi_symbol[] = {
 	"",
 	"RSA",
 	NULL,
 };
 
-void sntSSLPrintError(){
+void sntSSLPrintError() {
 	char buf[256];
 	ERR_load_crypto_strings();
 	ERR_error_string(ERR_get_error(), buf);
 	sntLogErrorPrintf("Error encrypting message: %s\n", buf);
 }
 
-int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned int numbits){
+int sntASymGenerateKey(SNTConnection *connection, unsigned int cipher, unsigned int numbits) {
 
-	int ret;					/*	*/
-	size_t asymksize = 0;		/*	*/
+	int ret;			  /*	*/
+	size_t asymksize = 0; /*	*/
 	/*	RSA	*/
-	const RSA_METHOD* method;	/*	*/
-	BIGNUM* ebnum;				/*	*/
+	const RSA_METHOD *method; /*	*/
+	BIGNUM *ebnum;			  /*	*/
 
 	/*	*/
 	int codes;
-	BN_GENCB* bn;
+	BN_GENCB *bn;
 
-	switch(cipher){
+	switch (cipher) {
 	case SNT_ENCRYPTION_ASYM_RSA:
 
 		/*	Create big number for RSA.	*/
 		ebnum = BN_new();
-		if(ebnum == NULL){
+		if (ebnum == NULL) {
 			sntSSLPrintError();
 			return 0;
 		}
-		if(BN_set_word(ebnum, RSA_F4) != 1){
+		if (BN_set_word(ebnum, RSA_F4) != 1) {
 			sntSSLPrintError();
 			BN_free(ebnum);
 			sntASymFree(connection);
@@ -89,7 +67,7 @@ int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned 
 
 		/*	Create new RSA.	*/
 		connection->asymkey = RSA_new();
-		if(connection->asymkey == NULL){
+		if (connection->asymkey == NULL) {
 			sntSSLPrintError();
 			BN_free(ebnum);
 			sntASymFree(connection);
@@ -98,7 +76,7 @@ int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned 
 
 		/*	Generate RSA keys.	*/
 		ret = RSA_generate_key_ex(connection->asymkey, numbits, ebnum, NULL);
-		if( ret != 1){
+		if (ret != 1) {
 			sntSSLPrintError();
 			BN_free(ebnum);
 			sntASymFree(connection);
@@ -111,13 +89,13 @@ int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned 
 		BN_free(ebnum);
 
 		/*	Check RSA key.	*/
-		if(RSA_check_key(connection->asymkey) <= 0){
+		if (RSA_check_key(connection->asymkey) <= 0) {
 			sntSSLPrintError();
 			sntASymFree(connection);
 			return 0;
 		}
 
-		asymksize = RSA_size((RSA*)connection->asymkey);
+		asymksize = RSA_size((RSA *)connection->asymkey);
 		// asymksize = sizeof(RSA);
 
 		break;
@@ -127,7 +105,7 @@ int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned 
 	}
 
 	/*	Prevent sensitive information from being swapped to disk.	*/
-	if(!sntLockMemory(connection->asymkey, asymksize)){
+	if (!sntLockMemory(connection->asymkey, asymksize)) {
 		sntASymFree(connection);
 		return 0;
 	}
@@ -139,38 +117,37 @@ int sntASymGenerateKey(SNTConnection* connection, unsigned int cipher, unsigned 
 	return 1;
 }
 
-int sntASymCreateKeyFromData(SNTConnection* __restrict__ connection,
-		unsigned int cipher, const void* __restrict__ key, int len, unsigned int private) {
+int sntASymCreateKeyFromData(SNTConnection *__restrict__ connection, unsigned int cipher, const void *__restrict__ key,
+							 int len, unsigned int private) {
 
-	size_t asymksize = 0;		/*	*/
-	int bitsize = 0;			/*	*/
-	BIO* keybio = NULL;			/*	*/
+	size_t asymksize = 0; /*	*/
+	int bitsize = 0;	  /*	*/
+	BIO *keybio = NULL;	  /*	*/
 
-	switch(cipher){
+	switch (cipher) {
 	case SNT_ENCRYPTION_ASYM_RSA:
 
 		/*	Create buffer to write to.	*/
 		keybio = BIO_new(BIO_s_mem());
-		if(keybio == NULL){
+		if (keybio == NULL) {
 			sntSSLPrintError();
 			return 0;
 		}
 
 		/*	Write key to BIO.	*/
-		if(BIO_write(keybio, key, len) <= 0){
+		if (BIO_write(keybio, key, len) <= 0) {
 			sntSSLPrintError();
 			BIO_free_all(keybio);
 			return 0;
 		}
 
 		/*	Create RSA public key.	*/
-		if(private){
-			connection->asymkey = PEM_read_bio_RSAPrivateKey(keybio, (RSA**)&connection->asymkey, NULL, NULL);
+		if (private) {
+			connection->asymkey = PEM_read_bio_RSAPrivateKey(keybio, (RSA **)&connection->asymkey, NULL, NULL);
+		} else {
+			connection->asymkey = PEM_read_bio_RSAPublicKey(keybio, (RSA **)&connection->asymkey, NULL, NULL);
 		}
-		else{
-			connection->asymkey = PEM_read_bio_RSAPublicKey(keybio, (RSA**)&connection->asymkey, NULL, NULL);
-		}
-		if(connection->asymkey == NULL){
+		if (connection->asymkey == NULL) {
 			sntSSLPrintError();
 			sntASymFree(connection);
 			BIO_free_all(keybio);
@@ -194,7 +171,7 @@ int sntASymCreateKeyFromData(SNTConnection* __restrict__ connection,
 	BIO_free_all(keybio);
 
 	/*	Prevent sensitive information from being swapped to disk.	*/
-	if(!sntLockMemory(connection->asymkey, asymksize)){
+	if (!sntLockMemory(connection->asymkey, asymksize)) {
 		sntASymFree(connection);
 		return 0;
 	}
@@ -202,21 +179,21 @@ int sntASymCreateKeyFromData(SNTConnection* __restrict__ connection,
 	return 1;
 }
 
-int sntASymCopyPublicKey(const SNTConnection* connection, void* cpkey){
+int sntASymCopyPublicKey(const SNTConnection *connection, void *cpkey) {
 
 	int res;
 	size_t pub_len;
-	BIO* pub;
+	BIO *pub;
 
-	switch(connection->asymchiper){
+	switch (connection->asymchiper) {
 	case SNT_ENCRYPTION_ASYM_RSA:
 		pub = BIO_new(BIO_s_mem());
-		if(!pub){
+		if (!pub) {
 			sntSSLPrintError();
 			return 0;
 		}
 		res = PEM_write_bio_RSAPublicKey(pub, connection->asymkey);
-		if(res != 1){
+		if (res != 1) {
 			BIO_free_all(pub);
 			sntSSLPrintError();
 			return 0;
@@ -234,21 +211,21 @@ int sntASymCopyPublicKey(const SNTConnection* connection, void* cpkey){
 	return pub_len;
 }
 
-int sntASymCreateKeyFromFile(SNTConnection* __restrict__ connection,
-		unsigned int cipher, void* __restrict__ filepath, unsigned int private) {
+int sntASymCreateKeyFromFile(SNTConnection *__restrict__ connection, unsigned int cipher, void *__restrict__ filepath,
+							 unsigned int private) {
 
 	int res;
 	long int len;
-	void* pkey;
+	void *pkey;
 
 	/*	Load content of the file.	*/
 	len = sntLoadFile(filepath, &pkey);
-	if(len <= 0){
+	if (len <= 0) {
 		return 0;
 	}
 
 	/*	Create key from data.	*/
-	res = sntASymCreateKeyFromData(connection, cipher, (const void*)pkey, len, private);
+	res = sntASymCreateKeyFromData(connection, cipher, (const void *)pkey, len, private);
 
 	/*	Release key.	*/
 	sntMemZero(pkey, len);
@@ -257,16 +234,15 @@ int sntASymCreateKeyFromFile(SNTConnection* __restrict__ connection,
 	return res;
 }
 
-int sntASymCreateFromX509File(SNTConnection* __restrict__ connection,
-		const char* __restrict__ cfilepath){
+int sntASymCreateFromX509File(SNTConnection *__restrict__ connection, const char *__restrict__ cfilepath) {
 
-	STACK_OF(X509_INFO) *certstack;
-	BIO* bio;
+	STACK_OF(X509_INFO) * certstack;
+	BIO *bio;
 	int i;
 	EVP_PKEY *pkey;
 	X509_INFO *stack_item = NULL;
 	X509_NAME *certsubject = NULL;
-	X509* cert;
+	X509 *cert;
 	unsigned int asym = 0;
 
 	/*	Load file.	*/
@@ -290,7 +266,7 @@ int sntASymCreateFromX509File(SNTConnection* __restrict__ connection,
 
 	/*	Check public key type.	*/
 
-	switch (EVP_MD_type((const EVP_MD*)pkey)) {
+	switch (EVP_MD_type((const EVP_MD *)pkey)) {
 	case EVP_PKEY_RSA:
 		asym = SNT_ENCRYPTION_ASYM_RSA;
 		connection->asymkey = EVP_PKEY_get1_RSA(pkey);
@@ -314,16 +290,14 @@ int sntASymCreateFromX509File(SNTConnection* __restrict__ connection,
 	return 1;
 }
 
-int sntASymPubEncrypt(unsigned int type, const void* source, unsigned int len,
-		void* dest, const void* key) {
+int sntASymPubEncrypt(unsigned int type, const void *source, unsigned int len, void *dest, const void *key) {
 
 	int reslen = 0;
 
-	switch(type){
+	switch (type) {
 	case SNT_ENCRYPTION_ASYM_RSA:
-		reslen = RSA_public_encrypt(len, source, dest, (RSA*)key,
-				RSA_PKCS1_PADDING);
-		if(reslen < 0){
+		reslen = RSA_public_encrypt(len, source, dest, (RSA *)key, RSA_PKCS1_PADDING);
+		if (reslen < 0) {
 			sntSSLPrintError();
 			return 0;
 		}
@@ -336,16 +310,14 @@ int sntASymPubEncrypt(unsigned int type, const void* source, unsigned int len,
 	return reslen;
 }
 
-int sntASymPriDecrypt(unsigned int cipher, const void* source, unsigned int len,
-		void* dest, const void* key) {
+int sntASymPriDecrypt(unsigned int cipher, const void *source, unsigned int len, void *dest, const void *key) {
 
 	int reslen = 0;
 
-	switch(cipher){
+	switch (cipher) {
 	case SNT_ENCRYPTION_ASYM_RSA:
-		reslen = RSA_private_decrypt(len, (const unsigned char *)source,
-				dest, (RSA*)key, RSA_PKCS1_PADDING);
-		if(reslen < 0){
+		reslen = RSA_private_decrypt(len, (const unsigned char *)source, dest, (RSA *)key, RSA_PKCS1_PADDING);
+		if (reslen < 0) {
 			sntSSLPrintError();
 			return 0;
 		}
@@ -358,20 +330,20 @@ int sntASymPriDecrypt(unsigned int cipher, const void* source, unsigned int len,
 	return reslen;
 }
 
-unsigned int sntASymGetBlockSize(unsigned int cipher, const void* key){
+unsigned int sntASymGetBlockSize(unsigned int cipher, const void *key) {
 
 	assert(key);
 
-	switch(cipher){
+	switch (cipher) {
 	case SNT_ENCRYPTION_ASYM_RSA:
-		return (unsigned int)RSA_size((RSA*)key);
+		return (unsigned int)RSA_size((RSA *)key);
 	default:
 		break;
 	}
 	return 0;
 }
 
-void sntASymFree(SNTConnection* connection){
+void sntASymFree(SNTConnection *connection) {
 	switch (connection->asymchiper) {
 	case SNT_ENCRYPTION_ASYM_RSA:
 		RSA_free(connection->asymkey);
@@ -386,8 +358,8 @@ void sntASymFree(SNTConnection* connection){
 	connection->asynumbits = 0;
 }
 
-static int sntGetSignHashEnum(unsigned int hash){
-	switch(hash){
+static int sntGetSignHashEnum(unsigned int hash) {
+	switch (hash) {
 	case SNT_HASH_MD4:
 		return NID_md4;
 	case SNT_HASH_MD5:
@@ -407,16 +379,16 @@ static int sntGetSignHashEnum(unsigned int hash){
 	}
 }
 
-int sntASymSignDigSign(const SNTConnection* connection, unsigned int hashtype,
-		const void* hash, unsigned int len, void* output, int32_t* diglen) {
+int sntASymSignDigSign(const SNTConnection *connection, unsigned int hashtype, const void *hash, unsigned int len,
+					   void *output, int32_t *diglen) {
 
 	int res = 0;
 
-	switch(connection->asymchiper){
+	switch (connection->asymchiper) {
 	case SNT_ENCRYPTION_ASYM_RSA:
 		/*	Sign.	*/
 		res = RSA_sign(sntGetSignHashEnum(hashtype), hash, len, output, diglen, connection->asymkey);
-		if(res != 1){
+		if (res != 1) {
 			sntSSLPrintError();
 			return 0;
 		}
@@ -427,16 +399,16 @@ int sntASymSignDigSign(const SNTConnection* connection, unsigned int hashtype,
 	}
 	return res;
 }
-int sntASymVerifyDigSign(const SNTConnection* connection, unsigned int hashtype,
-		const void* hash, unsigned int len, void* digital, unsigned int diglen) {
+int sntASymVerifyDigSign(const SNTConnection *connection, unsigned int hashtype, const void *hash, unsigned int len,
+						 void *digital, unsigned int diglen) {
 
 	int res = 0;
 
-	switch(connection->asymchiper){
+	switch (connection->asymchiper) {
 	case SNT_ENCRYPTION_ASYM_RSA:
 		/*	Verify.	*/
 		res = RSA_verify(sntGetSignHashEnum(hashtype), hash, len, digital, diglen, connection->asymkey);
-		if(res != 1){
+		if (res != 1) {
 			sntSSLPrintError();
 			return 0;
 		}
@@ -448,13 +420,13 @@ int sntASymVerifyDigSign(const SNTConnection* connection, unsigned int hashtype,
 	return res;
 }
 
-int sntSymGenerateKey(SNTConnection* connection, unsigned int cipher){
+int sntSymGenerateKey(SNTConnection *connection, unsigned int cipher) {
 
-	int status;					/*	*/
-	unsigned char* rand;		/*	*/
+	int status;			 /*	*/
+	unsigned char *rand; /*	*/
 
 	/*	Generate random key.	*/
-	rand = (unsigned char*)malloc(sntSymKeyByteSize(cipher));
+	rand = (unsigned char *)malloc(sntSymKeyByteSize(cipher));
 	sntGenRandom(rand, sntSymKeyByteSize(cipher));
 
 	/*	Create symmetric key.	*/
@@ -467,11 +439,11 @@ int sntSymGenerateKey(SNTConnection* connection, unsigned int cipher){
 	return status;
 }
 
-int sntSymCreateFromKey(SNTConnection* connection, unsigned int cipher, const void* pkey){
+int sntSymCreateFromKey(SNTConnection *connection, unsigned int cipher, const void *pkey) {
 
 	int symcipsize = 0;
 
-	switch(cipher){
+	switch (cipher) {
 	case SNT_ENCRYPTION_AES_CBC128:
 	case SNT_ENCRYPTION_AES_CBC192:
 	case SNT_ENCRYPTION_AES_CBC256:
@@ -504,7 +476,7 @@ int sntSymCreateFromKey(SNTConnection* connection, unsigned int cipher, const vo
 			sntSSLPrintError();
 			return 0;
 		}*/
-		if(DES_set_key((const_DES_cblock*)pkey, (DES_key_schedule *)connection->symenc) != 0){
+		if (DES_set_key((const_DES_cblock *)pkey, (DES_key_schedule *)connection->symenc) != 0) {
 			free(connection->symenc);
 			sntSSLPrintError();
 			return 0;
@@ -514,15 +486,15 @@ int sntSymCreateFromKey(SNTConnection* connection, unsigned int cipher, const vo
 	case SNT_ENCRYPTION_3DESCBC:
 		connection->symenc = malloc(sizeof(DES_key_schedule) * 3);
 		symcipsize = sizeof(DES_key_schedule) * 3;
-		if(DES_set_key(&((const_DES_cblock*)pkey)[0], &((DES_key_schedule*)connection->symenc)[0]) != 0){
+		if (DES_set_key(&((const_DES_cblock *)pkey)[0], &((DES_key_schedule *)connection->symenc)[0]) != 0) {
 			sntSSLPrintError();
 			return 0;
 		}
-		if(DES_set_key(&((const_DES_cblock*)pkey)[1], &((DES_key_schedule*)connection->symenc)[1]) != 0){
+		if (DES_set_key(&((const_DES_cblock *)pkey)[1], &((DES_key_schedule *)connection->symenc)[1]) != 0) {
 			sntSSLPrintError();
 			return 0;
 		}
-		if(DES_set_key(&((const_DES_cblock*)pkey)[2], &((DES_key_schedule*)connection->symenc)[2]) != 0){
+		if (DES_set_key(&((const_DES_cblock *)pkey)[2], &((DES_key_schedule *)connection->symenc)[2]) != 0) {
 			sntSSLPrintError();
 			return 0;
 		}
@@ -536,14 +508,14 @@ int sntSymCreateFromKey(SNTConnection* connection, unsigned int cipher, const vo
 	case SNT_ENCRYPTION_CASTCFB:
 		connection->symenc = malloc(sizeof(CAST_KEY));
 		symcipsize = sizeof(CAST_KEY);
-		CAST_set_key((CAST_KEY*)connection->symenc, CAST_KEY_LENGTH, pkey);
+		CAST_set_key((CAST_KEY *)connection->symenc, CAST_KEY_LENGTH, pkey);
 		break;
 	default:
 		return 0;
 	}
 
 	/*	Prevent key to be swapped to storage.	*/
-	if(!sntLockMemory(connection->symenc, symcipsize)){
+	if (!sntLockMemory(connection->symenc, symcipsize)) {
 		return 0;
 	}
 
@@ -554,12 +526,12 @@ int sntSymCreateFromKey(SNTConnection* connection, unsigned int cipher, const vo
 	return 1;
 }
 
-void sntSymCopyKey(SNTConnection* connection, void** key){
+void sntSymCopyKey(SNTConnection *connection, void **key) {
 
 	*key = calloc(1, sntSymKeyByteSize(connection->symchiper));
 	assert(*key);
 
-	switch(connection->symchiper){
+	switch (connection->symchiper) {
 	case SNT_ENCRYPTION_AES_ECB128:
 	case SNT_ENCRYPTION_AES_ECB192:
 	case SNT_ENCRYPTION_AES_ECB256:
@@ -572,26 +544,25 @@ void sntSymCopyKey(SNTConnection* connection, void** key){
 	case SNT_ENCRYPTION_AES_OFB128:
 	case SNT_ENCRYPTION_AES_OFB192:
 	case SNT_ENCRYPTION_AES_OFB256:
-		memcpy(*key, ((AES_KEY*)connection->symenc)->rd_key, sntSymKeyByteSize(connection->symchiper));
+		memcpy(*key, ((AES_KEY *)connection->symenc)->rd_key, sntSymKeyByteSize(connection->symchiper));
 		break;
 	case SNT_ENCRYPTION_BLOWFISH:
-		memcpy(*key, &((BF_KEY*)connection->symenc)->P[0], sntSymKeyByteSize(connection->symchiper));
+		memcpy(*key, &((BF_KEY *)connection->symenc)->P[0], sntSymKeyByteSize(connection->symchiper));
 		break;
 	case SNT_ENCRYPTION_3DES:
 	case SNT_ENCRYPTION_3DESCBC:
-		memcpy(*key, &((DES_key_schedule*)connection->symenc)->ks[0].cblock, sntSymKeyByteSize(connection->symchiper));
+		memcpy(*key, &((DES_key_schedule *)connection->symenc)->ks[0].cblock, sntSymKeyByteSize(connection->symchiper));
 		break;
 	case SNT_ENCRYPTION_DES:
-		memcpy(*key, &((DES_key_schedule*)connection->symenc)->ks[0].cblock, sntSymKeyByteSize(connection->symchiper));
+		memcpy(*key, &((DES_key_schedule *)connection->symenc)->ks[0].cblock, sntSymKeyByteSize(connection->symchiper));
 		break;
 	default:
 		break;
 	}
 }
 
-
-int sntSymKeyBitSize(unsigned int cipher){
-	switch(cipher){
+int sntSymKeyBitSize(unsigned int cipher) {
+	switch (cipher) {
 	case SNT_ENCRYPTION_AES_ECB128:
 	case SNT_ENCRYPTION_AES_CBC128:
 	case SNT_ENCRYPTION_AES_CFB128:
@@ -627,12 +598,10 @@ int sntSymKeyBitSize(unsigned int cipher){
 	}
 }
 
-int sntSymKeyByteSize(unsigned int cipher){
-	return sntSymKeyBitSize(cipher) / 8;
-}
+int sntSymKeyByteSize(unsigned int cipher) { return sntSymKeyBitSize(cipher) / 8; }
 
-int sntSymBlockSize(unsigned int cipher){
-	switch(cipher){
+int sntSymBlockSize(unsigned int cipher) {
+	switch (cipher) {
 	case SNT_ENCRYPTION_AES_CBC128:
 	case SNT_ENCRYPTION_AES_CBC192:
 	case SNT_ENCRYPTION_AES_CBC256:
@@ -665,8 +634,8 @@ int sntSymBlockSize(unsigned int cipher){
 	}
 }
 
-unsigned int sntSymNeedIV(unsigned int cipher){
-	switch(cipher){
+unsigned int sntSymNeedIV(unsigned int cipher) {
+	switch (cipher) {
 	case SNT_ENCRYPTION_AES_CBC128:
 	case SNT_ENCRYPTION_AES_CBC192:
 	case SNT_ENCRYPTION_AES_CBC256:
@@ -685,11 +654,10 @@ unsigned int sntSymNeedIV(unsigned int cipher){
 	default:
 		return 0;
 	}
-
 }
 
-unsigned int sntSymdNeedFB(unsigned int cipher){
-	switch(cipher){
+unsigned int sntSymdNeedFB(unsigned int cipher) {
+	switch (cipher) {
 	case SNT_ENCRYPTION_AES_CFB128:
 	case SNT_ENCRYPTION_AES_CFB192:
 	case SNT_ENCRYPTION_AES_CFB256:
@@ -704,9 +672,9 @@ unsigned int sntSymdNeedFB(unsigned int cipher){
 	}
 }
 
-void sntSymFree(SNTConnection* connection){
+void sntSymFree(SNTConnection *connection) {
 
-	switch(connection->symchiper){
+	switch (connection->symchiper) {
 	case SNT_ENCRYPTION_AES_CBC128:
 	case SNT_ENCRYPTION_AES_CBC192:
 	case SNT_ENCRYPTION_AES_CBC256:
@@ -752,12 +720,12 @@ void sntSymFree(SNTConnection* connection){
 	connection->blocksize = 0;
 }
 
-unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
-		unsigned char* dest, unsigned int soulen, void* __restrict__ iv, int* __restrict__ feedback) {
+unsigned int sntSymEncrypt(const SNTConnection *connection, const void *source, unsigned char *dest,
+						   unsigned int soulen, void *__restrict__ iv, int *__restrict__ feedback) {
 
 	unsigned int i;
 	unsigned int delen = soulen;
-	const unsigned char* in = source;
+	const unsigned char *in = source;
 
 	/*	Compute the total block size.	*/
 	delen = sntSymTotalBlockSize(soulen, connection->blocksize);
@@ -766,105 +734,104 @@ unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 	memset(dest + soulen, 0, (delen - soulen));
 
 	/*	Encryption.	*/
-	switch(connection->symchiper){
+	switch (connection->symchiper) {
 	case SNT_ENCRYPTION_AES_ECB128:
 	case SNT_ENCRYPTION_AES_ECB192:
 	case SNT_ENCRYPTION_AES_ECB256:
-		for(i = 0; i < delen; i += connection->blocksize){
+		for (i = 0; i < delen; i += connection->blocksize) {
 			AES_ecb_encrypt(in + i, dest + i, connection->symenc, AES_ENCRYPT);
 		}
 		break;
 	case SNT_ENCRYPTION_AES_CBC128:
 	case SNT_ENCRYPTION_AES_CBC192:
-	case SNT_ENCRYPTION_AES_CBC256:{
+	case SNT_ENCRYPTION_AES_CBC256: {
 		unsigned char iiv[16];
 		sntGenRandom(iiv, sntSymBlockSize(connection->symchiper));
 		memcpy(iv, iiv, sntSymBlockSize(connection->symchiper));
 		AES_cbc_encrypt(in, dest, delen, connection->symenc, iiv, AES_ENCRYPT);
-	}break;
+	} break;
 	case SNT_ENCRYPTION_AES_CFB128:
 	case SNT_ENCRYPTION_AES_CFB192:
-	case SNT_ENCRYPTION_AES_CFB256:{
+	case SNT_ENCRYPTION_AES_CFB256: {
 		unsigned char iiv[16];
 		sntGenRandom(iiv, sntSymBlockSize(connection->symchiper));
 		memcpy(iv, iiv, sntSymBlockSize(connection->symchiper));
 		*feedback = 0;
 		AES_cfb128_encrypt(in, dest, delen, connection->symenc, iiv, feedback, AES_ENCRYPT);
-	}break;
+	} break;
 	case SNT_ENCRYPTION_AES_OFB128:
 	case SNT_ENCRYPTION_AES_OFB192:
-	case SNT_ENCRYPTION_AES_OFB256:{
+	case SNT_ENCRYPTION_AES_OFB256: {
 		unsigned char iiv[16];
 		sntGenRandom(iiv, sntSymBlockSize(connection->symchiper));
 		memcpy(iv, iiv, sntSymBlockSize(connection->symchiper));
 		*feedback = 0;
 		AES_ofb128_encrypt(in, dest, delen, connection->symenc, iiv, feedback);
-	}break;
+	} break;
 	case SNT_ENCRYPTION_DES:
-		for(i = 0; i < delen; i += connection->blocksize){
-			memcpy((DES_LONG*)(dest + i), (DES_LONG*)(in + i), connection->blocksize);
-			DES_encrypt1((unsigned int*)(dest + i), connection->symenc, DES_ENCRYPT);
+		for (i = 0; i < delen; i += connection->blocksize) {
+			memcpy((DES_LONG *)(dest + i), (DES_LONG *)(in + i), connection->blocksize);
+			DES_encrypt1((unsigned int *)(dest + i), connection->symenc, DES_ENCRYPT);
 		}
 		break;
 	case SNT_ENCRYPTION_3DES:
-		for(i = 0; i < delen; i += connection->blocksize){
-			memcpy((DES_LONG*)(dest + i), (DES_LONG*)(in + i), connection->blocksize);
-			DES_encrypt3((DES_LONG*)(dest + i), 					&((DES_key_schedule*)connection->symenc)[0],
-					&((DES_key_schedule*)connection->symenc)[1],
-					&((DES_key_schedule*)connection->symenc)[2]);
+		for (i = 0; i < delen; i += connection->blocksize) {
+			memcpy((DES_LONG *)(dest + i), (DES_LONG *)(in + i), connection->blocksize);
+			DES_encrypt3((DES_LONG *)(dest + i), &((DES_key_schedule *)connection->symenc)[0],
+						 &((DES_key_schedule *)connection->symenc)[1], &((DES_key_schedule *)connection->symenc)[2]);
 		}
 		break;
-	case SNT_ENCRYPTION_3DESCBC:{
+	case SNT_ENCRYPTION_3DESCBC: {
 		DES_cblock iiv;
-		//unsigned char iiv[8];
+		// unsigned char iiv[8];
 		sntGenRandom(iv, sntSymBlockSize(connection->symchiper));
 		memcpy(iiv, iv, 8);
-		DES_ede3_cbc_encrypt(in, dest, delen,
-				&((DES_key_schedule*)connection->symenc)[0],
-				&((DES_key_schedule*)connection->symenc)[1],
-				&((DES_key_schedule*)connection->symenc)[2], &iiv, DES_ENCRYPT);
-	}break;
+		DES_ede3_cbc_encrypt(in, dest, delen, &((DES_key_schedule *)connection->symenc)[0],
+							 &((DES_key_schedule *)connection->symenc)[1], &((DES_key_schedule *)connection->symenc)[2],
+							 &iiv, DES_ENCRYPT);
+	} break;
 	case SNT_ENCRYPTION_BLOWFISH:
-		for(i = 0; i < delen; i += connection->blocksize){
+		for (i = 0; i < delen; i += connection->blocksize) {
 			BF_ecb_encrypt((in + i), (dest + i), connection->symenc, BF_ENCRYPT);
 		}
 		break;
-	case SNT_ENCRYPTION_BF_CBC:{
+	case SNT_ENCRYPTION_BF_CBC: {
 		unsigned char iiv[8];
 		sntGenRandom(iv, sntSymBlockSize(connection->symchiper));
 		memcpy(iiv, iv, sntSymBlockSize(connection->symchiper));
 		BF_cbc_encrypt(in, dest, delen, connection->symenc, iiv, BF_ENCRYPT);
-	}break;
-	case SNT_ENCRYPTION_BF_CFB:{
+	} break;
+	case SNT_ENCRYPTION_BF_CFB: {
 		unsigned char iiv[8];
 		sntGenRandom(iv, sntSymBlockSize(connection->symchiper));
 		memcpy(iiv, iv, 8);
 		*feedback = 0;
 		BF_cfb64_encrypt(in, dest, delen, connection->symenc, iiv, feedback, BF_ENCRYPT);
-	}break;
+	} break;
 	case SNT_ENCRYPTION_RC4:
 		RC4(connection->symenc, delen, in, dest);
 		break;
 	case SNT_ENCRYPTION_CAST:
-		for(i = 0; i < delen; i += connection->blocksize){
-			memcpy((DES_LONG*)(dest + i), (DES_LONG*)(in + i), connection->blocksize);
-			CAST_encrypt((unsigned int*)(dest + i), connection->symenc);
+		for (i = 0; i < delen; i += connection->blocksize) {
+			memcpy((DES_LONG *)(dest + i), (DES_LONG *)(in + i), connection->blocksize);
+			CAST_encrypt((unsigned int *)(dest + i), connection->symenc);
 		}
 		break;
-	case SNT_ENCRYPTION_CASTCBC:{
+	case SNT_ENCRYPTION_CASTCBC: {
 		unsigned char iiv[CAST_BLOCK];
 		sntGenRandom(iv, sntSymBlockSize(connection->symchiper));
 		memcpy(iiv, iv, CAST_BLOCK);
 		CAST_cbc_encrypt(in, dest, delen, connection->symenc, iiv, CAST_ENCRYPT);
 		break;
-	case SNT_ENCRYPTION_CASTCFB:{
+	case SNT_ENCRYPTION_CASTCFB: {
 		unsigned char iiv[CAST_BLOCK];
 		sntGenRandom(iv, sntSymBlockSize(connection->symchiper));
 		memcpy(iiv, iv, CAST_BLOCK);
 		*feedback = 0;
 		CAST_cfb64_encrypt(in, dest, delen, connection->symenc, iv, feedback, CAST_ENCRYPT);
-	}break;
-	}default:
+	} break;
+	}
+	default:
 		memcpy(dest, source, delen);
 		break;
 	}
@@ -873,23 +840,22 @@ unsigned int sntSymEncrypt(const SNTConnection* connection, const void* source,
 	return delen;
 }
 
-unsigned int sntSymDecrypt(const SNTConnection* connection, const void* source,
-		unsigned char* dest, unsigned int soulen, void* __restrict__ iv,
-		int* __restrict__ feedback) {
+unsigned int sntSymDecrypt(const SNTConnection *connection, const void *source, unsigned char *dest,
+						   unsigned int soulen, void *__restrict__ iv, int *__restrict__ feedback) {
 
 	unsigned int deslen;
-	const unsigned char* in = source;
+	const unsigned char *in = source;
 	unsigned int i;
 
 	/*	Compute the total block size.	*/
 	deslen = sntSymTotalBlockSize(soulen, connection->blocksize);
 
 	/*	Decryption.	*/
-	switch(connection->symchiper){
+	switch (connection->symchiper) {
 	case SNT_ENCRYPTION_AES_ECB128:
 	case SNT_ENCRYPTION_AES_ECB192:
 	case SNT_ENCRYPTION_AES_ECB256:
-		for(i = 0; i < deslen; i += connection->blocksize){
+		for (i = 0; i < deslen; i += connection->blocksize) {
 			AES_ecb_encrypt(in + i, dest + i, connection->symdec, DES_DECRYPT);
 		}
 		break;
@@ -905,48 +871,45 @@ unsigned int sntSymDecrypt(const SNTConnection* connection, const void* source,
 		break;
 	case SNT_ENCRYPTION_AES_OFB128:
 	case SNT_ENCRYPTION_AES_OFB192:
-	case SNT_ENCRYPTION_AES_OFB256:{
+	case SNT_ENCRYPTION_AES_OFB256: {
 		AES_ofb128_encrypt(in, dest, deslen, connection->symenc, iv, feedback);
-	}break;
+	} break;
 	case SNT_ENCRYPTION_DES:
-		for(i = 0; i < deslen; i += connection->blocksize){
-			memcpy((DES_LONG*)(dest + i),(DES_LONG*)(in + i), connection->blocksize);
-			DES_encrypt1((DES_LONG*)(dest + i), connection->symenc, DES_DECRYPT);
+		for (i = 0; i < deslen; i += connection->blocksize) {
+			memcpy((DES_LONG *)(dest + i), (DES_LONG *)(in + i), connection->blocksize);
+			DES_encrypt1((DES_LONG *)(dest + i), connection->symenc, DES_DECRYPT);
 		}
 		break;
 	case SNT_ENCRYPTION_3DES:
-		for(i = 0; i < deslen; i += connection->blocksize){
-			memcpy((DES_LONG*)(dest + i),(DES_LONG*)(in + i), connection->blocksize);
-			DES_decrypt3((DES_LONG*)(dest + i),
-					&((DES_key_schedule*)connection->symenc)[0],
-					&((DES_key_schedule*)connection->symenc)[1],
-					&((DES_key_schedule*)connection->symenc)[2]);
+		for (i = 0; i < deslen; i += connection->blocksize) {
+			memcpy((DES_LONG *)(dest + i), (DES_LONG *)(in + i), connection->blocksize);
+			DES_decrypt3((DES_LONG *)(dest + i), &((DES_key_schedule *)connection->symenc)[0],
+						 &((DES_key_schedule *)connection->symenc)[1], &((DES_key_schedule *)connection->symenc)[2]);
 		}
 		break;
 	case SNT_ENCRYPTION_3DESCBC:
-			DES_ede3_cbc_encrypt(in, dest, deslen,
-					&((DES_key_schedule*)connection->symenc)[0],
-					&((DES_key_schedule*)connection->symenc)[1],
-					&((DES_key_schedule*)connection->symenc)[2], iv, DES_DECRYPT);
+		DES_ede3_cbc_encrypt(in, dest, deslen, &((DES_key_schedule *)connection->symenc)[0],
+							 &((DES_key_schedule *)connection->symenc)[1], &((DES_key_schedule *)connection->symenc)[2],
+							 iv, DES_DECRYPT);
 		break;
 	case SNT_ENCRYPTION_BLOWFISH:
-		for(i = 0; i < deslen; i += connection->blocksize){
+		for (i = 0; i < deslen; i += connection->blocksize) {
 			BF_ecb_encrypt((in + i), (dest + i), connection->symenc, BF_DECRYPT);
 		}
 		break;
 	case SNT_ENCRYPTION_BF_CBC:
 		BF_cbc_encrypt(in, dest, deslen, connection->symenc, iv, BF_DECRYPT);
 		break;
-	case SNT_ENCRYPTION_BF_CFB:{
+	case SNT_ENCRYPTION_BF_CFB: {
 		BF_cfb64_encrypt(in, dest, deslen, connection->symenc, iv, feedback, BF_DECRYPT);
-	}break;
+	} break;
 	case SNT_ENCRYPTION_RC4:
 		RC4(connection->symenc, deslen, in, dest);
 		break;
 	case SNT_ENCRYPTION_CAST:
-		for(i = 0; i < deslen; i += connection->blocksize){
-			memcpy((DES_LONG*)(dest + i), (DES_LONG*)(in + i), connection->blocksize);
-			CAST_decrypt((unsigned int*)(dest + i), connection->symenc);
+		for (i = 0; i < deslen; i += connection->blocksize) {
+			memcpy((DES_LONG *)(dest + i), (DES_LONG *)(in + i), connection->blocksize);
+			CAST_decrypt((unsigned int *)(dest + i), connection->symenc);
 		}
 		break;
 	case SNT_ENCRYPTION_CASTCBC:
@@ -964,8 +927,8 @@ unsigned int sntSymDecrypt(const SNTConnection* connection, const void* source,
 	return deslen;
 }
 
-unsigned int sntSymTotalBlockSize(unsigned int len, unsigned int blocksize){
-	if(len % blocksize == 0)
+unsigned int sntSymTotalBlockSize(unsigned int len, unsigned int blocksize) {
+	if (len % blocksize == 0)
 		return len;
 	else
 		return len + (blocksize - (len % blocksize));

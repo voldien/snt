@@ -1,16 +1,15 @@
-#include"snt_utility.h"
-#include"snt_protocol.h"
-#include"snt_time.h"
-#include<assert.h>
+#include "snt_protocol.h"
+#include "snt_time.h"
+#include "snt_utility.h"
+#include <assert.h>
 
-int sntGenerateDeltaTypeInc(unsigned int type, char* text, SNTDelta* delta,
-		const SNTDelta* incr) {
+int sntGenerateDeltaTypeInc(unsigned int type, char *text, SNTDelta *delta, const SNTDelta *incr) {
 
 	int len = 0;
 
 	assert(type);
 
-	switch(type){
+	switch (type) {
 	case SNT_DELTA_TYPE_INT:
 		len = sntGenerateAsciiLongInt(text, (long int)delta->i);
 		delta->i += incr->i;
@@ -36,8 +35,8 @@ int sntGenerateDeltaTypeInc(unsigned int type, char* text, SNTDelta* delta,
 	return len;
 }
 
-void sntDeltaParse(unsigned int type, const char* __restrict__ buf, SNTDelta* __restrict__ delta){
-	switch(type){
+void sntDeltaParse(unsigned int type, const char *__restrict__ buf, SNTDelta *__restrict__ delta) {
+	switch (type) {
 	case SNT_DELTA_TYPE_FLOAT:
 		delta->f = sntAsciiToFloat(buf);
 		break;
@@ -54,9 +53,9 @@ void sntDeltaParse(unsigned int type, const char* __restrict__ buf, SNTDelta* __
 	}
 }
 
-int sntDeltaCheckChange(unsigned int type, const SNTDelta* __restrict__ prev,
-		const SNTDelta* __restrict__ next, const SNTDelta* __restrict__ incre) {
-	switch(type){
+int sntDeltaCheckChange(unsigned int type, const SNTDelta *__restrict__ prev, const SNTDelta *__restrict__ next,
+						const SNTDelta *__restrict__ incre) {
+	switch (type) {
 	case SNT_DELTA_TYPE_INT:
 		return ((next->i - prev->i) == incre->i);
 	case SNT_DELTA_TYPE_FLOAT:
@@ -73,23 +72,11 @@ int sntDeltaCheckChange(unsigned int type, const SNTDelta* __restrict__ prev,
 	return 0;
 }
 
-int sntGenerateAsciiFloat(char* text, float digit){
-	return sprintf(text, "%f", digit);
-}
-float sntAsciiToFloat(const char* text){
-	return strtof(text, NULL);
-}
+int sntGenerateAsciiFloat(char *text, float digit) { return sprintf(text, "%f", digit); }
+float sntAsciiToFloat(const char *text) { return strtof(text, NULL); }
 
-int sntGenerateAsciiDouble(char* text, double digit){
-	return sprintf(text, "%lf", digit);
-}
-double sntAsciiToDouble(const char* text){
-	return strtod(text, NULL);
-}
+int sntGenerateAsciiDouble(char *text, double digit) { return sprintf(text, "%lf", digit); }
+double sntAsciiToDouble(const char *text) { return strtod(text, NULL); }
 
-int sntGenerateAsciiLongInt(char* text, long int digit){
-	return sprintf(text, "%ld", digit);
-}
-long int sntAsciiToLongInt(const char* text){
-	return strtol(text, NULL, 10);
-}
+int sntGenerateAsciiLongInt(char *text, long int digit) { return sprintf(text, "%ld", digit); }
+long int sntAsciiToLongInt(const char *text) { return strtol(text, NULL, 10); }

@@ -1,74 +1,71 @@
-#include"snt_utility.h"
-#include<limits.h>
-#include<assert.h>
-#include<errno.h>
+#include "snt_utility.h"
+#include <assert.h>
+#include <errno.h>
+#include <limits.h>
 
-
-void sntSwapPointer(void** a, void** b){
-	void* tp;
+void sntSwapPointer(void **a, void **b) {
+	void *tp;
 	tp = *a;
 	*a = *b;
 	*b = tp;
 }
 
-int sntLog2MutExlusive32(unsigned int a){
+int sntLog2MutExlusive32(unsigned int a) {
 
 	int i = 0;
 	int po = 0;
 	const int bitlen = 32;
 
-	if(a == 0)
+	if (a == 0)
 		return 0;
 
-	for(; i < bitlen; i++){
-		if((a >> i) & 0x1)
+	for (; i < bitlen; i++) {
+		if ((a >> i) & 0x1)
 			return (i + 1);
 	}
 
 	return 0;
 }
 
-int sntIsPower2(unsigned int n){
-	if(n==0) { return 1; }
+int sntIsPower2(unsigned int n) {
+	if (n == 0) {
+		return 1;
+	}
 	return n && !(n & (n - 1));
 }
 
-int sntMax(int a, int b){
-	return ( ( (a) > (b) ) ? (a) : (b) );
-}
+int sntMax(int a, int b) { return (((a) > (b)) ? (a) : (b)); }
 
-int sntMin(int a, int b){
-	return ( ( (a) < (b) ) ? (a) : (b) );
-}
+int sntMin(int a, int b) { return (((a) < (b)) ? (a) : (b)); }
 
-unsigned int sntSymbolArraySize(const void** array){
+unsigned int sntSymbolArraySize(const void **array) {
 
 	unsigned int i = 0;
 
-	while(array[i] != NULL){
+	while (array[i] != NULL) {
 		i++;
 	}
 
 	return i;
 }
 
-long int sntLoadFile(const char* cfilename, void** pbuf){
+long int sntLoadFile(const char *cfilename, void **pbuf) {
 
 	long int nbytes;
 	long int size;
-	FILE* f;
+	FILE *f;
 
 	/*	Special case.	*/
-	if(*cfilename == '~'){
+	if (*cfilename == '~') {
 		char buf[PATH_MAX];
-		const char* base = getenv("HOME");
+		const char *base = getenv("HOME");
 		sprintf(buf, "%s%s", base, ++cfilename);
 		cfilename = buf;
 	}
 
 	/*	Open file.	*/
 	f = fopen(cfilename, "rb");
-	if(!f){
+	if (!f) {
 		fprintf(stderr, "Failed opening %s, %s.\n", cfilename, strerror(errno));
 		return -1;
 	}
@@ -91,8 +88,7 @@ long int sntLoadFile(const char* cfilename, void** pbuf){
 	return nbytes;
 }
 
-
-void sntMemZero(void* __restrict__ pbuf, size_t size){
+void sntMemZero(void *__restrict__ pbuf, size_t size) {
 	memset(pbuf, 0, size);
 	memset(pbuf, 0, size);
 	memset(pbuf, 0, size);
