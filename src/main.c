@@ -7,7 +7,7 @@
 #include <signal.h>
 #include <errno.h>
 
-static void snt_release(void){
+static void snt_release(){
 
 	unsigned int i;
 

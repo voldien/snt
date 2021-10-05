@@ -26,12 +26,12 @@
  *	program gets loaded to memeory and are not allowed to be
  *	swapped to a storage medium.
  */
-extern void sntMemoryLockAll(void);
+extern void sntMemoryLockAll();
 
 /**
  *	Unlock all memory.
  */
-extern void sntMemoryUnLockAll(void);
+extern void sntMemoryUnLockAll();
 
 /**
  *	Lock memory adddress region.

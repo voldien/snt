@@ -52,7 +52,7 @@ const char* gc_asymchi_symbol[] = {
 	NULL,
 };
 
-void sntSSLPrintError(void){
+void sntSSLPrintError(){
 	char buf[256];
 	ERR_load_crypto_strings();
 	ERR_error_string(ERR_get_error(), buf);
@@ -289,7 +289,7 @@ int sntASymCreateFromX509File(SNTConnection* __restrict__ connection,
 	}
 
 	/*	Check public key type.	*/
-	
+
 	switch (EVP_MD_type((const EVP_MD*)pkey)) {
 	case EVP_PKEY_RSA:
 		asym = SNT_ENCRYPTION_ASYM_RSA;

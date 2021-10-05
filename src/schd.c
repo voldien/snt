@@ -12,13 +12,13 @@
 #include "snt_log.h"
 
 
-void sntMemoryLockAll(void){
+void sntMemoryLockAll(){
 	if(mlockall(MCL_CURRENT | MCL_FUTURE) < 0){
 		sntLogErrorPrintf("mlockall failed, %s.\n", strerror(errno));
 	}
 }
 
-void sntMemoryUnLockAll(void){
+void sntMemoryUnLockAll(){
 	if(munlockall() < 0){
 		sntLogErrorPrintf("munlockall failed, %s.\n", strerror(errno));
 	}

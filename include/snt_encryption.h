@@ -266,6 +266,6 @@ extern unsigned int sntSymTotalBlockSize(unsigned int len, unsigned int blocksiz
  *	Print error from openssl from previously invoked function
  *	from the openssl API.
  */
-extern void sntSSLPrintError(void);
+extern void sntSSLPrintError();
 
 #endif

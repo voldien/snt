@@ -73,7 +73,7 @@ typedef struct snt_connection_option_t{
 /**
  *	@Return non-null pointer.
  */
-extern const char* sntGetVersion(void);
+extern const char* sntGetVersion();
 
 /**
  *	Read option arguments.
@@ -99,7 +99,7 @@ extern int sntInitClient(unsigned int nparallcon);
 /**
  *	Server main loop. Will run indefinitely.
  */
-extern void sntServerMain(void);
+extern void sntServerMain();
 
 /**
  *	Client main loop.

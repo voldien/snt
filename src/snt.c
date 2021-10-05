@@ -29,7 +29,7 @@ char* g_cerficatefilepath = "/etc/ssl/certs/snt.cert";
 char* g_prikeyfilepath = "~/.snt/snt.pem";
 char* g_dhfilepath = "/etc/ssl/certs/sntdh.pem";
 
-const char* sntGetVersion(void){
+const char* sntGetVersion(){
 	return SNT_STR_VERSION " (" SNT_ARCH ") -- " SNT_COMPILER_NAME;
 }
 
@@ -398,7 +398,7 @@ static void sntUnMapSocket(SNTConnection** __restrict__ table,
 	}
 }
 
-void sntServerMain(void){
+void sntServerMain(){
 
 	SNTConnection* con = NULL;	/*	*/
 	volatile int fd_size = 0;	/*	*/
