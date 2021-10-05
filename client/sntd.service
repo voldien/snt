@@ -1,6 +1,7 @@
 [Unit]
 Description=SNT - Simple Nework Tool server
 After=network.target
+Requires=network.target
 
 [Service]
 ExecStart=/usr/bin/snt --server --verbose --cipher=all --delta=all --compression=all --transport=all --secure --listen=128
