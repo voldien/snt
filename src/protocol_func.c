@@ -280,11 +280,11 @@ int sntProtFuncBenchmark(SNTConnection *connection, const SNTUniformPacket *pack
 	return 1;
 }
 
-int sntProtFuncDHReq(SNTConnection *__restrict__ connection, const SNTUniformPacket *__restrict__ packet) {
+int sntProtFuncDHReq(SNTConnection *SNT_RESTRICT connection, const SNTUniformPacket *SNT_RESTRICT packet) {
 	return sntSendDHpq(g_bindconnection, connection);
 }
 
-int sntProtFuncDHInit(SNTConnection *__restrict__ connection, const SNTUniformPacket *__restrict__ packet) {
+int sntProtFuncDHInit(SNTConnection *SNT_RESTRICT connection, const SNTUniformPacket *SNT_RESTRICT packet) {
 
 	SNTDHInit *init = (SNTDHInit *)packet;
 	const size_t packlen = sizeof(SNTDHExch);
@@ -312,7 +312,7 @@ int sntProtFuncDHInit(SNTConnection *__restrict__ connection, const SNTUniformPa
 	return sntSendDHExch(connection);
 }
 
-int sntProtFuncDHExch(SNTConnection *__restrict__ connection, const SNTUniformPacket *__restrict__ packet) {
+int sntProtFuncDHExch(SNTConnection *SNT_RESTRICT connection, const SNTUniformPacket *SNT_RESTRICT packet) {
 
 	SNTDHExch *exch = (SNTDHExch *)packet;
 	int plen;
@@ -427,7 +427,7 @@ int sntValidateCapability(const SNTClientOption *option) {
 	return SNT_ERROR_NONE;
 }
 
-int sntSendCertificate(const SNTConnection *__restrict__ bind, SNTConnection *__restrict__ client) {
+int sntSendCertificate(const SNTConnection *SNT_RESTRICT bind, SNTConnection *SNT_RESTRICT client) {
 
 	int len;
 	SNTCertificate *cert;
@@ -491,7 +491,7 @@ int sntSendCertificate(const SNTConnection *__restrict__ bind, SNTConnection *__
 	return len;
 }
 
-int sntSendDHpq(const SNTConnection *__restrict__ bind, SNTConnection *__restrict__ client) {
+int sntSendDHpq(const SNTConnection *SNT_RESTRICT bind, SNTConnection *SNT_RESTRICT client) {
 
 	SNTDHInit *init;
 	const size_t packlen = sizeof(SNTDHInit);
@@ -560,7 +560,7 @@ int sntSendDHpq(const SNTConnection *__restrict__ bind, SNTConnection *__restric
 	return len;
 }
 
-int sntSendDHExch(const SNTConnection *__restrict__ connection) {
+int sntSendDHExch(const SNTConnection *SNT_RESTRICT connection) {
 
 	SNTDHExch *exch;
 	const size_t packlen = sizeof(SNTDHExch);
@@ -595,7 +595,7 @@ int sntSendDHExch(const SNTConnection *__restrict__ connection) {
 	return len;
 }
 
-int sntSendReady(const SNTConnection *__restrict__ connection) {
+int sntSendReady(const SNTConnection *SNT_RESTRICT connection) {
 
 	SNTReadyPacket ready;
 	int len;

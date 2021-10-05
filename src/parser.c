@@ -28,7 +28,7 @@ static unsigned int sntNumParam(const char *arg) {
 /**
  *	Get param by nth index.
  */
-static void sntGetParamByIndex(const char *__restrict__ arg, char *__restrict__ param, unsigned int index) {
+static void sntGetParamByIndex(const char *SNT_RESTRICT arg, char *SNT_RESTRICT param, unsigned int index) {
 
 	unsigned int i;
 	const char *tmp = arg;
@@ -53,7 +53,7 @@ static void sntGetParamByIndex(const char *__restrict__ arg, char *__restrict__ 
 	param[end - beg] = '\0';
 }
 
-unsigned int sntParserBitWiseMultiParam(const char *__restrict__ arg, const char **__restrict__ opts) {
+unsigned int sntParserBitWiseMultiParam(const char *SNT_RESTRICT arg, const char **SNT_RESTRICT opts) {
 
 	unsigned int i = 0;	  /*	*/
 	unsigned int j = 0;	  /*	*/

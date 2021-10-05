@@ -34,21 +34,21 @@ typedef union snt_delta_t {
  *
  *	@Return number of bytes written to text.
  */
-extern int sntGenerateDeltaTypeInc(unsigned int type, char *__restrict__ text, SNTDelta *__restrict__ delta,
-								   const SNTDelta *__restrict__ incr);
+extern int sntGenerateDeltaTypeInc(unsigned int type, char *SNT_RESTRICT text, SNTDelta *SNT_RESTRICT delta,
+								   const SNTDelta *SNT_RESTRICT incr);
 
 /**
  *	Parse delta binary.
  */
-extern void sntDeltaParse(unsigned int type, const char *__restrict__ buf, SNTDelta *__restrict__ delta);
+extern void sntDeltaParse(unsigned int type, const char *SNT_RESTRICT buf, SNTDelta *SNT_RESTRICT delta);
 
 /**
  *	Check changed from previous delta and current delta.
  *
  *	@Return none zero if delta is correct from between prev and next.
  */
-extern int sntDeltaCheckChange(unsigned int type, const SNTDelta *__restrict__ prev, const SNTDelta *__restrict__ next,
-							   const SNTDelta *__restrict__ incre);
+extern int sntDeltaCheckChange(unsigned int type, const SNTDelta *SNT_RESTRICT prev, const SNTDelta *SNT_RESTRICT next,
+							   const SNTDelta *SNT_RESTRICT incre);
 
 /**
  *

@@ -117,7 +117,7 @@ int sntASymGenerateKey(SNTConnection *connection, unsigned int cipher, unsigned 
 	return 1;
 }
 
-int sntASymCreateKeyFromData(SNTConnection *__restrict__ connection, unsigned int cipher, const void *__restrict__ key,
+int sntASymCreateKeyFromData(SNTConnection *SNT_RESTRICT connection, unsigned int cipher, const void *SNT_RESTRICT key,
 							 int len, unsigned int private) {
 
 	size_t asymksize = 0; /*	*/
@@ -211,7 +211,7 @@ int sntASymCopyPublicKey(const SNTConnection *connection, void *cpkey) {
 	return pub_len;
 }
 
-int sntASymCreateKeyFromFile(SNTConnection *__restrict__ connection, unsigned int cipher, void *__restrict__ filepath,
+int sntASymCreateKeyFromFile(SNTConnection *SNT_RESTRICT connection, unsigned int cipher, void *SNT_RESTRICT filepath,
 							 unsigned int private) {
 
 	int res;
@@ -234,7 +234,7 @@ int sntASymCreateKeyFromFile(SNTConnection *__restrict__ connection, unsigned in
 	return res;
 }
 
-int sntASymCreateFromX509File(SNTConnection *__restrict__ connection, const char *__restrict__ cfilepath) {
+int sntASymCreateFromX509File(SNTConnection *SNT_RESTRICT connection, const char *SNT_RESTRICT cfilepath) {
 
 	STACK_OF(X509_INFO) * certstack;
 	BIO *bio;
@@ -721,7 +721,7 @@ void sntSymFree(SNTConnection *connection) {
 }
 
 unsigned int sntSymEncrypt(const SNTConnection *connection, const void *source, unsigned char *dest,
-						   unsigned int soulen, void *__restrict__ iv, int *__restrict__ feedback) {
+						   unsigned int soulen, void *SNT_RESTRICT iv, int *SNT_RESTRICT feedback) {
 
 	unsigned int i;
 	unsigned int delen = soulen;
@@ -841,7 +841,7 @@ unsigned int sntSymEncrypt(const SNTConnection *connection, const void *source, 
 }
 
 unsigned int sntSymDecrypt(const SNTConnection *connection, const void *source, unsigned char *dest,
-						   unsigned int soulen, void *__restrict__ iv, int *__restrict__ feedback) {
+						   unsigned int soulen, void *SNT_RESTRICT iv, int *SNT_RESTRICT feedback) {
 
 	unsigned int deslen;
 	const unsigned char *in = source;

@@ -169,7 +169,7 @@ void sntBenchmarkPrintSessionResult(const SNTBenchmarkSession *session) {
 					"-----------------------------------------------\n");
 }
 
-void sntBenchmarkEnd(SNTConnection *__restrict__ connection, SNTResultPacket *__restrict__ result) {
+void sntBenchmarkEnd(SNTConnection *SNT_RESTRICT connection, SNTResultPacket *SNT_RESTRICT result) {
 
 	/*	Get time resolution.	*/
 	result->timeres = (uint64_t)sntGetTimeResolution();

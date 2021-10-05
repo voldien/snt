@@ -62,22 +62,22 @@ typedef struct snt_presentation_union_t {
 //  *
 //  *	@Return number of bytes of the packet body.
 //  */
-// extern unsigned int sntCreateSendPacket(const SNTConnection *__restrict__ connection, void *__restrict__ buffer,
-// 										unsigned int buflen, SNTPresentationUnion *__restrict__ pres);
+// extern unsigned int sntCreateSendPacket(const SNTConnection *SNT_RESTRICT connection, void *SNT_RESTRICT buffer,
+// 										unsigned int buflen, SNTPresentationUnion *SNT_RESTRICT pres);
 // /**
 //  *	Create packet ready to be received.
 //  *
 //  *	@Return number of bytes of the packet body.
 //  */
-// extern unsigned int sntCreateRecvPacket(const SNTConnection *__restrict__ connection, void *__restrict__ buffer,
-// 										unsigned int buflen, SNTPresentationUnion *__restrict__ pres);
+// extern unsigned int sntCreateRecvPacket(const SNTConnection *SNT_RESTRICT connection, void *SNT_RESTRICT buffer,
+// 										unsigned int buflen, SNTPresentationUnion *SNT_RESTRICT pres);
 
 // /**
 //  *	Read data from socket.
 //  *
 //  *	@Return number of bytes read.
 //  */
-// extern int sntReadSocket(const SNTConnection *__restrict__ connection, void *__restrict__ buffer, unsigned int buflen,
+// extern int sntReadSocket(const SNTConnection *SNT_RESTRICT connection, void *SNT_RESTRICT buffer, unsigned int buflen,
 // 						 int flag);
 
 // /**
@@ -85,7 +85,7 @@ typedef struct snt_presentation_union_t {
 //  *
 //  *	@Return number of bytes written.
 //  */
-// extern int sntWriteSocket(const SNTConnection *__restrict__ connection, const void *__restrict__ buffer,
+// extern int sntWriteSocket(const SNTConnection *SNT_RESTRICT connection, const void *SNT_RESTRICT buffer,
 // 						  unsigned int buflen, int flag);
 
 // /**
@@ -98,22 +98,22 @@ typedef struct snt_presentation_union_t {
 //  *
 //  *	@Return number of bytes sent.
 //  */
-// extern int sntWriteSocketPacket(const SNTConnection *__restrict__ connection,
-// 								const SNTUniformPacket *__restrict__ pack);
+// extern int sntWriteSocketPacket(const SNTConnection *SNT_RESTRICT connection,
+// 								const SNTUniformPacket *SNT_RESTRICT pack);
 
 // /**
 //  *	Receiving packet.
 //  *
 //  *	@Return number of bytes received.
 //  */
-// extern int sntReadSocketPacket(const SNTConnection *__restrict__ connection, SNTUniformPacket *__restrict__ pack);
+// extern int sntReadSocketPacket(const SNTConnection *SNT_RESTRICT connection, SNTUniformPacket *SNT_RESTRICT pack);
 
 // /**
 //  *	Peek application protocol header.
 //  *
 //  *	@Return none zero if successfully fetch. zero otherwise.
 //  */
-// extern int sntPeekPacketHeader(const SNTConnection *__restrict__ connection, SNTUniformPacket *__restrict__ header);
+// extern int sntPeekPacketHeader(const SNTConnection *SNT_RESTRICT connection, SNTUniformPacket *SNT_RESTRICT header);
 
 // /**
 //  *	Drop incoming packet.
@@ -124,7 +124,7 @@ typedef struct snt_presentation_union_t {
 //  *	Copy application protocol header. This includes layer
 //  *	5 to 7 in the OSI model.
 //  */
-// extern void sntCopyHeader(SNTPacketHeader *__restrict__ dest, const SNTPacketHeader *__restrict__ source);
+// extern void sntCopyHeader(SNTPacketHeader *SNT_RESTRICT dest, const SNTPacketHeader *SNT_RESTRICT source);
 
 // /**
 //  *	Copy packet payload.
@@ -135,7 +135,7 @@ typedef struct snt_presentation_union_t {
 //  *	Copy the whole packet based on the values
 //  *	in the application protocol header.
 //  */
-// extern void sntCopyPacket(SNTUniformPacket *__restrict__ dest, const SNTUniformPacket *__restrict__ source);
+// extern void sntCopyPacket(SNTUniformPacket *SNT_RESTRICT dest, const SNTUniformPacket *SNT_RESTRICT source);
 
 // /**
 //  *	Initialize default header values.

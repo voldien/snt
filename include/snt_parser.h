@@ -32,8 +32,8 @@
  *
  *	@Return bitwise option.
  */
-extern unsigned int sntParserBitWiseMultiParam(const char* __restrict__ arg,
-		const char** __restrict__ opts);
+extern unsigned int sntParserBitWiseMultiParam(const char* SNT_RESTRICT arg,
+		const char** SNT_RESTRICT opts);
 
 
 #endif

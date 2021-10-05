@@ -12,18 +12,21 @@
 #include <unistd.h>
 
 void sntMemoryLockAll() {
+	//TODO add support for multiple targets
 	if (mlockall(MCL_CURRENT | MCL_FUTURE) < 0) {
 		sntLogErrorPrintf("mlockall failed, %s.\n", strerror(errno));
 	}
 }
 
 void sntMemoryUnLockAll() {
+	// TODO add support for multiple targets
 	if (munlockall() < 0) {
 		sntLogErrorPrintf("munlockall failed, %s.\n", strerror(errno));
 	}
 }
 
 int sntLockMemory(const void *mem, size_t size) {
+	// TODO add support for multiple targets
 	int e;
 	e = mlock(mem, size);
 	if (e != 0) {

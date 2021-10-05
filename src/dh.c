@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <openssl/ssl.h>
 
-int sntDHCreate(sntDH **__restrict__ dh, int numbits) {
+int sntDHCreate(sntDH **SNT_RESTRICT dh, int numbits) {
 	int codes;
 
 	/*	Create DH.*/
@@ -35,7 +35,7 @@ int sntDHCreate(sntDH **__restrict__ dh, int numbits) {
 	return 1;
 }
 
-int sntDHCreateByData(sntDH **__restrict__ dh, const void *__restrict__ p, const void *__restrict__ g, uint32_t plen,
+int sntDHCreateByData(sntDH **SNT_RESTRICT dh, const void *SNT_RESTRICT p, const void *SNT_RESTRICT g, uint32_t plen,
 					  uint32_t glen) {
 
 	/*	Create DH.*/
@@ -71,7 +71,7 @@ int sntDHCreateByData(sntDH **__restrict__ dh, const void *__restrict__ p, const
 	return 1;
 }
 
-int sntDHCreateFromPEMFile(sntDH **__restrict__ dh, const char *path) {
+int sntDHCreateFromPEMFile(sntDH **SNT_RESTRICT dh, const char *path) {
 
 	BIO *bio;
 	unsigned int asym = 0;
@@ -101,8 +101,8 @@ int sntDHSize(const sntDH *dh) { return DH_size(dh); }
 
 void sntDHRelease(sntDH *dh) { DH_free(dh); }
 
-int sntDHCopyCommon(sntDH *__restrict__ dh, void *__restrict__ p, void *__restrict__ g, uint32_t *__restrict__ pplen,
-					uint32_t *__restrict__ pglen) {
+int sntDHCopyCommon(sntDH *SNT_RESTRICT dh, void *SNT_RESTRICT p, void *SNT_RESTRICT g, uint32_t *SNT_RESTRICT pplen,
+					uint32_t *SNT_RESTRICT pglen) {
 
 	/*	Compute length for p and g.	*/
 
@@ -146,7 +146,7 @@ int sntDHCompute(sntDH *dh) {
 	return 1;
 }
 
-int sntDHGetExchange(sntDH *__restrict__ dh, void *__restrict__ ex) {
+int sntDHGetExchange(sntDH *SNT_RESTRICT dh, void *SNT_RESTRICT ex) {
 
 	/*	Copy public number binary to ex.	*/
 
@@ -159,7 +159,7 @@ int sntDHGetExchange(sntDH *__restrict__ dh, void *__restrict__ ex) {
 	return 1;
 }
 
-int sntDHGetComputedKey(sntDH *__restrict__ dh, const void *q, void *__restrict__ key) {
+int sntDHGetComputedKey(sntDH *SNT_RESTRICT dh, const void *q, void *SNT_RESTRICT key) {
 
 	BIGNUM *pub;
 	const int plen = BN_num_bytes(DH_get0_p(dh));

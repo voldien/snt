@@ -34,7 +34,7 @@ typedef void sntDH;
  *
  *	@Return none zero if successful.
  */
-extern int sntDHCreate(sntDH** __restrict__ dh, int numbits);
+extern int sntDHCreate(sntDH** SNT_RESTRICT dh, int numbits);
 
 /**
  *	Create Diffie hellman.
@@ -49,8 +49,8 @@ extern int sntDHCreate(sntDH** __restrict__ dh, int numbits);
  *
  *	@Return none zero if successful.
  */
-extern int sntDHCreateByData(sntDH** __restrict__ dh, const void* __restrict__ p,
-		const void* __restrict__ g, uint32_t plen, uint32_t glen);
+extern int sntDHCreateByData(sntDH** SNT_RESTRICT dh, const void* SNT_RESTRICT p,
+		const void* SNT_RESTRICT g, uint32_t plen, uint32_t glen);
 
 /**
  *	Create Diffie hellman from PEM file.
@@ -61,7 +61,7 @@ extern int sntDHCreateByData(sntDH** __restrict__ dh, const void* __restrict__ p
  *
  *	@Return none zero if successful.
  */
-extern int sntDHCreateFromPEMFile(sntDH** __restrict__ dh, const char* path);
+extern int sntDHCreateFromPEMFile(sntDH** SNT_RESTRICT dh, const char* path);
 
 /**
  *	@Return size of diffie hellman in bytes.
@@ -88,9 +88,9 @@ extern void sntDHRelease(sntDH* dh);
  *
  *	@Return none zero if successful.
  */
-extern int sntDHCopyCommon(sntDH* __restrict__ dh, void* __restrict__ p,
-		void* __restrict__ g, uint32_t* __restrict__ plen,
-		uint32_t* __restrict__ glen);
+extern int sntDHCopyCommon(sntDH* SNT_RESTRICT dh, void* SNT_RESTRICT p,
+		void* SNT_RESTRICT g, uint32_t* SNT_RESTRICT plen,
+		uint32_t* SNT_RESTRICT glen);
 
 /**
  *	Compute diffie hellman with random secret key.
@@ -108,8 +108,8 @@ extern int sntDHCompute(sntDH* dh);
  *
  *	@Return none zero if successful.
  */
-extern int sntDHGetExchange(sntDH* __restrict__ dh,
-		void* __restrict__ exchange);
+extern int sntDHGetExchange(sntDH* SNT_RESTRICT dh,
+		void* SNT_RESTRICT exchange);
 
 /**
  *	Compute the shared key.
@@ -122,8 +122,8 @@ extern int sntDHGetExchange(sntDH* __restrict__ dh,
  *
  *	@Return none zero if successful.
  */
-extern int sntDHGetComputedKey(sntDH* __restrict__ dh,
-		const void* __restrict__ q, void* __restrict__ key);
+extern int sntDHGetComputedKey(sntDH* SNT_RESTRICT dh,
+		const void* SNT_RESTRICT q, void* SNT_RESTRICT key);
 
 
 #endif

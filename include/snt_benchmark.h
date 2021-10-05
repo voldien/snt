@@ -85,8 +85,8 @@ extern int sntDurationExpired(uint64_t elapse, const SNTConnectionOption* option
  *	Benchmark end function. Has to be invoked at the end of
  *	each benchmark.
  */
-extern void sntBenchmarkEnd(SNTConnection* __restrict__ connection,
-		SNTResultPacket* __restrict__ packet);
+extern void sntBenchmarkEnd(SNTConnection* SNT_RESTRICT connection,
+		SNTResultPacket* SNT_RESTRICT packet);
 
 /**
  *	Print benchmark result.

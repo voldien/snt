@@ -512,7 +512,7 @@ int sntSetTransportProcotcol(SNTConnection *connection, unsigned int protocol) {
 }
 
 unsigned int sntCreateSendPacket(const SNTConnection *connection, void *buffer, unsigned int buflen,
-								 SNTPresentationUnion *__restrict__ pres) {
+								 SNTPresentationUnion *SNT_RESTRICT pres) {
 
 	unsigned int size;		 /*	*/
 	unsigned char buf[4096]; /*	*/
@@ -555,7 +555,7 @@ unsigned int sntCreateSendPacket(const SNTConnection *connection, void *buffer, 
 }
 
 unsigned int sntCreateRecvPacket(const SNTConnection *connection, void *buffer, unsigned int buflen,
-								 SNTPresentationUnion *__restrict__ pres) {
+								 SNTPresentationUnion *SNT_RESTRICT pres) {
 
 	unsigned int size;		 /*	*/
 	unsigned char buf[4096]; /*	*/
@@ -729,7 +729,7 @@ int sntReadSocketPacket(const SNTConnection *connection, SNTUniformPacket *pack)
 	return len;
 }
 
-int sntPeekPacketHeader(const SNTConnection *__restrict__ connection, SNTUniformPacket *__restrict__ header) {
+int sntPeekPacketHeader(const SNTConnection *SNT_RESTRICT connection, SNTUniformPacket *SNT_RESTRICT header) {
 	return sntReadSocket(connection, header, sizeof(SNTPacketHeader), MSG_PEEK);
 }
 

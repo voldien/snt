@@ -377,7 +377,7 @@ void sntReadArgument(int argc, char *const *argv, char *ip, unsigned int *port, 
 	optarg = NULL;
 }
 
-static void sntMapSocket(SNTConnection **table, SNTConnection *__restrict__ con, fd_set *__restrict__ fdset,
+static void sntMapSocket(SNTConnection **table, SNTConnection *SNT_RESTRICT con, fd_set *SNT_RESTRICT fdset,
 						 int socket) {
 	if (socket > 0) {
 		FD_SET(socket, fdset);
@@ -385,7 +385,7 @@ static void sntMapSocket(SNTConnection **table, SNTConnection *__restrict__ con,
 	}
 }
 
-static void sntUnMapSocket(SNTConnection **__restrict__ table, fd_set *__restrict__ fdset, int socket) {
+static void sntUnMapSocket(SNTConnection **SNT_RESTRICT table, fd_set *SNT_RESTRICT fdset, int socket) {
 	if (socket > 0) {
 		FD_CLR(socket, fdset);
 		table[socket] = NULL;

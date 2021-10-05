@@ -92,8 +92,8 @@ extern int sntASymGenerateKey(SNTConnection* connection,
  *
  *	@Return none zero if successfully.
  */
-extern int sntASymCreateKeyFromData(SNTConnection* __restrict__ connection,
-		unsigned int cipher, const void* __restrict__ data, int len, unsigned int private);
+extern int sntASymCreateKeyFromData(SNTConnection* SNT_RESTRICT connection,
+		unsigned int cipher, const void* SNT_RESTRICT data, int len, unsigned int private);
 
 /**
  *	Copy public key from asymmetric cipher to
@@ -102,7 +102,7 @@ extern int sntASymCreateKeyFromData(SNTConnection* __restrict__ connection,
  *	@Return non zero if successfully.
  */
 extern int sntASymCopyPublicKey(
-		const SNTConnection* __restrict__ connection, void* __restrict__ cpkey);
+		const SNTConnection* SNT_RESTRICT connection, void* SNT_RESTRICT cpkey);
 
 /**
  *	Create asymmetric key from file.
@@ -110,34 +110,34 @@ extern int sntASymCopyPublicKey(
  *	@Return non zero if successful.
  */
 extern int sntASymCreateKeyFromFile(
-		SNTConnection* __restrict__ connection, unsigned int cipher,
-		void* __restrict__ filepath, unsigned int private);
+		SNTConnection* SNT_RESTRICT connection, unsigned int cipher,
+		void* SNT_RESTRICT filepath, unsigned int private);
 
 /**
  *	Create asymmetric key from x509 certificate.
  *
  *	@Return non zero if successful.
  */
-extern int sntASymCreateFromX509File(SNTConnection* __restrict__ connection,
-		const char* __restrict__ cfilepath);
+extern int sntASymCreateFromX509File(SNTConnection* SNT_RESTRICT connection,
+		const char* SNT_RESTRICT cfilepath);
 
 /**
  *	Encrypt data block with asymmetric cipher.
  *
  *	@Return number of bytes encrypted.
  */
-extern int sntASymPubEncrypt(unsigned int type, const void* __restrict__ source,
-		unsigned int len, void* __restrict__ dest,
-		const void* __restrict__ key);
+extern int sntASymPubEncrypt(unsigned int type, const void* SNT_RESTRICT source,
+		unsigned int len, void* SNT_RESTRICT dest,
+		const void* SNT_RESTRICT key);
 
 /**
  *	Decrypt data block with asymmetric cipher.
  *
  *	@Return number of bytes decrypted.
  */
-extern int sntASymPriDecrypt(unsigned int type, const void* __restrict__ input,
-		unsigned int len, void* __restrict__ output,
-		const void* __restrict__ key);
+extern int sntASymPriDecrypt(unsigned int type, const void* SNT_RESTRICT input,
+		unsigned int len, void* SNT_RESTRICT output,
+		const void* SNT_RESTRICT key);
 
 /**
  *	Get block size of asymmetric cipher.
@@ -158,18 +158,18 @@ extern void sntASymFree(SNTConnection* connection);
  *
  *	@Return if successfully size of the signature in bytes. zero if failed.
  */
-extern int sntASymSignDigSign(const SNTConnection* __restrict__ connection,
-		unsigned int hashtype, const void* __restrict__ hash, unsigned int len,
-		void* __restrict__ output, int32_t* __restrict__ diglen);
+extern int sntASymSignDigSign(const SNTConnection* SNT_RESTRICT connection,
+		unsigned int hashtype, const void* SNT_RESTRICT hash, unsigned int len,
+		void* SNT_RESTRICT output, int32_t* SNT_RESTRICT diglen);
 
 /**
  *	Verify signed digital signature.
  *
  *	@Return if successfully size of the verified in bytes. zero if failed.
  */
-extern int sntASymVerifyDigSign(const SNTConnection* __restrict__ connection,
-		unsigned int hashtype, const void* __restrict__ hash, unsigned int len,
-		void* __restrict__ digital, unsigned int diglen);
+extern int sntASymVerifyDigSign(const SNTConnection* SNT_RESTRICT connection,
+		unsigned int hashtype, const void* SNT_RESTRICT hash, unsigned int len,
+		void* SNT_RESTRICT digital, unsigned int diglen);
 
 /**
  *	Generate symmetric key
@@ -185,16 +185,16 @@ extern int sntSymGenerateKey(SNTConnection* connection, unsigned int cipher);
  *
  *	@Return non zero if successfully.
  */
-extern int sntSymCreateFromKey(SNTConnection* __restrict__ connection,
-		unsigned int cipher, const void* __restrict__ pkey);
+extern int sntSymCreateFromKey(SNTConnection* SNT_RESTRICT connection,
+		unsigned int cipher, const void* SNT_RESTRICT pkey);
 
 /**
  *	Copy symmetric cipher.
  *
  *	Remark:
  */
-extern void sntSymCopyKey(SNTConnection* __restrict__ connection,
-		void** __restrict__ key);
+extern void sntSymCopyKey(SNTConnection* SNT_RESTRICT connection,
+		void** SNT_RESTRICT key);
 
 /**
  *	Get key bit size of given symmetric
@@ -238,9 +238,9 @@ extern void sntSymFree(SNTConnection* connection);
  *
  *	@Return	number of bytes encrypted.
  */
-extern unsigned int sntSymEncrypt(const SNTConnection* __restrict__ connection,
-		const void* __restrict__ data, unsigned char* __restrict__ output,
-		unsigned int len, void* __restrict__ iv, int* __restrict__ feedback);
+extern unsigned int sntSymEncrypt(const SNTConnection* SNT_RESTRICT connection,
+		const void* SNT_RESTRICT data, unsigned char* SNT_RESTRICT output,
+		unsigned int len, void* SNT_RESTRICT iv, int* SNT_RESTRICT feedback);
 
 /**
  *	Decrypt block.
@@ -252,9 +252,9 @@ extern unsigned int sntSymEncrypt(const SNTConnection* __restrict__ connection,
  *
  *	@Return	number of bytes decrypted.
  */
-extern unsigned int sntSymDecrypt(const SNTConnection* __restrict__ connection,
-		const void* __restrict__ data, unsigned char* __restrict__ output,
-		unsigned int len, void* __restrict__ iv, int* __restrict__ feedback);
+extern unsigned int sntSymDecrypt(const SNTConnection* SNT_RESTRICT connection,
+		const void* SNT_RESTRICT data, unsigned char* SNT_RESTRICT output,
+		unsigned int len, void* SNT_RESTRICT iv, int* SNT_RESTRICT feedback);
 
 /**
  *	Compute the total size of encryption data chunk.

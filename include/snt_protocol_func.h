@@ -23,30 +23,30 @@
 /**
  *	Protocol command functions.
  */
-extern int sntProtFuncInit(SNTConnection* __restrict__ connection,
-		const SNTUniformPacket* __restrict__ packet);
-extern int sntProtFuncCliOpt(SNTConnection* __restrict__ connection,
-		const SNTUniformPacket* __restrict__ packet);
-extern int sntProtFuncCertificate(SNTConnection* __restrict__ connection,
-		const SNTUniformPacket* __restrict__ packet);
-extern int sntProtFuncSecure(SNTConnection* __restrict__ connection,
-		const SNTUniformPacket* __restrict__ packet);
-extern int sntProtFuncReady(SNTConnection* __restrict__ connection,
-		const SNTUniformPacket* __restrict__ packet);
-extern int sntProtFuncStart(SNTConnection* __restrict__ connection,
-		const SNTUniformPacket* __restrict__ packet);
-extern int sntProtFuncError(SNTConnection* __restrict__ connection,
-		const SNTUniformPacket* __restrict__ packet);
-extern int sntProtFuncResult(SNTConnection* __restrict__ connection,
-		const SNTUniformPacket* __restrict__ packet);
-extern int sntProtFuncBenchmark(SNTConnection* __restrict__ connection,
-		const SNTUniformPacket* __restrict__ packet);
-extern int sntProtFuncDHReq(SNTConnection* __restrict__ connection,
-		const SNTUniformPacket* __restrict__ packet);
-extern int sntProtFuncDHInit(SNTConnection* __restrict__ connection,
-		const SNTUniformPacket* __restrict__ packet);
-extern int sntProtFuncDHExch(SNTConnection* __restrict__ connection,
-		const SNTUniformPacket* __restrict__ packet);
+extern int sntProtFuncInit(SNTConnection* SNT_RESTRICT connection,
+		const SNTUniformPacket* SNT_RESTRICT packet);
+extern int sntProtFuncCliOpt(SNTConnection* SNT_RESTRICT connection,
+		const SNTUniformPacket* SNT_RESTRICT packet);
+extern int sntProtFuncCertificate(SNTConnection* SNT_RESTRICT connection,
+		const SNTUniformPacket* SNT_RESTRICT packet);
+extern int sntProtFuncSecure(SNTConnection* SNT_RESTRICT connection,
+		const SNTUniformPacket* SNT_RESTRICT packet);
+extern int sntProtFuncReady(SNTConnection* SNT_RESTRICT connection,
+		const SNTUniformPacket* SNT_RESTRICT packet);
+extern int sntProtFuncStart(SNTConnection* SNT_RESTRICT connection,
+		const SNTUniformPacket* SNT_RESTRICT packet);
+extern int sntProtFuncError(SNTConnection* SNT_RESTRICT connection,
+		const SNTUniformPacket* SNT_RESTRICT packet);
+extern int sntProtFuncResult(SNTConnection* SNT_RESTRICT connection,
+		const SNTUniformPacket* SNT_RESTRICT packet);
+extern int sntProtFuncBenchmark(SNTConnection* SNT_RESTRICT connection,
+		const SNTUniformPacket* SNT_RESTRICT packet);
+extern int sntProtFuncDHReq(SNTConnection* SNT_RESTRICT connection,
+		const SNTUniformPacket* SNT_RESTRICT packet);
+extern int sntProtFuncDHInit(SNTConnection* SNT_RESTRICT connection,
+		const SNTUniformPacket* SNT_RESTRICT packet);
+extern int sntProtFuncDHExch(SNTConnection* SNT_RESTRICT connection,
+		const SNTUniformPacket* SNT_RESTRICT packet);
 
 /**
  *	Validate capability of system.
@@ -60,38 +60,38 @@ extern int sntValidateCapability(const SNTClientOption* option);
  *
  *	@Return none zero if successful.
  */
-extern int sntSendCertificate(const SNTConnection* __restrict__ bind,
-		SNTConnection* __restrict__ client);
+extern int sntSendCertificate(const SNTConnection* SNT_RESTRICT bind,
+		SNTConnection* SNT_RESTRICT client);
 
 /**
  *	Send Diffie hellman request.
  *
  *	@Return number of bytes sent.
  */
-extern int sntSendDHpq(const SNTConnection* __restrict__ bind,
-		SNTConnection* __restrict__ client);
+extern int sntSendDHpq(const SNTConnection* SNT_RESTRICT bind,
+		SNTConnection* SNT_RESTRICT client);
 
 /**
  *	Send Diffie hellman exchange packet.
  *
  *	@Return number of bytes sent.
  */
-extern int sntSendDHExch(const SNTConnection* __restrict__ connection);
+extern int sntSendDHExch(const SNTConnection* SNT_RESTRICT connection);
 
 /**
  *	Send ready packet to connection.
  *
  *	@Return number of bytes sent.
  */
-extern int sntSendReady(const SNTConnection* __restrict__ connection);
+extern int sntSendReady(const SNTConnection* SNT_RESTRICT connection);
 
 /**
  *	Send error code.
  *
  *	@Return number of bytes sent.
  */
-extern int sntSendError(const SNTConnection* __restrict__ connection,
-		int code, const char* __restrict__ message);
+extern int sntSendError(const SNTConnection* SNT_RESTRICT connection,
+		int code, const char* SNT_RESTRICT message);
 /**
  *
  *	@Return number of bytes sent.

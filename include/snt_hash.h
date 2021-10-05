@@ -18,34 +18,35 @@
 */
 #ifndef _SNT_HASH_H_
 #define _SNT_HASH_H_
-#include"snt_def.h"
+#include "snt_def.h"
 
 enum SNTHashAlgorithm {
-    SntHashNone,
-    SntHashMD4,
-    SntHashMD5,
-    SntHashSHA224,
-    SntHashSHA256,
-    SntHashSHA384,
-    SntHashSHA512,
+	SntHashNone,   /*	No hash.	*/
+	SntHashMD4,	   /*	MD4 hash.	*/
+	SntHashMD5,	   /*	MD5 hash.	*/
+	SntHashSHA128, /*	Secure hashing algorithm 128 bits.	*/
+	SntHashSHA224, /*	Secure hashing algorithm 224 bits.	*/
+	SntHashSHA256, /*	Secure hashing algorithm 256 bits.	*/
+	SntHashSHA384, /*	Secure hashing algorithm 384 bits.	*/
+	SntHashSHA512, /*	Secure hashing algorithm 512 bits.*/
 };
 
 /**
  *	Hash types.
  */
-#define SNT_HASH_None		0x0		/*	No hash.	*/
-#define SNT_HASH_MD4		0x1		/*	MD4 hash.	*/
-#define SNT_HASH_MD5		0x2		/*	MD5 hash.	*/
-#define SNT_HASH_SHA		0x3		/*	Secure hashing algorithm 128 bits.	*/
-#define SNT_HASH_SHA224		0x4		/*	Secure hashing algorithm 224 bits.	*/
-#define SNT_HASH_SHA256		0x5		/*	Secure hashing algorithm 256 bits.	*/
-#define SNT_HASH_SHA384 	0x6		/*	Secure hashing algorithm 384 bits.	*/
-#define SNT_HASH_SHA512 	0x7		/*	Secure hashing algorithm 512 bits.*/
+#define SNT_HASH_None 0x0	/*	No hash.	*/
+#define SNT_HASH_MD4 0x1	/*	MD4 hash.	*/
+#define SNT_HASH_MD5 0x2	/*	MD5 hash.	*/
+#define SNT_HASH_SHA 0x3	/*	Secure hashing algorithm 128 bits.	*/
+#define SNT_HASH_SHA224 0x4 /*	Secure hashing algorithm 224 bits.	*/
+#define SNT_HASH_SHA256 0x5 /*	Secure hashing algorithm 256 bits.	*/
+#define SNT_HASH_SHA384 0x6 /*	Secure hashing algorithm 384 bits.	*/
+#define SNT_HASH_SHA512 0x7 /*	Secure hashing algorithm 512 bits.*/
 
 /**
  *	Hash symbol table.
  */
-extern const char* gc_hash_symbol[];
+extern const char *gc_hash_symbol[];
 
 /**
  *	Compute hash out of the data
@@ -53,8 +54,10 @@ extern const char* gc_hash_symbol[];
  *
  *	@Return hash size in bytes.
  */
-extern unsigned int sntHash(unsigned int hashtype, const void* __restrict__ block,
-		unsigned int len, void* __restrict__ result);
+extern unsigned int sntHash(unsigned int hashtype, const void *SNT_RESTRICT block, unsigned int len,
+							void *SNT_RESTRICT result);
+
+extern unsigned int sntIsHashSupported(enum SNTHashAlgorithm ag);
 
 /**
  *	Get fixed hashed size of given hash type.

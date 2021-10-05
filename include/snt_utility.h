@@ -23,7 +23,7 @@
 /**
  *	Swap pointer value.
  */
-extern void sntSwapPointer(void** __restrict__ a, void** __restrict__ b);
+extern void sntSwapPointer(void** SNT_RESTRICT a, void** SNT_RESTRICT b);
 
 /**
  *	log2 with mutuality exclusive bit flag.
@@ -68,6 +68,6 @@ extern long int sntLoadFile(const char* cfilename, void** pbuf);
  *	Memset memory for data chunk containing sensitive information.
  *	The memory will be memset three times in succession.
  */
-extern void sntMemZero(void* __restrict__ pbuf, size_t size);
+extern void sntMemZero(void* SNT_RESTRICT pbuf, size_t size);
 
 #endif

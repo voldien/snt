@@ -1,3 +1,4 @@
+#include "snt_def.h"
 #include "snt_protocol.h"
 #include "snt_time.h"
 #include "snt_utility.h"
@@ -35,7 +36,7 @@ int sntGenerateDeltaTypeInc(unsigned int type, char *text, SNTDelta *delta, cons
 	return len;
 }
 
-void sntDeltaParse(unsigned int type, const char *__restrict__ buf, SNTDelta *__restrict__ delta) {
+void sntDeltaParse(unsigned int type, const char *SNT_RESTRICT buf, SNTDelta *SNT_RESTRICT delta) {
 	switch (type) {
 	case SNT_DELTA_TYPE_FLOAT:
 		delta->f = sntAsciiToFloat(buf);
@@ -53,8 +54,8 @@ void sntDeltaParse(unsigned int type, const char *__restrict__ buf, SNTDelta *__
 	}
 }
 
-int sntDeltaCheckChange(unsigned int type, const SNTDelta *__restrict__ prev, const SNTDelta *__restrict__ next,
-						const SNTDelta *__restrict__ incre) {
+int sntDeltaCheckChange(unsigned int type, const SNTDelta *SNT_RESTRICT prev, const SNTDelta *SNT_RESTRICT next,
+						const SNTDelta *SNT_RESTRICT incre) {
 	switch (type) {
 	case SNT_DELTA_TYPE_INT:
 		return ((next->i - prev->i) == incre->i);

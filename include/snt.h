@@ -75,12 +75,20 @@ typedef struct snt_connection_option_t{
  */
 extern const char* sntGetVersion();
 
+typedef struct snt_server_context_t {
+
+}SNTServerContext;
+
+typedef struct snt_client_context_T{
+
+} SNTClientContext;
+
 /**
  *	Read option arguments.
  */
-extern void sntReadArgument(int argc,  char *const * __restrict__ argv,
-		char* __restrict__ ip, unsigned int* __restrict__ port,
-		SNTConnectionOption* __restrict__ option);
+extern void sntReadArgument(int argc,  char *const * SNT_RESTRICT argv,
+		char* SNT_RESTRICT ip, unsigned int* SNT_RESTRICT port,
+		SNTConnectionOption* SNT_RESTRICT option);
 
 /**
  *	Initialize the program for running as a server.
@@ -104,8 +112,8 @@ extern void sntServerMain();
 /**
  *	Client main loop.
  */
-extern void sntClientMain(const char* __restrict__ host, unsigned int port,
-		int nconnector, const SNTConnectionOption* __restrict__ option);
+extern void sntClientMain(const char* SNT_RESTRICT host, unsigned int port,
+		int nconnector, const SNTConnectionOption* SNT_RESTRICT option);
 
 /**
  *	Interpret incoming packets.

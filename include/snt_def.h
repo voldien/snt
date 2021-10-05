@@ -16,12 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 */
-#ifndef _SNT_DEF_H_
-#define _SNT_DEF_H_
-#include<stdint.h>
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
+#ifndef _SNT_DEFS_H_
+#define _SNT_DEFS_H_ 1
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 
 /**
@@ -234,6 +234,23 @@
 	#define SNTAPISTDENTRY  __stdcall
 	#define SNTAPIFASTENTRY __fastcall
 #endif
+
+
+/**
+ *	Restrict declaration.
+ */
+#ifndef SNT_RESTRICT
+	#if defined(SNT_GNUC)
+		#define SNT_RESTRICT __restrict
+	#elif defined(SNT_CLANG)
+	    #define SNT_RESTRICT __restrict
+	#elif defined(SNT_VC)
+		#define SNT_RESTRICT __declspec(restrict)
+    #else
+	    #define SNT_RESTRICT
+	#endif
+#endif
+
 
 
 

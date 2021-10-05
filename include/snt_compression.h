@@ -18,8 +18,10 @@
 */
 #ifndef _SNT_COMPRESSION_H_
 #define _SNT_COMPRESSION_H_ 1
+#include "snt_def.h"
 #include<stdio.h>
 #include<stdlib.h>
+
 
 /**
  *	Compression enumerator constants.
@@ -52,8 +54,8 @@ extern void sntInitCompression(unsigned int type);
  *
  *	@Return if sucesfully number of bytes. otherwise a negative number.
  */
-extern int sntInflate(unsigned int compression, const char* __restrict__ source,
-		char* __restrict__ dest, unsigned int len);
+extern int sntInflate(unsigned int compression, const char* SNT_RESTRICT source,
+		char* SNT_RESTRICT dest, unsigned int len);
 
 /**
  *	Deflate data.
@@ -62,7 +64,7 @@ extern int sntInflate(unsigned int compression, const char* __restrict__ source,
  *
  *	@Return if sucesfully number of bytes. otherwise a negative number.
  */
-extern int sntDeflate(unsigned int compression, const char* __restrict__ source,
-		char* __restrict__ dest, unsigned int len);
+extern int sntDeflate(unsigned int compression, const char* SNT_RESTRICT source,
+		char* SNT_RESTRICT dest, unsigned int len);
 
 #endif
