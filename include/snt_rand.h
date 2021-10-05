@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 */
-#ifndef _SNT_RAND_H_
-#define _SNT_RAND_H_ 1
+#ifndef _SNT_RAND_GENERATOR_H_
+#define _SNT_RAND_GENERATOR_H_ 1
 #include"snt_def.h"
 
 /**
@@ -29,6 +29,8 @@
  *	\size sizeof the memory location in bytes.
  */
 extern void sntGenRandom(unsigned char* rand, int size);
+
+extern void sntGenPseudoSecureRandom(void* random, size_t size);
 
 
 #endif
