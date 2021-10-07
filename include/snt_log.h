@@ -27,6 +27,7 @@
 #define SNT_LOG_VERBOSE     0x1     /*	Print only verbose print outs.	*/
 #define SNT_LOG_DEBUG       0x3     /*	Prints everything.	*/
 
+
 /**
  *	Set verbosity level.
  */

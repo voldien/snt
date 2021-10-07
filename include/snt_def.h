@@ -237,6 +237,25 @@
 
 
 /**
+ *	Library declaration.
+ */
+#if defined(SNT_GNUC) || defined(SNT_CLANG)
+	#if defined(SNT_UNIX)
+		#define SNTDECLSPEC	 __attribute__((__visibility__ ("default")))
+	#else
+		#define SNTDECLSPEC
+	#endif
+#elif defined(SNT_VC)
+	#if SNT_INTERNAL
+	#define SNTDECLSPEC __declspec(dllexport)
+	#else
+	#define SNTDECLSPEC __declspec(dllimport)
+	#endif
+#endif
+
+
+
+/**
  *	Restrict declaration.
  */
 #ifndef SNT_RESTRICT

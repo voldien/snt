@@ -138,11 +138,15 @@ ELSE()
 
 ENDIF()
 
+# Protocol Specific.
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/protocol)
+# Core Functionties.
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/core)
+# Clint using the core and protocol features.
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/client)
 
 
+#
 ADD_LIBRARY(snt-core ${SOURCE_FILES} ${HEADER_FILES} )
 TARGET_LINK_LIBRARIES(snt-core m ${OPENSSL_CRYPTO_LIBRARY} lz4 pthread ${ZLIB_LIBRARIES} ${OPENSSL_SSL_LIBRARY} bz2)
 
