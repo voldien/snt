@@ -7,12 +7,29 @@
 extern "C" {
 #endif
 
+enum SntPackageSection {
+	SntSectionHeader,
+	SntSectionPresentation,
+	SntSectionPresentationIV,
+	SntSectionPresentationFeedback,
+	SntSectionCRC,
+	SntSectionReserve = 0xFF,
+	SntSectionCustom = 0x1FF,
+};
+
+typedef struct sntPackage;
+
+typedef struct snt_package_next_t {
+	uint16_t next;
+} __attribute__((__packed__)) SntPackageNext;
+
 /**
  *	SNT protocol header. This header will be attached
  *	to all packet with a intention of informing something.
  *	Everything except the benchmark uses the packet header.
  */
 typedef struct snt_packet_header_t {
+	SntPackageNext next;
 	uint16_t version; /*	version of the protocol.	*/
 	uint8_t stype;	  /*	packet type.	*/
 	uint8_t offset;	  /*	offset from application protocol header to the payload.	*/
@@ -28,6 +45,7 @@ typedef struct snt_packet_header_t {
  *	This will remove the padding added in order perform the encryption.
  */
 typedef struct snt_presentation_package_t {
+	SntPackageNext next;
 	uint8_t noffset; /*	Negative offset.	*/
 } __attribute__((__packed__)) SNTPresentationPacket;
 
@@ -36,14 +54,21 @@ typedef struct snt_presentation_package_t {
  *	that uses initial vector.
  */
 typedef struct snt_presentation_iv_package_t {
+	SntPackageNext next;
 	uint8_t len;   /*	size of IV in bytes.	*/
 	uint8_t iv[0]; /*	IV pointer only.	*/
 } __attribute__((__packed__)) SNTPresentationIVPacket;
+
+typedef struct snt_crc_package_t {
+	SntPackageNext next;
+	uint16_t crcType;
+} SntCrcPackage;
 
 /**
  *	Presentation feedback.
  */
 typedef struct snt_presentation_feedback_package_t {
+	SntPackageNext next;
 	int32_t num; /*	*/
 } __attribute__((__packed__)) SNTPresentationFeedbackPacket;
 
@@ -56,6 +81,8 @@ typedef struct snt_presentation_union_t {
 	SNTPresentationIVPacket iv;		  /*	Initialize vector.	*/
 	SNTPresentationFeedbackPacket fb; /*	feedback number.	*/
 } __attribute__((__packed__)) SNTPresentationUnion;
+
+extern unsigned int sntAddNextSection(const SntPackageNext *next, sntPackage *package);
 
 // /**
 //  *	Create packet ready to be sent.
@@ -77,8 +104,8 @@ typedef struct snt_presentation_union_t {
 //  *
 //  *	@Return number of bytes read.
 //  */
-// extern int sntReadSocket(const SNTConnection *SNT_RESTRICT connection, void *SNT_RESTRICT buffer, unsigned int buflen,
-// 						 int flag);
+// extern int sntReadSocket(const SNTConnection *SNT_RESTRICT connection, void *SNT_RESTRICT buffer, unsigned int
+// buflen, 						 int flag);
 
 // /**
 //  *	Write data to socket.

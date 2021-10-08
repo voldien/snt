@@ -1,7 +1,11 @@
 #pragma once
-#include"../snt-protocol.h"
+#include "../snt-protocol.h"
 
-namespace LIBSNT{
+namespace LIBSNT {
 
-	class SntBlock {};
+	class SntBlock {
+
+		template <typename T>
+		void addNextSection(SntPackageSection nextSection, T &section, unsigned int length = sizeof(T)) {}
+	};
 } // namespace LIBSNT
