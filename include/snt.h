@@ -76,11 +76,11 @@ typedef struct snt_connection_option_t{
 extern const char* sntGetVersion();
 
 typedef struct snt_server_context_t {
-
-}SNTServerContext;
+	SNTConnectionOption options;
+} SNTServerContext;
 
 typedef struct snt_client_context_T{
-
+	SNTConnectionOption options;
 } SNTClientContext;
 
 /**

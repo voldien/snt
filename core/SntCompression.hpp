@@ -16,7 +16,8 @@ namespace libsnt {
 		template <typename T> long int inflate(const T &, unsigned int length) {}
 		template <typename T> long int deflate(const T &, unsigned int length) {}
 
-		Compression &operator>>(bool &data) {}
+		template <typename T> Compression &operator>>(T &data) { inflate(data, sizeof(T)); }
+		template <typename T> T &operator>>(Compression &compress) { deflate(data, sizeof(T)); }
 
 	  private:
 		SntCompressionContext *context;

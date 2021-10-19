@@ -51,6 +51,13 @@ void snt_catch(int signal) {
 	exit(EXIT_SUCCESS);
 }
 
+class SntClient {
+  private:
+};
+class SntServer {
+  private:
+};
+
 int main(int argc, char *const *argv) {
 
 	/*	*/

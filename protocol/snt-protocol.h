@@ -8,16 +8,17 @@ extern "C" {
 #endif
 
 enum SntPackageSection {
-	SntSectionHeader,
-	SntSectionPresentation,
-	SntSectionPresentationIV,
-	SntSectionPresentationFeedback,
-	SntSectionCRC,
+	SntSectionHeader = 0,
+	SntSectionPresentation = 1,
+	SntSectionPresentationIV = 2,
+	SntSectionPresentationFeedback = 3,
+	SntSectionCRC = 4,
 	SntSectionReserve = 0xFF,
 	SntSectionCustom = 0x1FF,
 };
 
-typedef struct sntPackage;
+/*	*/
+struct sntPackage;
 
 typedef struct snt_package_next_t {
 	uint16_t next;
@@ -82,7 +83,13 @@ typedef struct snt_presentation_union_t {
 	SNTPresentationFeedbackPacket fb; /*	feedback number.	*/
 } __attribute__((__packed__)) SNTPresentationUnion;
 
+typedef struct snt_protocol_context_t{
+
+} SntProtocolContext;
+
 extern unsigned int sntAddNextSection(const SntPackageNext *next, sntPackage *package);
+
+extern unsigned int sntGetSectionSize(SntProtocolContext* de, enum SntPackageSection section);
 
 // /**
 //  *	Create packet ready to be sent.
