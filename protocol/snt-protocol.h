@@ -83,13 +83,13 @@ typedef struct snt_presentation_union_t {
 	SNTPresentationFeedbackPacket fb; /*	feedback number.	*/
 } __attribute__((__packed__)) SNTPresentationUnion;
 
-typedef struct snt_protocol_context_t{
+typedef struct snt_protocol_context_t {
 
 } SntProtocolContext;
 
 extern unsigned int sntAddNextSection(const SntPackageNext *next, sntPackage *package);
 
-extern unsigned int sntGetSectionSize(SntProtocolContext* de, enum SntPackageSection section);
+extern unsigned int sntGetSectionSize(SntProtocolContext *de, enum SntPackageSection section);
 
 // /**
 //  *	Create packet ready to be sent.

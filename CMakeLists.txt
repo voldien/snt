@@ -142,6 +142,8 @@ ENDIF()
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/protocol)
 # Core Functionties.
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/core)
+# Negotiation Functionties.
+ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/negotiation)
 # Clint using the core and protocol features.
 ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/client)
 

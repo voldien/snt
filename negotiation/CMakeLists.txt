@@ -1,0 +1,6 @@
+# Define all file lists.
+FILE(GLOB SOURCE_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/*.c)
+FILE(GLOB HEADER_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
+
+ADD_LIBRARY(snt-negotiation-protocol ${SOURCE_FILES} ${HEADER_FILES} )
+TARGET_LINK_LIBRARIES(snt-negotiation-protocol PUBLIC snt-core)

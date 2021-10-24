@@ -22,11 +22,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef __cplusplus /*	C++ Environment	*/
+extern "C" {
+#endif
+
 enum SntCompressionAlgorithm {
 	SntCompressionNone,
 	SntCompressionLZ4,
 	SntCompressionGZIP,
 	SntCompressionBZIP2,
+	SntCompressionMax,
 };
 
 /**
@@ -52,7 +57,7 @@ extern SNTDECLSPEC void sntCreateCompressionContext(SntCompressionContext **cont
 													enum SntCompressionAlgorithm algorthm);
 extern SNTDECLSPEC void sntDeleteCompressionContext(SntCompressionContext *context);
 
-extern SNTDECLSPEC SntCompressionAlgorithm sntGetCompression(const SntCompressionContext *context);
+extern SNTDECLSPEC enum SntCompressionAlgorithm sntGetCompression(const SntCompressionContext *context);
 
 extern SNTDECLSPEC long int sntCompressionInflate(SntCompressionContext *SNT_RESTRICTcontext,
 												  const void *SNT_RESTRICT source, void *SNT_RESTRICT dest,
@@ -87,5 +92,9 @@ extern int sntInflate(unsigned int compression, const char *SNT_RESTRICT source,
  */
 extern int sntDeflate(unsigned int compression, const char *SNT_RESTRICT source, char *SNT_RESTRICT dest,
 					  unsigned int len);
+
+#ifdef __cplusplus /*	C++ Environment	*/
+}
+#endif
 
 #endif
