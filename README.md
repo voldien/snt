@@ -2,7 +2,6 @@
 [![Actions Build Status](https://github.com/voldien/snt/workflows/snt/badge.svg?branch=master)](https://github.com/voldien/snt/actions)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![GitHub release](https://img.shields.io/github/release/voldien/snt.svg)](https://github.com/voldien/snt/releases)
-[![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/voldien/snt.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/voldien/snt/context:cpp)
 
 *snt* - simple-network-tool is a network tool for performing network performance tests. The program supports multiple benchmark modes for testing various aspect of the network. The benchmark can use compression and encryption optionally in order to check how encryption and compression will change the network performance.
 
